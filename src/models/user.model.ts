@@ -1,5 +1,5 @@
 import { model, Schema, Types } from 'mongoose';
-import { IUserDocument, IUserModel, NOTIFICATION_STATUS } from 'src/interfaces/models.interface';
+import { IUserDocument, IUserModel, NOTIFICATION_STATUS } from '../interfaces/models.interface';
 
 const userSchema = new Schema<IUserDocument, IUserModel>(
 	{
