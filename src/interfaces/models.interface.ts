@@ -12,6 +12,11 @@ interface IDepartament {
 	users: IUserDocument['_id'][];
 }
 
+interface IDocument {
+	url: string;
+	name: string;
+}
+
 export interface IDepartamentDocument extends IDepartament, Document {}
 
 export type IDepartamentModel = Model<IDepartamentDocument>;
@@ -54,9 +59,11 @@ interface ITestSystem {
 	projects: IProjectsDocument['_id'][];
 	client: IClientDocument['_id'];
 	alias: string;
+	notes: INoteDocument['id'][];
+	year: number;
 }
 
-interface ITestSystemDocument extends ITestSystem, Document {}
+export interface ITestSystemDocument extends ITestSystem, Document {}
 
 export type ITestSystemModel = Model<ITestSystemDocument>;
 
@@ -95,3 +102,37 @@ interface IClient {
 export interface IClientDocument extends IClient, Document {}
 
 export type IClientModel = Model<IClientDocument>;
+
+interface INote {
+	title: string;
+	description: string;
+	link: string;
+	documents: IDocument[];
+	// type: enum;
+	testSystem: ITestSystemDocument['_id'][];
+	projects: IProjectsDocument['_id'][];
+	// tags: ITagDocument['_id'][];
+	// messages: IMessageDocument['_id'][];
+	// update: IDate; // da error con el Document de mongoose
+	updateTime: IDate;
+	owner: IUserDocument['_id'];
+	read: IUserDocument['_id'][];
+	aproved: boolean;
+	formalize: boolean;
+}
+
+export interface INoteDocument extends INote, Document {}
+
+export type INoteModel = Model<INoteDocument>;
+
+interface ITag {
+	name: string;
+	updated: IDate;
+	projects: IProjectsDocument['_id'][];
+	relatedTags: ITagDocument['_id'][];
+	index: number;
+}
+
+export interface ITagDocument extends ITag, Document {}
+
+export type ITagModel = Model<ITagDocument>;
