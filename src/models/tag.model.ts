@@ -1,21 +1,19 @@
+import { DATE_SCHEMA } from '@constants/model.constants';
 import { model, Schema, Types } from 'mongoose';
 import { ITagDocument, ITagModel } from '../interfaces/models.interface';
 
 const tagSchema = new Schema<ITagDocument, ITagModel>(
 	{
-		name: { type: String },
-		updated: {
-			year: { type: String },
-			month: { type: String },
-			daty: { type: String }
-		},
-		projects: [{ type: Types.ObjectId, ref: 'Project' }],
+		name: { type: String, unique: true },
+		updated: DATE_SCHEMA,
 		relatedTags: [{ type: Types.ObjectId, ref: 'Tag' }],
-		index: { type: Number }
+		type: { type: String, enum: ['project', 'note'], required: true }
+		// projects: [{ type: Types.ObjectId, ref: 'Project' }],
 	},
 	{
 		timestamps: true,
 		versionKey: false,
+		discriminatorKey: 'type',
 		toJSON: {
 			transform: function (doc, ret) {
 				ret.id = doc._id;
@@ -31,4 +29,4 @@ const tagSchema = new Schema<ITagDocument, ITagModel>(
 	}
 );
 
-export const TagSchema = model('Tag', tagSchema);
+export const TagModel = model('Tag', tagSchema);

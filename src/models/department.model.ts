@@ -3,7 +3,7 @@ import { IDepartamentDocument, IDepartamentModel } from '../interfaces/models.in
 
 const departmentSchema = new Schema<IDepartamentDocument, IDepartamentModel>(
 	{
-		name: { type: String },
+		name: { type: String, unique: true, required: true },
 		users: [{ type: Types.ObjectId, ref: 'User' }]
 	},
 	{

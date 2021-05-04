@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { searchModelCar, searchModelCarCahce } from 'src/services/test.service';
+import { searchModelCar, searchModelCarCahce } from '../services/test.service';
 
 export const FindModelCarTest = async (
 	req: Request,

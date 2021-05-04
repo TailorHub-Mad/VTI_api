@@ -60,7 +60,6 @@ interface ITestSystem {
 	client: IClientDocument['_id'];
 	alias: string;
 	notes: INoteDocument['id'][];
-	year: number;
 }
 
 export interface ITestSystemDocument extends ITestSystem, Document {}
@@ -82,8 +81,8 @@ interface IProjects {
 	client: IClientDocument['_id'];
 	sector: ISectorDocument['_id'];
 	focusPoint: IUserDocument['_id'][];
-	testSystem: ITestSystemDocument['_id'][];
-	tag: [];
+	testSystems: ITestSystemDocument['_id'][];
+	tags: [];
 	notes: [];
 	closed: Date;
 }
@@ -108,22 +107,32 @@ interface INote {
 	description: string;
 	link: string;
 	documents: IDocument[];
-	// type: enum;
 	testSystem: ITestSystemDocument['_id'][];
-	projects: IProjectsDocument['_id'][];
-	// tags: ITagDocument['_id'][];
-	// messages: IMessageDocument['_id'][];
-	// update: IDate; // da error con el Document de mongoose
-	updateTime: IDate;
+	project: IProjectsDocument['_id'];
+	tags: ITagDocument['_id'][];
+	updateLimitDate: Date;
+	updateTime: Date;
 	owner: IUserDocument['_id'];
-	read: IUserDocument['_id'][];
-	aproved: boolean;
-	formalize: boolean;
+	readBy: IUserDocument['_id'][];
+	message: IMessageDocument['_id'][];
+	approved: boolean;
+	formalized: boolean;
 }
 
 export interface INoteDocument extends INote, Document {}
 
 export type INoteModel = Model<INoteDocument>;
+
+interface IMessage {
+	owner: IUserDocument['_id'];
+	approved: boolean;
+	formalized: boolean;
+	message: string;
+}
+
+export interface IMessageDocument extends IMessage, Document {}
+
+export type IMessageModel = Model<IMessageDocument>;
 
 interface ITag {
 	name: string;

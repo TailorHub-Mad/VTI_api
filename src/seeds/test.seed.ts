@@ -1,6 +1,6 @@
 import logger from '@log';
 import { Document } from 'mongoose';
-import { TestModel } from 'src/models/test.model';
+import { TestModel } from '../models/test.model';
 
 export default async (brands: Document[]): Promise<void> => {
 	const nameModel = TestModel.collection.name;
