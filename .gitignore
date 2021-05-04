@@ -3,5 +3,5 @@ dist
 .env
 .vscode
 yarn-error.log
-test/coverage
 logs
+*.html

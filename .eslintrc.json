@@ -22,5 +22,5 @@
   "rules": {
     "camelcase":"off"
   },
-  "ignorePatterns": ["ecosystem.*", "dist"]
+  "ignorePatterns": ["ecosystem.*", "dist", "benchmark"]
 }
