@@ -16,26 +16,30 @@ export interface IDepartamentDocument extends IDepartament, Document {}
 
 export type IDepartamentModel = Model<IDepartamentDocument>;
 
+export const NOTIFICATION_STATUS = ['no read', 'read'] as const;
+
+export type TNotificationStatus = typeof NOTIFICATION_STATUS[number];
+
 interface IUser {
 	email: string;
 	alias: string;
 	name: string;
 	lastName: string;
 	idAdmin: boolean;
-	departament: IDepartamentDocument['_id'];
+	department: IDepartamentDocument['_id'];
 	projectsComments: IProjectsDocument['_id'][];
 	focusPoint: IUserDocument['_id'][];
 	favorites: {
 		notes: [];
-		projects: [];
+		projects: IProjectsDocument['_id'][];
 	};
 	subscribed: {
 		notes: [];
 		projects: IProjectsDocument['_id'][];
-		testSystem: ITestSystemDocument['_id'][];
+		testSystems: ITestSystemDocument['_id'][];
 	};
 	notifications: {
-		status: 'no read' | 'read';
+		status: TNotificationStatus;
 		notification: 'id';
 	};
 }

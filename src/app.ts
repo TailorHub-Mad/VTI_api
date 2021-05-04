@@ -3,7 +3,6 @@ import 'dotenv/config';
 import * as http from 'http';
 import express from 'express';
 import { PORT } from '@constants/env.constants';
-import logger from '@log';
 import cors from 'cors';
 import helmet from 'helmet';
 import * as loaders from './loaders';

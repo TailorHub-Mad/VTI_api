@@ -17,7 +17,6 @@ describe('Middleware Error-Handler', () => {
 
   it("should return error 500 if not error hasn't status", () => {
     errorHandler(new Error(), req, res, next);
-
     expect(res.statusCode).toBe(500);
   });
 });

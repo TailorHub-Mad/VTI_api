@@ -11,7 +11,7 @@ describe('BaseError', () => {
   });
   it('should assign message if it is provided', () => {
     const baseErrorMessage = new BaseError('Message');
-    expect(baseErrorMessage.status).toBe(500);
+    expect(baseErrorMessage.message).toBe('Message');
   });
   it('name should be the constructor name', () => {
     expect(baseError.name).toBe('BaseError');
@@ -22,6 +22,6 @@ describe('BaseError', () => {
   });
   it('should assign code if it is provided', () => {
     const baseErrorCode = new BaseError(undefined, undefined, 'COD01');
-    expect(baseErrorCode.status).toBe(500);
+    expect(baseErrorCode.code).toBe('COD01');
   });
 });
