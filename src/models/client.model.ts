@@ -3,9 +3,8 @@ import { IClientDocument, IClientModel } from '../interfaces/models.interface';
 
 const clientSchema = new Schema<IClientDocument, IClientModel>(
 	{
-		alias: { type: String },
+		alias: { type: String, unique: true, required: true },
 		name: { type: String },
-		link: { type: String },
 		testSystem: [{ type: Types.ObjectId, ref: 'TestSystem' }],
 		projects: [{ type: Types.ObjectId, ref: 'Project' }]
 	},

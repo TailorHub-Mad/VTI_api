@@ -1,18 +1,14 @@
+import { DATE_SCHEMA } from '@constants/model.constants';
 import { model, Schema, Types } from 'mongoose';
 import { ITestSystemDocument, ITestSystemModel } from '../interfaces/models.interface';
 
 const testSystemSchema = new Schema<ITestSystemDocument, ITestSystemModel>(
 	{
-		vtiCode: { type: String },
-		year: { type: Number },
-		date: {
-			year: { type: String },
-			month: { type: String },
-			daty: { type: String }
-		},
+		vtiCode: { type: String, unique: true, required: true },
+		alias: { type: String, unique: true, required: true },
+		date: DATE_SCHEMA,
 		projects: [{ type: Types.ObjectId, ref: 'Project' }],
 		client: { type: Types.ObjectId, ref: 'Client' },
-		alias: { type: String },
 		notes: [{ type: Types.ObjectId, ref: 'Note' }]
 	},
 	{

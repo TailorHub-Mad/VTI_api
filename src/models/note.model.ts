@@ -3,21 +3,20 @@ import { INoteDocument, INoteModel } from '../interfaces/models.interface';
 
 const noteSchema = new Schema<INoteDocument, INoteModel>(
 	{
-		title: { type: String },
+		title: { type: String, unique: true, required: true },
 		description: { type: String },
 		link: { type: String },
 		documents: [{ url: { type: String }, name: { type: String } }],
-		// type: enum; // qué tipos
 		testSystem: [{ type: Types.ObjectId, ref: 'TestSystem' }],
 		projects: [{ type: Types.ObjectId, ref: 'Project' }],
 		tags: [{ type: Types.ObjectId, ref: 'Tag' }],
 		messages: [{ type: Types.ObjectId, ref: 'Message' }],
-		// update: IDate; // da error con el Document de mongoose
-		// updateTime: IDate, // more info con update
-		owner: { type: Types.ObjectId, ref: 'User' },
-		read: [{ type: Types.ObjectId, ref: 'User' }],
-		aproved: { type: Boolean },
-		formalize: { type: Boolean }
+		updateLimitDate: { type: Date, default: () => new Date() }, // TODO: crear función generadora de fechas por limite de timepo
+		updateTime: { type: Date },
+		owner: { type: Types.ObjectId, ref: 'User', required: true },
+		readBy: [{ type: Types.ObjectId, ref: 'User' }],
+		approved: { type: Boolean, default: false },
+		formalized: { type: Boolean, default: false }
 	},
 	{
 		timestamps: true,

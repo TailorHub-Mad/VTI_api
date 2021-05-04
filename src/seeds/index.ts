@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import logger from '@log';
 import brandSeed from './brand.seed';
-import dbLoader from 'src/loaders/db.loader';
+import dbLoader from '../loaders/db.loader';
 import testSeed from './test.seed';
 (async () => {
 	await dbLoader.open();
