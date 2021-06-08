@@ -1,12 +1,14 @@
-import { model, Schema, Types } from 'mongoose';
+import { model, Schema } from 'mongoose';
 import { IClientDocument, IClientModel } from '../interfaces/models.interface';
+import { projectSchema } from './project.model';
+import { testSystemSchema } from './test_system.model';
 
 const clientSchema = new Schema<IClientDocument, IClientModel>(
 	{
 		alias: { type: String, unique: true, required: true },
 		name: { type: String },
-		testSystem: [{ type: Types.ObjectId, ref: 'TestSystem' }],
-		projects: [{ type: Types.ObjectId, ref: 'Project' }]
+		testSystem: [testSystemSchema],
+		projects: [projectSchema]
 	},
 	{
 		timestamps: true,

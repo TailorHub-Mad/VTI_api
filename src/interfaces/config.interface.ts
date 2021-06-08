@@ -8,3 +8,8 @@ export interface IRouter {
 export interface IRouterMid extends IRouter {
 	middelware: (req: Request, res: Response, next: NextFunction) => void;
 }
+
+export interface Pagination {
+	limit: number;
+	offset: number;
+}

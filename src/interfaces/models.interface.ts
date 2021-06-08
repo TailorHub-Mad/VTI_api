@@ -53,11 +53,10 @@ export interface IUserDocument extends IUser, Document {}
 
 export type IUserModel = Model<IUserDocument>;
 
-interface ITestSystem {
+export interface ITestSystem {
 	vtiCode: string;
 	date: IDate;
 	projects: IProjectsDocument['_id'][];
-	client: IClientDocument['_id'];
 	alias: string;
 	notes: INoteDocument['id'][];
 }
