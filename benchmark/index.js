@@ -10,24 +10,14 @@ const options = {
 
 const routeWithoutCache = {
   route1: {
-    method: 'post',
-    route: 'test',
-    data: {
-      brand: 'ALFA ROMEO',
-      year: 2016,
-      fuel: 'diesel'
-    }
+    method: 'get',
+    route: 'projects'
   }
 };
 const routeWithCache = {
   route1: {
-    method: 'post',
-    route: 'test/cache',
-    data: {
-      brand: 'ALFA ROMEO',
-      year: 2016,
-      fuel: 'diesel'
-    }
+    method: 'get',
+    route: 'projects'
   }
 };
 

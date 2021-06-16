@@ -95,6 +95,7 @@ export interface IClient {
 	name: string;
 	testSystem: ITestSystemDocument['_id'][];
 	projects: IProjectsDocument['_id'][];
+	notes: INoteDocument['_id'][];
 }
 
 export interface IClientDocument extends IClient, Document {}

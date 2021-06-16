@@ -1,18 +1,17 @@
 import { DATE_SCHEMA } from '@constants/model.constants';
 import { Schema, Types } from 'mongoose';
 import { IProjectsDocument, IProjectsModel } from '../interfaces/models.interface';
-import { noteSchema } from './note.model';
 
 export const projectSchema = new Schema<IProjectsDocument, IProjectsModel>(
 	{
-		alias: { type: String, unique: true, required: true, index: true },
+		alias: { type: String }, // , unique: true, required: true, index: true },
 		date: DATE_SCHEMA,
 		years: { type: Number },
 		sector: { type: Types.ObjectId, ref: 'Sector' },
 		focusPoint: [{ type: Types.ObjectId, ref: 'User' }],
 		testSystems: [{ type: Types.ObjectId }], // Quizás crear aquí los test system.
 		tag: [{ type: Types.ObjectId, ref: 'Tag' }],
-		notes: [noteSchema],
+		notes: [{ type: Types.ObjectId }],
 		closed: { type: Date }
 		// users: [{ type: Types.ObjectId, ref: 'User' }]
 	},

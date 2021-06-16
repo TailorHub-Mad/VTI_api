@@ -111,7 +111,7 @@ export default async (): Promise<void> => {
 	];
 
 	const createNotes = () => ({
-		title: randomBytes(6).toString('hex'),
+		title: randomBytes(8).toString('hex'),
 		description: 'Description',
 		link: 'link',
 		documents: [],
@@ -125,12 +125,11 @@ export default async (): Promise<void> => {
 	});
 
 	const createTestSystem = (clientName: string) => {
-		const alias = `${clientName}-${randomBytes(3).toString('hex')}`;
-		const vtiCode = `${randomBytes(3).toString('hex')}`;
+		const alias = `${clientName}-${randomBytes(8).toString('hex')}`;
+		const vtiCode = `${randomBytes(8).toString('hex')}`;
 		return {
 			vtiCode,
 			alias,
-			notes: new Array(randomNumberFnc(3) + 1).fill(undefined).map(createNotes),
 			date: {
 				year: randomNumberFnc(21) + 2000 // random 2021 - 2000
 			}
@@ -138,13 +137,12 @@ export default async (): Promise<void> => {
 	};
 
 	const createProject = (numberOfTestSystem: number, testSystem: unknown[]) => ({
-		alias: `${PROJECTS_NAME[randomNumberFnc(PROJECTS_NAME.length)]}-${randomBytes(3).toString(
+		alias: `${PROJECTS_NAME[randomNumberFnc(PROJECTS_NAME.length)]}-${randomBytes(8).toString(
 			'hex'
 		)}`,
 		date: {
 			year: randomNumberFnc(21) + 2000 // random 2021 - 2000
 		},
-		notes: new Array(randomNumberFnc(3) + 1).fill(undefined).map(createNotes),
 		testSystems: new Array(numberOfTestSystem).fill(undefined).map((_, index) => testSystem[index])
 	});
 
@@ -169,13 +167,39 @@ export default async (): Promise<void> => {
 		})
 	);
 
-	await Promise.all(
+	const clientsDBWithProjects = await Promise.all(
 		clientsDBWithTestSystem.map((client) => {
-			const projects = new Array(randomNumberFnc(3))
+			const projects = new Array(randomNumberFnc(3) + 1)
 				.fill(undefined)
 				.map(() => createProject(randomNumberFnc(client.testSystem.length) + 1, client.testSystem));
 			client.projects = projects;
 			return client.save();
+		})
+	);
+
+	const clientsDBWithNotes = await Promise.all(
+		clientsDBWithProjects.map((client) => {
+			const notes = new Array(randomNumberFnc(5) + 1).fill(undefined).map(createNotes);
+			client.notes = notes;
+			return client.save();
+		})
+	);
+
+	await Promise.all(
+		clientsDBWithNotes.map((client) => {
+			const { notes } = client;
+			if (notes.length > 0) {
+				client.projects = client.projects.map((project) => {
+					project.notes = new Array(randomNumberFnc(notes.length) + 1)
+						.fill(undefined)
+						.map((_, i) => {
+							return notes[i]._id;
+						});
+					return project;
+				});
+				return client.save();
+			}
+			return client;
 		})
 	);
 };

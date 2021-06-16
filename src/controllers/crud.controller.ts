@@ -18,11 +18,11 @@ export const GetAll =
 	};
 
 export const GetAllAggregate =
-	(field: string): ((req: Request, res: Response, next: NextFunction) => Promise<void>) =>
+	(field?: string): ((req: Request, res: Response, next: NextFunction) => Promise<void>) =>
 	async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const pagination = getPagination(req.query);
-			const result = await getAllAggregate(field, pagination);
+			const result = await getAllAggregate(pagination, field);
 			res.json(result);
 		} catch (err) {
 			next(err);

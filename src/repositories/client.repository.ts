@@ -1,4 +1,5 @@
-import { FilterQuery } from 'mongoose';
+import { FilterQuery, Types } from 'mongoose';
+import { randomNumberFnc } from 'src/seeds/test.seed';
 import { Pagination } from '../interfaces/config.interface';
 import { IClient, IClientModel } from '../interfaces/models.interface';
 import { ClientModel } from '../models/client.model';
@@ -37,7 +38,7 @@ export const findTestSystem = async (
 	}: {
 		match?: string;
 		_extends?: string;
-		nameFild: string;
+		nameFild?: string;
 		querys: FilterQuery<IClientModel>;
 		group?: string;
 	},
@@ -68,7 +69,7 @@ export const findTestSystem = async (
 	}
 
 	pipeline.push({
-		$match: querys
+		$match: { _id: Types.ObjectId('60ca31d23a9b1bba16659bf9') }
 	});
 
 	if (order) {
@@ -88,7 +89,7 @@ export const findTestSystem = async (
 		});
 	}
 
-	if (_extends) {
+	if (_extends && nameFild) {
 		pipeline.push({
 			$addFields: {
 				[nameFild]: `$${_extends}`

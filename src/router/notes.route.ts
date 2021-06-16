@@ -4,8 +4,6 @@ import { GetAllAggregate } from '../controllers/crud.controller';
 
 const router = Router();
 
-router.get('/testSystem', GetAllAggregate('testSystem.notes'));
-
-router.get('/projects', GetAllAggregate('projects.notes'));
+router.get('/', GetAllAggregate('notes'));
 
 export const NotesRouter = { router, path: NOTES_PATH };

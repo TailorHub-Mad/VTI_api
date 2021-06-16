@@ -8,11 +8,11 @@ export const getAll = async <T>(model: Model<T>, pagination: Pagination): Promis
 };
 
 export const getAllAggregate = async (
-	_extends: string,
-	pagination: Pagination
+	pagination: Pagination,
+	_extends?: string
 ): Promise<unknown> => {
-	const transformExtendsToArray = _extends.split('.');
-	const nameField = transformExtendsToArray.slice(-1)[0];
+	const transformExtendsToArray = _extends?.split('.');
+	const nameField = transformExtendsToArray?.slice(-1)[0];
 	return await findTestSystem(
 		{ _extends, nameFild: nameField, querys: {}, group: 'null' },
 		pagination
