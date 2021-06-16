@@ -54,6 +54,11 @@ redisLoader
 			logger.info(`Running on port ${PORT}`);
 		});
 
+		process.on('SIGINT', function () {
+			console.error('Caught SIGINT, shutting down.');
+			server.close();
+		});
+
 		server.on('error', loaders.onError);
 	})
 	.catch((err) => logger.error(`Error: ${err}`));

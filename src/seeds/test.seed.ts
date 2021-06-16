@@ -1,5 +1,4 @@
 import logger from '@log';
-import { Document } from 'mongoose';
 import { IClientDocument } from '../interfaces/models.interface';
 import { ClientModel } from '../models/client.model';
 
@@ -71,77 +70,112 @@ export default async (): Promise<void> => {
 	const createClientBase = (index: number): (Partial<IClientDocument> & { name: string })[] => [
 		{
 			name: 'CENTRO DE ESTUDIOS Y EXPERIMENTACION DE OBRAS PÚBLICAS (CEDEX) Centro de Estudios de Puertos y Costas (CEPYC)',
-			alias: `CEDEX-${testSystemAliasCode(index - 3)}`
+			alias: `CEDEX1-${testSystemAliasCode(index)}`
 		},
 		{
 			name: 'INSTITUTO FRANCES DE INVESTIGACION PARA LA EXPLOTACION DEL MAR (IFREMER)',
-			alias: `IFREMER-${testSystemAliasCode(index - 3)}`
+			alias: `IFREMER-${testSystemAliasCode(index)}`
 		},
 		{
 			name: 'UNIVERSIDAD CARLOS III',
-			alias: `UC3M-${testSystemAliasCode(index - 3)}`
+			alias: `UC3M-${testSystemAliasCode(index)}`
 		},
 		{
 			name: 'COMPAÑÍA ESPAÑOLA DE SISTEMAS AERONAUTICOS, S.A.',
-			alias: `CESA-${testSystemAliasCode(index - 3)}`
+			alias: `CESA-${testSystemAliasCode(index)}`
 		},
 		{
 			name: 'KOREA RESEARCH INSTITUTE OF SHIPS & OCEAN ENGINEERING (KRISO)',
-			alias: `KRISO-${testSystemAliasCode(index - 3)}`
+			alias: `KRISO-${testSystemAliasCode(index)}`
 		},
 		{
 			name: 'GRUPO ANTOLIN INGENIERIA, S.A.',
-			alias: `GAING-${testSystemAliasCode(index - 3)}`
+			alias: `GAING-${testSystemAliasCode(index)}`
 		},
 		{
 			name: 'GRUPO ANTOLIN OSTRAVA, s.r.o.',
-			alias: `GA OSTRAVA-${testSystemAliasCode(index - 3)}`
+			alias: `GA OSTRAVA-${testSystemAliasCode(index)}`
 		},
 		{
 			name: 'CENTRO DE ESTUDIOS Y EXPERIMENTACION DE OBRAS PÚBLICAS (CEDEX) Centro de Estudios del Transporte',
-			alias: `CEDEX-${testSystemAliasCode(index - 2)}`
+			alias: `CEDEX2-${testSystemAliasCode(index)}`
 		},
 		{
 			name: 'CENTRO DE ESTUDIOS Y EXPERIMENTACION DE OBRAS PÚBLICAS (CEDEX) Laboratorio de Geotecnia',
-			alias: `CEDEX-${testSystemAliasCode(index - 1)}`
+			alias: `CEDEX3-${testSystemAliasCode(index)}`
 		},
 		{
 			name: 'DEVELOPMENT CENTRE FOR SHIP TECHNOLOGY AND TRANSPORT SYSTEMS e.V.',
-			alias: `DST-${testSystemAliasCode(index - 3)}`
+			alias: `DST-${testSystemAliasCode(index)}`
 		}
 	];
 
-	const createTestSystem = (clientName: string, index: number) => {
+	const createNotes = () => ({
+		title: randomBytes(6).toString('hex'),
+		description: 'Description',
+		link: 'link',
+		documents: [],
+		messages: [
+			new Array(randomNumberFnc(3) + 1)
+				.fill(undefined)
+				.map(() => ({ message: randomBytes(8).toString('hex') }))
+		],
+		approved: true,
+		formalized: false
+	});
+
+	const createTestSystem = (clientName: string) => {
 		const alias = `${clientName}-${randomBytes(3).toString('hex')}`;
-		const vtiCode = `${alias}-${randomBytes(3).toString('hex')}`;
+		const vtiCode = `${randomBytes(3).toString('hex')}`;
 		return {
 			vtiCode,
 			alias,
+			notes: new Array(randomNumberFnc(3) + 1).fill(undefined).map(createNotes),
 			date: {
 				year: randomNumberFnc(21) + 2000 // random 2021 - 2000
 			}
 		};
 	};
 
-	const clientsArray = new Array(1)
+	const createProject = (numberOfTestSystem: number, testSystem: unknown[]) => ({
+		alias: `${PROJECTS_NAME[randomNumberFnc(PROJECTS_NAME.length)]}-${randomBytes(3).toString(
+			'hex'
+		)}`,
+		date: {
+			year: randomNumberFnc(21) + 2000 // random 2021 - 2000
+		},
+		notes: new Array(randomNumberFnc(3) + 1).fill(undefined).map(createNotes),
+		testSystems: new Array(numberOfTestSystem).fill(undefined).map((_, index) => testSystem[index])
+	});
+
+	const clientsArray = new Array(100)
 		.fill(undefined)
 		.map((_, index) => {
 			const clients = createClientBase(index);
+
 			return clients.reduce((clients, client) => {
 				client.testSystem = new Array(randomNumberFnc(3) + 1)
 					.fill(undefined)
-					.map((_, index) => createTestSystem(client.name, index));
+					.map(() => createTestSystem(client.name));
 				clients.push(client);
 				return clients;
 			}, [] as Partial<IClientDocument>[]);
 		})
 		.flat();
-	const clientsDB = await Promise.all(
+
+	const clientsDBWithTestSystem = await Promise.all(
 		clientsArray.map((client) => {
-			console.log(client);
-			console.log('----');
 			return new ClientModel(client).save();
 		})
 	);
-	// const clientsDBWithTestSystem = await Promise.all(clientsDB.map((client) => {}));
+
+	await Promise.all(
+		clientsDBWithTestSystem.map((client) => {
+			const projects = new Array(randomNumberFnc(3))
+				.fill(undefined)
+				.map(() => createProject(randomNumberFnc(client.testSystem.length) + 1, client.testSystem));
+			client.projects = projects;
+			return client.save();
+		})
+	);
 };

@@ -1,7 +1,7 @@
 import { model, Schema, Types } from 'mongoose';
 import { IMessageDocument, IMessageModel } from '../interfaces/models.interface';
 
-const messageSchema = new Schema<IMessageDocument, IMessageModel>(
+export const messageSchema = new Schema<IMessageDocument, IMessageModel>(
 	{
 		owner: { type: Types.ObjectId, ref: 'User' },
 		approved: { type: Boolean, default: false },

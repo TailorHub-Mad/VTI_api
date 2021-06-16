@@ -18,7 +18,8 @@
     "postinstall": "husky install",
     "prepublishOnly": "pinst --disable",
     "postpublish": "pinst --enable",
-    "install:db": "bash ./scripts/dbs.sh -c -r"
+    "install:db": "bash ./scripts/dbs.sh -c -r",
+    "clinic": "yarn run build && NODE_ENV=production clinic doctor --on-port 'autocannon localhost:$PORT' -- node -r module-alias/register dist/app.js"
   },
   "keywords": [
     "template",
@@ -50,6 +51,8 @@
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@typescript-eslint/parser": "^4.22.0",
     "api-benchmark": "^1.0.1",
+    "autocannon": "^7.3.0",
+    "clinic": "^9.0.0",
     "eslint": "^7.25.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-config-standard": "^16.0.2",

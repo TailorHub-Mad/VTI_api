@@ -74,7 +74,7 @@ export interface ISectorDocument extends ISector, Document {}
 
 export type ISectorModel = Model<ISectorDocument>;
 
-interface IProjects {
+export interface IProjects {
 	alias: string;
 	date: IDate;
 	client: IClientDocument['_id'];
@@ -90,7 +90,7 @@ export interface IProjectsDocument extends IProjects, Document {}
 
 export type IProjectsModel = Model<IProjectsDocument>;
 
-interface IClient {
+export interface IClient {
 	alias: string;
 	name: string;
 	testSystem: ITestSystemDocument['_id'][];

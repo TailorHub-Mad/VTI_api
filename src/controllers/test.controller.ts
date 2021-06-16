@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { findTestSystem } from 'src/repositories/client.repository';
+import { findTestSystem } from '../repositories/client.repository';
 import { searchModelCar, searchModelCarCahce } from '../services/test.service';
 
 export const FindModelCarTest = async (
@@ -8,7 +8,8 @@ export const FindModelCarTest = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
-		const models = await findTestSystem(req.body);
+		const { offset = 0, limit = 0 } = req.query;
+		const models = await findTestSystem(req.body, { offset: +offset, limit: +limit });
 		res.json(models);
 	} catch (err) {
 		next(err);

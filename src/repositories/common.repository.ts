@@ -1,5 +1,4 @@
 import { EnforceDocument, FilterQuery, Model } from 'mongoose';
-import { ClientModel } from 'src/models/client.model';
 import { Pagination } from '../interfaces/config.interface';
 
 // Este repository nos dejará buscar por cualquier modelo y nos devolvera con su interfece corresponiente.
