@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { findTestSystem } from '../repositories/client.repository';
-import { searchModelCar, searchModelCarCahce } from '../services/test.service';
+import { searchModelCarCahce } from '../services/test.service';
 
 export const FindModelCarTest = async (
 	req: Request,
