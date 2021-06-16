@@ -15,7 +15,7 @@
     "moduleResolution": "node",
     "paths": {
       "@constants/*": ["./src/constants/*"],
-      "@utils": ["./src/utils"],
+      "@utils": ["./src/utils/*"],
       "@log": ["./src/loaders/log.loader"],
       "@errors/*": ["./src/errors/*"]
     },

@@ -77,14 +77,14 @@ export const findTestSystem = async (
 		});
 	}
 
-	if (pagination.limit > 0) {
-		pipeline.push({
-			$limit: pagination.limit
-		});
-	}
 	if (pagination.offset > 0) {
 		pipeline.push({
 			$skip: pagination.offset
+		});
+	}
+	if (pagination.limit > 0) {
+		pipeline.push({
+			$limit: pagination.limit
 		});
 	}
 
@@ -99,11 +99,11 @@ export const findTestSystem = async (
 				[`${nameFild}.clientAlias`]: `$alias`
 			}
 		});
-		if (group && order) {
-			pipeline.push({
-				$sort: order
-			});
-		}
+
+		pipeline.push({
+			$sort: order || { [`${nameFild}.updatedAt`]: -1 }
+		});
+
 		pipeline.push({
 			$group: {
 				_id: group || '$_id',
