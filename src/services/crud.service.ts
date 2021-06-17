@@ -1,5 +1,5 @@
 import { Model } from 'mongoose';
-import { findTestSystem } from '../repositories/client.repository';
+import { aggregateCrud } from '../repositories/aggregate.repository';
 import { Pagination } from '../interfaces/config.interface';
 import { findWithPagination } from '../repositories/common.repository';
 
@@ -13,7 +13,7 @@ export const getAllAggregate = async (
 ): Promise<unknown> => {
 	const transformExtendsToArray = _extends?.split('.');
 	const nameField = transformExtendsToArray?.slice(-1)[0];
-	return await findTestSystem(
+	return await aggregateCrud(
 		{ _extends, nameFild: nameField, querys: {}, group: 'null' },
 		pagination
 	);

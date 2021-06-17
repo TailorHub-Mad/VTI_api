@@ -1,0 +1,33 @@
+{
+	"rootDir": "../",
+	"testRegex": "\\.spec\\.ts$",
+	"testEnvironment": "node",
+	"setupFilesAfterEnv": [
+		"./config/jest.config.ts"
+	],
+	"moduleFileExtensions": [
+		"js",
+		"ts"
+	],
+	"transform": {
+		".ts": "ts-jest"
+	},
+	"collectCoverageFrom": [
+		"**/src/**/*.ts",
+		"!**/node_modules/**"
+	],
+	"coverageDirectory": "coverage",
+	"coveragePathIgnorePatterns": [
+		"node_modules",
+		"src/app",
+		"src/@types",
+		"src/models"
+	],
+	"verbose": true,
+	"moduleNameMapper": {
+		"@utils": "<rootDir>/src/utils/(.*)",
+		"@constants/(.*)": "<rootDir>/src/constants/$1",
+		"@log": "<rootDir>/src/loaders/log.loader",
+		"@errors/(.*)": "<rootDir>/src/errors/(.*)"
+	}
+}

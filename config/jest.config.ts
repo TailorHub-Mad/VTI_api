@@ -1,4 +1,4 @@
-import '../../src/@types/index.d';
+import '../src/@types/index.d';
 import { Logger } from 'winston';
 
 global.logger = {} as Logger;

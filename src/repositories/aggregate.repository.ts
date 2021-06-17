@@ -1,7 +1,6 @@
-import { FilterQuery, Types } from 'mongoose';
-import { randomNumberFnc } from 'src/seeds/test.seed';
+import { FilterQuery } from 'mongoose';
 import { Pagination } from '../interfaces/config.interface';
-import { IClient, IClientModel } from '../interfaces/models.interface';
+import { IClientModel } from '../interfaces/models.interface';
 import { ClientModel } from '../models/client.model';
 
 /**
@@ -28,7 +27,7 @@ import { ClientModel } from '../models/client.model';
  * @group Para agrupar los datos que hemos obtenido
  */
 
-export const findTestSystem = async (
+export const aggregateCrud = async (
 	{
 		match,
 		_extends,
@@ -44,7 +43,7 @@ export const findTestSystem = async (
 	},
 	pagination: Pagination,
 	order?: { [key: string]: -1 | 1 }
-): Promise<{ _id: string; testSystem: IClient }[]> => {
+): Promise<any[]> => {
 	const pipeline: unknown[] = match
 		? [
 				{
@@ -69,7 +68,7 @@ export const findTestSystem = async (
 	}
 
 	pipeline.push({
-		$match: { _id: Types.ObjectId('60ca31d23a9b1bba16659bf9') }
+		$match: querys
 	});
 
 	if (order) {

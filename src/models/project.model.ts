@@ -1,6 +1,6 @@
-import { DATE_SCHEMA } from '@constants/model.constants';
 import { Schema, Types } from 'mongoose';
 import { IProjectsDocument, IProjectsModel } from '../interfaces/models.interface';
+import { DATE_SCHEMA } from '@constants/model.constants';
 
 export const projectSchema = new Schema<IProjectsDocument, IProjectsModel>(
 	{

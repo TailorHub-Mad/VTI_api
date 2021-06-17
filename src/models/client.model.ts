@@ -31,9 +31,9 @@ const clientSchema = new Schema<IClientDocument, IClientModel>(
 );
 clientSchema.index({
 	alias: 'text',
-	'testSystem.vtiCode': 'text'
-	// 'testSystem.alias': 'text',
-	// 'projects.alias': 'text',
-	// 'notes.title': 'text'
+	'testSystem.vtiCode': 'text',
+	'testSystem.alias': 'text',
+	'projects.alias': 'text',
+	'notes.title': 'text'
 });
 export const ClientModel = model('Client', clientSchema);
