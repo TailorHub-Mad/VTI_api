@@ -43,6 +43,7 @@ export const aggregateCrud = async (
 	},
 	pagination: Pagination,
 	order?: { [key: string]: -1 | 1 }
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any[]> => {
 	const pipeline: unknown[] = match
 		? [

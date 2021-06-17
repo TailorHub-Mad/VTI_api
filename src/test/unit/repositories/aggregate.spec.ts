@@ -1,6 +1,5 @@
 import { aggregateCrud } from '../../../repositories/aggregate.repository';
 import db from '../../../loaders/db.loader';
-import { Types } from 'mongoose';
 
 const pagination = { limit: 0, offset: 0 };
 

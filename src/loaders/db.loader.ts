@@ -36,7 +36,7 @@ class MongoConnection {
 				await mongoose.connect(mongoUrl, options);
 			} else {
 				logger.debug('connecting to mongo db: ' + DATABASEURL);
-				mongoose.connect(DATABASEURL, options);
+				await mongoose.connect(DATABASEURL, options);
 			}
 
 			mongoose.connection.on('connected', () => {
