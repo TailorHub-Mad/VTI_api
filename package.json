@@ -4,7 +4,7 @@
   "description": "template back",
   "main": "src/app.ts",
   "scripts": {
-    "test:coverage": "ENV_FILE=./config/.env.test jest --config config/jest.json --collectCoverage",
+    "test:coverage": "ENV_FILE=.env.test jest --config config/jest.json --collectCoverage",
     "start": "NODE_ENV=production node -r module-alias/register dist/app.js",
     "dev": "NODE_ENV=development nodemon",
     "dev:prod": "NODE_ENV=production nodemon",
