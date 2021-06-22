@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from 'express';
-import { Model } from 'mongoose';
 import Joi from 'joi';
 import { create, getAll, getAllAggregate } from '../services/crud.service';
 import { getPagination } from '../utils/controllers.utils';
@@ -7,11 +6,13 @@ import { GenericModel } from 'src/interfaces/models.interface';
 
 // Creamos un controlador genérico usando una interface T que tendrá el valor del modelo que nosotros le pasemos.
 export const GetAll =
-	<T>(model: Model<T>): ((req: Request, res: Response, next: NextFunction) => Promise<void>) =>
+	<Doc, M extends GenericModel<Doc> = GenericModel<Doc>>(
+		model: M
+	): ((req: Request, res: Response, next: NextFunction) => Promise<void>) =>
 	async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const pagination = getPagination(req.query);
-			const result = await getAll(model, pagination);
+			const result = await getAll<Doc, M>(model, pagination);
 			res.status(200).json(result);
 		} catch (err) {
 			logger.error(`Error get all ${model.collection.name}`);

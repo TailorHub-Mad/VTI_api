@@ -1,12 +1,23 @@
-import { Model } from 'mongoose';
+import { FilterQuery } from 'mongoose';
 import { aggregateCrud } from '../repositories/aggregate.repository';
 import { Pagination } from '../interfaces/config.interface';
 import { createRepository, findWithPagination } from '../repositories/common.repository';
 import Joi from 'joi';
 import { GenericModel } from 'src/interfaces/models.interface';
 
-export const getAll = async <T>(model: Model<T>, pagination: Pagination): Promise<T[]> => {
+export const getAll = async <Doc, M extends GenericModel<Doc>>(
+	model: M,
+	pagination: Pagination
+): Promise<Doc[]> => {
 	return await findWithPagination(model, {}, pagination);
+};
+
+export const find = async <Doc, M extends GenericModel<Doc>>(
+	model: M,
+	query: FilterQuery<Doc>,
+	pagination: Pagination
+): Promise<Doc[]> => {
+	return await findWithPagination<Doc>(model, query, pagination);
 };
 
 export const create = async <Doc, M extends GenericModel<Doc>>(
