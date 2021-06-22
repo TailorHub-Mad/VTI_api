@@ -145,3 +145,5 @@ interface ITag {
 export interface ITagDocument extends ITag, Document {}
 
 export type ITagModel = Model<ITagDocument>;
+
+export type GenericModel<T> = Model<T, unknown, never>;

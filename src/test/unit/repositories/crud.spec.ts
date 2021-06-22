@@ -1,6 +1,6 @@
-import { findWithPagination, createRepository } from '../../../repositories/common.repository';
+import { createRepository } from '../../../repositories/common.repository';
 import db from '../../../loaders/db.loader';
-import { IClient, IClientDocument, IClientModel } from '../../../interfaces/models.interface';
+import { IClient, IClientDocument } from '../../../interfaces/models.interface';
 import { ClientModel } from '../../../models/client.model';
 
 beforeAll(async () => {

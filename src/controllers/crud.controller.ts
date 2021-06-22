@@ -1,8 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
-import { Model, Document } from 'mongoose';
+import { Model } from 'mongoose';
 import Joi from 'joi';
 import { create, getAll, getAllAggregate } from '../services/crud.service';
 import { getPagination } from '../utils/controllers.utils';
+import { GenericModel } from 'src/interfaces/models.interface';
 
 // Creamos un controlador genérico usando una interface T que tendrá el valor del modelo que nosotros le pasemos.
 export const GetAll =
@@ -19,7 +20,7 @@ export const GetAll =
 	};
 
 export const Create =
-	<Doc, M extends Model<Doc, any, any> = Model<any, any, any>>(
+	<Doc, M extends GenericModel<Doc> = GenericModel<Doc>>(
 		model: M,
 		validate: Joi.ObjectSchema<Partial<Doc>>
 	): ((req: Request, res: Response, next: NextFunction) => Promise<void>) =>

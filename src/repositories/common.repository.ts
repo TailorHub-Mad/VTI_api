@@ -1,4 +1,5 @@
-import { EnforceDocument, FilterQuery, Model, Document } from 'mongoose';
+import { EnforceDocument, FilterQuery, Model } from 'mongoose';
+import { GenericModel } from 'src/interfaces/models.interface';
 import { Pagination } from '../interfaces/config.interface';
 
 // Este repository nos dejará buscar por cualquier modelo y nos devolvera con su interfece corresponiente.
@@ -10,7 +11,7 @@ export const findWithPagination = async <T>(
 	return await model.find(find).skip(pagination.offset).limit(pagination.limit);
 };
 
-export const createRepository = async <Doc, M extends Model<Doc, any, any> = Model<any, any, any>>(
+export const createRepository = async <Doc, M extends GenericModel<Doc> = GenericModel<Doc>>(
 	Model: M,
 	body: Partial<Doc>
 ): Promise<Doc> => {
