@@ -108,7 +108,7 @@ export const aggregateCrud = async (
 
 		pipeline.push({
 			$group: {
-				_id: group || '$_id',
+				_id: '$testSystem.alias' || '$_id',
 				[nameFild]: {
 					$push: `$${nameFild}`
 				}
@@ -116,5 +116,8 @@ export const aggregateCrud = async (
 		});
 	}
 
-	return await ClientModel.aggregate(pipeline);
+	return await ClientModel.aggregate(pipeline).sort({ _id: 1 }).collation({
+		locale: 'es',
+		numericOrdering: true
+	});
 };
