@@ -15,7 +15,9 @@ declare global {
 		interface Request {
 			// Falta por definir que guardar en el req.user
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			user?: any;
+			user?: {
+				id: string;
+			};
 		}
 		namespace Multer {
 			interface File {

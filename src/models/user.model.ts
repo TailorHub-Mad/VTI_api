@@ -1,14 +1,16 @@
 import { PATH_USER_MODEL } from '@constants/model.constants';
-import { model, Schema, Types } from 'mongoose';
+import { HookNextFunction, model, Schema, Types } from 'mongoose';
 import { IUserDocument, IUserModel, NOTIFICATION_STATUS } from '../interfaces/models.interface';
+import bcrypt from 'bcrypt';
 
 const userSchema = new Schema<IUserDocument, IUserModel>(
 	{
-		email: { type: String },
+		email: { type: String, unique: true, trim: true, lowercase: true, required: true },
 		alias: { type: String },
 		name: { type: String },
 		lastName: { type: String },
-		isAdmin: { type: Boolean },
+		isAdmin: { type: Boolean, default: false },
+		password: { type: String, required: true, select: false },
 		department: { type: Types.ObjectId, ref: '' },
 		projectsComments: [{ type: Types.ObjectId, ref: '' }],
 		focusPoint: [{ type: Types.ObjectId, ref: '' }],
@@ -43,5 +45,20 @@ const userSchema = new Schema<IUserDocument, IUserModel>(
 		}
 	}
 );
+
+userSchema.pre('save', function (next: HookNextFunction) {
+	if (this.isModified('password')) {
+		try {
+			this.password = bcrypt.hashSync(this.password, bcrypt.genSaltSync(8)); // ToDo: Pass to globlal env.
+		} catch (err) {
+			return next(err);
+		}
+	}
+	next();
+});
+
+userSchema.methods.validatePassword = function (password: string) {
+	return bcrypt.compareSync(password, this.password);
+};
 
 export const UserModel = model(PATH_USER_MODEL, userSchema);
