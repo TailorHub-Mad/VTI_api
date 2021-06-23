@@ -24,6 +24,12 @@ app.use(
 );
 
 app.use(helmet());
+
+app.use((_req, res, next) => {
+	res.setHeader('Permissions-Policy', 'geolocation=(), interest-cohort=()'); // TODO: update  geolocation=(self "https://example.com"), microphone=()
+	next();
+});
+
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 app.use(compression());
