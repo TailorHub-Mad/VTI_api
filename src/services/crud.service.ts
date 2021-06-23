@@ -21,7 +21,7 @@ export const read = async <Doc, M extends GenericModel<Doc> = GenericModel<Doc>>
 	query: FilterQuery<Document>,
 	pagination: Pagination,
 	select?: string
-): Promise<Doc[] | []> => {
+): Promise<Doc[]> => {
 	return await findWithPagination<Doc>(model, query, pagination, select);
 };
 

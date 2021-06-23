@@ -105,7 +105,7 @@ export interface IClientDocument extends IClient, Document {}
 
 export type IClientModel = Model<IClientDocument>;
 
-interface INote {
+export interface INote {
 	title: string;
 	description: string;
 	link: string;
