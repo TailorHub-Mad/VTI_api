@@ -4,3 +4,4 @@ export { NotesRouter } from './notes.route';
 export { ProjectsRouter } from './projects.route';
 export { TestSystemRouter } from './testSystem.route';
 export { ClientsRouter } from './client.route';
+export { UserRouter } from './user.route';

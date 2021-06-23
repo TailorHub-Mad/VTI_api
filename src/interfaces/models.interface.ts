@@ -25,12 +25,12 @@ export const NOTIFICATION_STATUS = ['no read', 'read'] as const;
 
 export type TNotificationStatus = typeof NOTIFICATION_STATUS[number];
 
-interface IUser {
+export interface IUser {
 	email: string;
 	alias: string;
 	name: string;
 	lastName: string;
-	idAdmin: boolean;
+	isAdmin: boolean;
 	department: IDepartamentDocument['_id'];
 	projectsComments: IProjectsDocument['_id'][];
 	focusPoint: IUserDocument['_id'][];
@@ -47,9 +47,12 @@ interface IUser {
 		status: TNotificationStatus;
 		notification: 'id';
 	};
+	password: string;
 }
 
-export interface IUserDocument extends IUser, Document {}
+export interface IUserDocument extends IUser, Document {
+	validatePassword: (password: string) => boolean;
+}
 
 export type IUserModel = Model<IUserDocument>;
 
