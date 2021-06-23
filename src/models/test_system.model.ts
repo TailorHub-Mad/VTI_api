@@ -4,10 +4,10 @@ import { ITestSystemDocument, ITestSystemModel } from '../interfaces/models.inte
 
 export const testSystemSchema = new Schema<ITestSystemDocument, ITestSystemModel>(
 	{
-		vtiCode: { type: String, unique: true, required: true, index: true },
-		alias: { type: String, unique: true, required: true, index: true },
+		vtiCode: { type: String },
+		alias: { type: String },
 		date: DATE_SCHEMA,
-		projects: [{ type: Types.ObjectId, index: true }],
+		projects: [{ type: Types.ObjectId }],
 		notes: [{ type: Types.ObjectId }]
 	},
 	{

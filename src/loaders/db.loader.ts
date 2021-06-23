@@ -8,6 +8,7 @@ const options = {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
 	useCreateIndex: true,
+	useFindAndModify: false,
 	keepAlive: true,
 	keepAliveInitialDelay: 300000,
 	autoIndex: true, // Dev == true; Prod == false

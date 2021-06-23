@@ -1,4 +1,4 @@
-import { FilterQuery } from 'mongoose';
+import { FilterQuery, UpdateQuery } from 'mongoose';
 import { GenericModel } from '../interfaces/models.interface';
 import { Pagination } from '../interfaces/config.interface';
 
@@ -6,9 +6,10 @@ import { Pagination } from '../interfaces/config.interface';
 export const findWithPagination = async <Doc, M extends GenericModel<Doc> = GenericModel<Doc>>(
 	model: M,
 	find: FilterQuery<Doc>,
-	pagination: Pagination
+	pagination: Pagination,
+	select = ''
 ): Promise<Doc[]> => {
-	return await model.find(find).skip(pagination.offset).limit(pagination.limit);
+	return await model.find(find).skip(pagination.offset).limit(pagination.limit).select(select);
 };
 
 export const createRepository = async <Doc, M extends GenericModel<Doc> = GenericModel<Doc>>(
@@ -17,4 +18,12 @@ export const createRepository = async <Doc, M extends GenericModel<Doc> = Generi
 ): Promise<Doc> => {
 	const newDocumet = new Model(body);
 	return await newDocumet.save();
+};
+
+export const updateRepository = async <Doc, M extends GenericModel<Doc> = GenericModel<Doc>>(
+	model: M,
+	query: FilterQuery<Doc>,
+	update: UpdateQuery<Doc>
+): Promise<Doc | null> => {
+	return await model.findOneAndUpdate(query, update);
 };

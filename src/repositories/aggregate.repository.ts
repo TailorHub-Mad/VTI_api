@@ -41,7 +41,7 @@ export const aggregateCrud = async (
 		querys: FilterQuery<IClientModel>;
 		group?: string;
 	},
-	pagination: Pagination,
+	pagination?: Pagination,
 	order?: { [key: string]: -1 | 1 }
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any[]> => {
@@ -77,16 +77,17 @@ export const aggregateCrud = async (
 			$sort: order
 		});
 	}
-
-	if (pagination.offset > 0) {
-		pipeline.push({
-			$skip: pagination.offset
-		});
-	}
-	if (pagination.limit > 0) {
-		pipeline.push({
-			$limit: pagination.limit
-		});
+	if (pagination) {
+		if (pagination.offset > 0) {
+			pipeline.push({
+				$skip: pagination.offset
+			});
+		}
+		if (pagination.limit > 0) {
+			pipeline.push({
+				$limit: pagination.limit
+			});
+		}
 	}
 
 	if (_extends && nameFild) {
