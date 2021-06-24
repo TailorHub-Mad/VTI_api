@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { createMessage, createNote } from '../services/note.service';
+import { createMessage, createNote, updateMessage, updateNote } from '../services/note.service';
 
 export const CreateNote = async (
 	req: Request,
@@ -25,6 +25,36 @@ export const CreateMessage = async (
 		const { id } = params;
 		await createMessage(id, body, user);
 		res.sendStatus(201);
+	} catch (err) {
+		next(err);
+	}
+};
+
+export const UpdateNote = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		const { body, params } = req;
+		const { id } = params;
+		await updateNote(id, body);
+		res.sendStatus(200);
+	} catch (err) {
+		next(err);
+	}
+};
+
+export const UpdateMessage = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		const { body, params } = req;
+		const { id } = params;
+		await updateMessage(id, body);
+		res.sendStatus(200);
 	} catch (err) {
 		next(err);
 	}

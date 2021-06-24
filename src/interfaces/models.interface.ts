@@ -1,5 +1,4 @@
 /* eslint-disable no-use-before-define */
-import { string } from 'joi';
 import { Document, Model } from 'mongoose';
 
 interface IDate {
@@ -127,7 +126,7 @@ export interface INoteDocument extends INote, Document {}
 
 export type INoteModel = Model<INoteDocument>;
 
-interface IMessage {
+export interface IMessage {
 	owner: IUserDocument['_id'];
 	approved: boolean;
 	formalized: boolean;
@@ -154,4 +153,5 @@ export type GenericModel<T> = Model<T, unknown, never>;
 
 export interface IReqUser {
 	id: string;
+	email: string;
 }

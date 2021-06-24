@@ -1,5 +1,5 @@
 import { errorHandler } from '../../../middleware';
-import { IError } from '../../../interfaces/error-http.interface';
+// import { IError } from '../../../interfaces/error-http.interface';
 import { MockRequest, MockResponse, createRequest, createResponse } from 'node-mocks-http';
 import { Request, Response, NextFunction } from 'express';
 

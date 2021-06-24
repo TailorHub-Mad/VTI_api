@@ -6,9 +6,9 @@ export const validateToken = (req: Request, _res: Response, next: NextFunction):
 	const { authorization } = req.headers;
 	if (authorization) {
 		try {
-			const { sub } = verifyJWT(removeBearer(authorization));
+			const { sub, email } = verifyJWT(removeBearer(authorization));
 			if (typeof sub === 'string') {
-				req.user = { id: sub };
+				req.user = { id: sub, email };
 			}
 		} catch (error) {
 			next(error);

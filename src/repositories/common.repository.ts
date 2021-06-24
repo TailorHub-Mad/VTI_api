@@ -1,4 +1,4 @@
-import { FilterQuery, UpdateQuery } from 'mongoose';
+import { FilterQuery, QueryOptions, UpdateQuery } from 'mongoose';
 import { GenericModel } from '../interfaces/models.interface';
 import { Pagination } from '../interfaces/config.interface';
 
@@ -23,11 +23,13 @@ export const createRepository = async <Doc, M extends GenericModel<Doc> = Generi
 export const updateRepository = async <Doc, M extends GenericModel<Doc> = GenericModel<Doc>>(
 	model: M,
 	query: FilterQuery<Doc>,
-	update: UpdateQuery<Doc>
+	update: UpdateQuery<Doc>,
+	options?: QueryOptions
 ): Promise<Doc | null> => {
 	return await model.findOneAndUpdate(query, update, {
 		new: true,
 		upsert: true,
-		timestamps: true
+		timestamps: true,
+		...options
 	});
 };

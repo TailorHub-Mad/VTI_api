@@ -108,7 +108,7 @@ export const aggregateCrud = async (
 
 		pipeline.push({
 			$group: {
-				_id: '$testSystem.alias' || '$_id',
+				_id: group || '$_id',
 				[nameFild]: {
 					$push: `$${nameFild}`
 				}

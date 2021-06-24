@@ -1,10 +1,21 @@
-import { createMessageNoteValidation, createNoteValidation } from '../validations/note.validation';
-import { IClientDocument, INote, INoteDocument, IReqUser } from '../interfaces/models.interface';
+import {
+	createMessageNoteValidation,
+	createNoteValidation,
+	updateNoteValidationAdmin,
+	updateMessageNoteValidation
+} from '../validations/note.validation';
+import {
+	IClientDocument,
+	IMessage,
+	INote,
+	INoteDocument,
+	IReqUser
+} from '../interfaces/models.interface';
 import { read } from './crud.service';
 import { ClientModel } from '../models/client.model';
 import { BaseError } from '@errors/base.error';
 import { getPagination } from '@utils/controllers.utils';
-import { transformStringToObjectId } from '@utils/model.utils';
+import { createSet, transformStringToObjectId } from '@utils/model.utils';
 import { updateRepository } from '../repositories/common.repository';
 import { mongoIdValidation } from '../validations/common.validation';
 import { MessageModel } from '../models/message.model';
@@ -61,4 +72,31 @@ export const createMessage = async (
 		{ $push: { 'notes.$.messages': message } }
 	);
 	await client?.save();
+	const _note = client?.notes.find(({ _id }) => _id.toString() === note);
+	logger.notice(
+		`El usuario ${user.email} ha creado el mensaje con title ${validateBody.message} en el apunte ${_note?.title}`,
+		{ name: 'test' }
+	);
+};
+
+export const updateNote = async (note_id: string, body: Partial<INote>): Promise<void> => {
+	const validateBody = await updateNoteValidationAdmin.validateAsync(body);
+	const validateIdNote = await mongoIdValidation.validateAsync(note_id);
+
+	const updated = createSet(validateBody, 'notes.$');
+
+	await updateRepository<IClientDocument>(ClientModel, { 'notes._id': validateIdNote }, updated);
+};
+
+export const updateMessage = async (message_id: string, body: Partial<IMessage>): Promise<void> => {
+	const validateBody = await updateMessageNoteValidation.validateAsync(body);
+	const validateIdNote = await mongoIdValidation.validateAsync(message_id);
+
+	const updated = createSet(validateBody, 'notes.$.messages.$[message]');
+	await updateRepository<IClientDocument>(
+		ClientModel,
+		{ 'notes.messages._id': validateIdNote },
+		{ $set: updated },
+		{ arrayFilters: [{ 'message._id': validateIdNote }] }
+	);
 };
