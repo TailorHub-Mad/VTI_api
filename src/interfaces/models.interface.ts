@@ -1,4 +1,5 @@
 /* eslint-disable no-use-before-define */
+import { string } from 'joi';
 import { Document, Model } from 'mongoose';
 
 interface IDate {
@@ -150,3 +151,7 @@ export interface ITagDocument extends ITag, Document {}
 export type ITagModel = Model<ITagDocument>;
 
 export type GenericModel<T> = Model<T, unknown, never>;
+
+export interface IReqUser {
+	id: string;
+}

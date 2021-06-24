@@ -6,7 +6,9 @@ export const messageSchema = new Schema<IMessageDocument, IMessageModel>(
 		owner: { type: Types.ObjectId, ref: 'User' },
 		approved: { type: Boolean, default: false },
 		formalized: { type: Boolean, default: false },
-		message: { type: String }
+		message: { type: String },
+		createdAt: { type: Date },
+		updatedAt: { type: Date }
 	},
 	{
 		timestamps: true,

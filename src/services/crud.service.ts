@@ -1,4 +1,4 @@
-import { FilterQuery, Types } from 'mongoose';
+import { FilterQuery, Types, UpdateQuery } from 'mongoose';
 import { aggregateCrud } from '../repositories/aggregate.repository';
 import { Pagination } from '../interfaces/config.interface';
 import {
@@ -38,7 +38,7 @@ export const update = async <Doc, M extends GenericModel<Doc> = GenericModel<Doc
 	model: M,
 	validate: Joi.ObjectSchema<Partial<Doc>>,
 	query: FilterQuery<Document>,
-	body: Partial<Doc>
+	body: UpdateQuery<Doc>
 ): Promise<Doc | null> => {
 	const updateInfo = await validate.validateAsync(body);
 	return await updateRepository<Doc>(model, query, updateInfo);

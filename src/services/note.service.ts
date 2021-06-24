@@ -1,10 +1,13 @@
-import { createNoteValidation } from '../validations/note.validation';
-import { IClientDocument, INote, INoteDocument } from '../interfaces/models.interface';
+import { createMessageNoteValidation, createNoteValidation } from '../validations/note.validation';
+import { IClientDocument, INote, INoteDocument, IReqUser } from '../interfaces/models.interface';
 import { read } from './crud.service';
 import { ClientModel } from '../models/client.model';
 import { BaseError } from '@errors/base.error';
 import { getPagination } from '@utils/controllers.utils';
 import { transformStringToObjectId } from '@utils/model.utils';
+import { updateRepository } from '../repositories/common.repository';
+import { mongoIdValidation } from '../validations/common.validation';
+import { MessageModel } from '../models/message.model';
 
 export const createNote = async (body: Partial<INote>): Promise<void> => {
 	const validateBody = await createNoteValidation.validateAsync(body);
@@ -43,4 +46,19 @@ export const createNote = async (body: Partial<INote>): Promise<void> => {
 	await newClient.save();
 };
 
-// export const updateNote = async ( note: string, body: Partial<>)
+export const createMessage = async (
+	note: string,
+	body: Partial<INote>,
+	user: IReqUser
+): Promise<void> => {
+	const validateBody = await createMessageNoteValidation.validateAsync(body);
+	const validateIdNote = await mongoIdValidation.validateAsync(note);
+	validateBody.owner = user.id;
+	const message = new MessageModel(validateBody);
+	const client = await updateRepository<IClientDocument>(
+		ClientModel,
+		{ 'notes._id': validateIdNote },
+		{ $push: { 'notes.$.messages': message } }
+	);
+	await client?.save();
+};

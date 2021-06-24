@@ -11,7 +11,6 @@ export default async (): Promise<Document[]> => {
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const initialBrand: any = brandsJson;
-	console.log(Array.isArray(initialBrand));
 	const modifyBrand = initialBrand.map(
 		(car: {
 			brand: string;
