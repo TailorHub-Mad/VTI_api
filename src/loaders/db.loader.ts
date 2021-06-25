@@ -2,7 +2,9 @@ import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { DATABASEURL } from '@constants/env.constants';
 
-mongoose.set('debug', true); // disabled to production
+if (process.env.NODE_ENV === 'development') {
+	mongoose.set('debug', true); // disabled to production
+}
 
 const options = {
 	useNewUrlParser: true,

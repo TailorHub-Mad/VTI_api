@@ -11,7 +11,6 @@ describe('Middleware Error-Handler', () => {
 	beforeEach(() => {
 		req = createRequest();
 		res = createResponse();
-		global.logger.info = jest.fn();
 		jest.clearAllMocks();
 	});
 
