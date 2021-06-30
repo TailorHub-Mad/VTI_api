@@ -28,7 +28,7 @@ export const read = async <Doc, M extends GenericModel<Doc> = GenericModel<Doc>>
 export const create = async <Doc, M extends GenericModel<Doc> = GenericModel<Doc>>(
 	model: M,
 	validate: Joi.ObjectSchema<Doc>,
-	body: Partial<Doc>
+	body: Partial<unknown>
 ): Promise<Doc> => {
 	const newInfo = await validate.validateAsync(body);
 	return await createRepository<Doc>(model, newInfo);
@@ -38,9 +38,10 @@ export const update = async <Doc, M extends GenericModel<Doc> = GenericModel<Doc
 	model: M,
 	validate: Joi.ObjectSchema<Partial<Doc>>,
 	query: FilterQuery<Document>,
-	body: UpdateQuery<Doc>
+	body: UpdateQuery<unknown>
 ): Promise<Doc | null> => {
 	const updateInfo = await validate.validateAsync(body);
+	Object.keys(updateInfo).forEach((key) => updateInfo[key] === undefined && delete updateInfo[key]);
 	return await updateRepository<Doc>(model, query, updateInfo);
 };
 

@@ -17,7 +17,6 @@ export const errorHandler = (
 		status = 400;
 	}
 	error.message = error.message || 'Something went wrong';
-
 	logger.error(error.stack);
 
 	res.status(status).json(error);

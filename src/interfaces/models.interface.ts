@@ -137,7 +137,7 @@ export interface IMessageDocument extends IMessage, Document {}
 
 export type IMessageModel = Model<IMessageDocument>;
 
-interface ITag {
+export interface ITag {
 	name: string;
 	updated: IDate;
 	projects: IProjectsDocument['_id'][];
@@ -147,9 +147,26 @@ interface ITag {
 
 export interface ITagDocument extends ITag, Document {}
 
+export interface ITagNoteDocument extends ITag, Document {
+	type: 'note';
+	// notes: INoteDocument['_id'][];
+}
+export interface ITagProjectDocument extends ITag, Document {
+	type: 'project';
+	projects: IProjectsDocument['_id'][];
+}
+
 export type ITagModel = Model<ITagDocument>;
 
+export type ITagNoteModel = Model<ITagNoteDocument>;
+
+export type ITagProjectModel = Model<ITagProjectDocument>;
+
+export type ITagBothDocument = ITagNoteDocument | ITagProjectDocument;
+
 export type GenericModel<T> = Model<T, unknown, never>;
+
+export type ITagBothModel = GenericModel<ITagNoteDocument> | GenericModel<ITagProjectDocument>;
 
 export interface IReqUser {
 	id: string;

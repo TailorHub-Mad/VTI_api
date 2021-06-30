@@ -14,7 +14,7 @@ export const findWithPagination = async <Doc, M extends GenericModel<Doc> = Gene
 
 export const createRepository = async <Doc, M extends GenericModel<Doc> = GenericModel<Doc>>(
 	Model: M,
-	body: Partial<Doc>
+	body: Partial<unknown>
 ): Promise<Doc> => {
 	const newDocumet = new Model(body);
 	return await newDocumet.save();
@@ -22,13 +22,12 @@ export const createRepository = async <Doc, M extends GenericModel<Doc> = Generi
 
 export const updateRepository = async <Doc, M extends GenericModel<Doc> = GenericModel<Doc>>(
 	model: M,
-	query: FilterQuery<Doc>,
+	query: FilterQuery<Document>,
 	update: UpdateQuery<Doc>,
 	options?: QueryOptions
 ): Promise<Doc | null> => {
 	return await model.findOneAndUpdate(query, update, {
 		new: true,
-		upsert: true,
 		timestamps: true,
 		...options
 	});

@@ -5,3 +5,4 @@ export { ProjectsRouter } from './projects.route';
 export { TestSystemRouter } from './test_system.route';
 export { ClientsRouter } from './client.route';
 export { UserRouter } from './user.route';
+export { TagRouter } from './tag.route';
