@@ -9,7 +9,7 @@ export const findWithPagination = async <Doc, M extends GenericModel<Doc> = Gene
 	pagination: Pagination,
 	select = ''
 ): Promise<Doc[]> => {
-	return await model.find(find).skip(pagination.offset).limit(pagination.limit).select(select);
+	return await model.find(find).limit(pagination.limit).skip(pagination.offset).select(select);
 };
 
 export const createRepository = async <Doc, M extends GenericModel<Doc> = GenericModel<Doc>>(
