@@ -14,12 +14,14 @@ const TagNoteSchema = new Schema<ITagNoteDocument, ITagNoteModel>(
 		versionKey: false,
 		discriminatorKey: 'type',
 		toJSON: {
+			virtuals: true,
 			transform: function (doc, ret) {
 				ret.id = doc._id;
 				delete ret._id;
 			}
 		},
 		toObject: {
+			virtuals: true,
 			transform: function (doc, ret) {
 				ret.id = doc._id;
 				delete ret._id;
@@ -27,5 +29,9 @@ const TagNoteSchema = new Schema<ITagNoteDocument, ITagNoteModel>(
 		}
 	}
 );
+
+TagNoteSchema.virtual('isInheritance').get(function (this: ITagNoteDocument) {
+	return this.relatedTags.length > 0;
+});
 
 export const TagNoteModel = model('TagNote', TagNoteSchema);

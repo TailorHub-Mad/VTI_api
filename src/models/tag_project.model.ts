@@ -14,12 +14,14 @@ const tagProjectSchema = new Schema<ITagProjectDocument, ITagProjectModel>(
 		versionKey: false,
 		discriminatorKey: 'type',
 		toJSON: {
+			virtuals: true,
 			transform: function (doc, ret) {
 				ret.id = doc._id;
 				delete ret._id;
 			}
 		},
 		toObject: {
+			virtuals: true,
 			transform: function (doc, ret) {
 				ret.id = doc._id;
 				delete ret._id;
@@ -27,5 +29,9 @@ const tagProjectSchema = new Schema<ITagProjectDocument, ITagProjectModel>(
 		}
 	}
 );
+
+tagProjectSchema.virtual('isInheritance').get(function (this: ITagProjectDocument) {
+	return this.relatedTags.length > 0;
+});
 
 export const TagProjectModel = model('TagProject', tagProjectSchema);

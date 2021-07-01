@@ -7,10 +7,12 @@ const router = Router();
 
 router.get('/', GetAllAggregate('projects'));
 
-router.get('/:id', GetByIdAggregate('projects'));
+// router.get('/help')
 
 router.post('/', CreateProject);
 
 router.put('/:id_project', UpdateProject);
+
+router.get('/:id', GetByIdAggregate('projects'));
 
 export const ProjectsRouter = { router, path: PROJECTS_PATH };

@@ -5,8 +5,13 @@ import { CreateTag, UpdateTag } from '../controllers/tag.controller';
 import { TagNoteModel } from '../models/tag_notes.model';
 import { TagProjectModel } from '../models/tag_project.model';
 import { ITagNoteDocument, ITagProjectDocument } from '../interfaces/models.interface';
+import { GetAll } from 'src/controllers/crud.controller';
 
 const router = Router();
+
+router.get('/notes', GetAll<ITagNoteDocument>(TagNoteModel));
+
+router.get('/projects', GetAll<ITagProjectDocument>(TagProjectModel));
 
 router.post('/notes', CreateTag<ITagNoteDocument>(TagNoteModel, createTagValidation));
 

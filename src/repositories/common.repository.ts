@@ -26,6 +26,7 @@ export const updateRepository = async <Doc, M extends GenericModel<Doc> = Generi
 	update: UpdateQuery<Doc>,
 	options?: QueryOptions
 ): Promise<Doc | null> => {
+	console.log(update);
 	return await model.findOneAndUpdate(query, update, {
 		new: true,
 		timestamps: true,

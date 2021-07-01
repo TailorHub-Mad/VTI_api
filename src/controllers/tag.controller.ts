@@ -1,14 +1,10 @@
+import { BaseError } from '@errors/base.error';
 import { getPagination } from '@utils/controllers.utils';
 import { Request, Response, NextFunction } from 'express';
 import Joi from 'joi';
 import { updateRepository } from 'src/repositories/common.repository';
 import { mongoIdValidation } from 'src/validations/common.validation';
-import {
-	GenericModel,
-	ITag,
-	ITagBothDocument,
-	ITagProjectDocument
-} from '../interfaces/models.interface';
+import { GenericModel, ITag, ITagBothDocument } from '../interfaces/models.interface';
 import { create, read, update } from '../services/crud.service';
 
 export const CreateTag =
@@ -56,10 +52,13 @@ export const UpdateTag =
 			)) as unknown as ITagBothDocument;
 
 			if (body.relatedTag) {
+				if (tag.relatedTags.length > 0) {
+					throw new BaseError('Tag with inheritance.', 409);
+				}
 				await updateRepository<ITagBothDocument>(
 					model as unknown as GenericModel<ITagBothDocument>,
-					{ relatedTags: [tag._id] },
-					{ $pullAll: [{ relatedTags: tag._id }] } // buscar y eliminar un elemento de un array
+					{ relatedTags: { $in: [tag._id] } },
+					{ $pull: { relatedTags: tag._id } }
 				);
 				const relatedTag = (
 					await read<Doc>(model, { _id: body.relatedTag }, getPagination())
@@ -67,7 +66,7 @@ export const UpdateTag =
 
 				if (relatedTag) {
 					relatedTag.relatedTags.push(tag._id);
-					relatedTag.save();
+					await relatedTag.save();
 				}
 			}
 			res.sendStatus(200);
