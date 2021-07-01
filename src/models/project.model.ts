@@ -4,7 +4,7 @@ import { DATE_SCHEMA } from '@constants/model.constants';
 
 export const projectSchema = new Schema<IProjectsDocument, IProjectsModel>(
 	{
-		alias: { type: String }, // , unique: true, required: true, index: true },
+		alias: { type: String, unique: true, sparse: true, index: true }, // , unique: true, required: true, index: true },
 		date: DATE_SCHEMA,
 		years: { type: Number },
 		sector: { type: Types.ObjectId, ref: 'Sector' },

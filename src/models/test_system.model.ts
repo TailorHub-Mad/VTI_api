@@ -4,7 +4,7 @@ import { ITestSystemDocument, ITestSystemModel } from '../interfaces/models.inte
 
 export const testSystemSchema = new Schema<ITestSystemDocument, ITestSystemModel>(
 	{
-		vtiCode: { type: String },
+		vtiCode: { type: String, unque: true, index: true, sparse: true },
 		alias: { type: String },
 		date: DATE_SCHEMA,
 		projects: [{ type: Types.ObjectId }],

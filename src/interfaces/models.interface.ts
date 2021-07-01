@@ -168,6 +168,26 @@ export type GenericModel<T> = Model<T, unknown, never>;
 
 export type ITagBothModel = GenericModel<ITagNoteDocument> | GenericModel<ITagProjectDocument>;
 
+export interface ICriterion {
+	name: string;
+	title: string;
+	type: 'note' | 'project';
+	relatedTags: ITagNoteDocument['_id'] | ITagProjectDocument['_id'];
+}
+
+export interface ICriterionNoteDocument extends ICriterion, Document {
+	type: 'note';
+	relatedTags: ITagNoteDocument['_id'];
+}
+
+export interface ICriterionProjectDocument extends ICriterion, Document {
+	type: 'project';
+	relatedTags: ITagProjectDocument['_id'];
+}
+
+export type ICriterionNoteModel = Model<ICriterionNoteDocument>;
+
+export type ICriterionProjectModel = Model<ICriterionProjectDocument>;
 export interface IReqUser {
 	id: string;
 	email: string;

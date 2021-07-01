@@ -4,7 +4,7 @@ import { messageSchema } from './message.model';
 
 export const noteSchema = new Schema<INoteDocument, INoteModel>(
 	{
-		title: { type: String }, //, unique: true, required: true },
+		title: { type: String, unique: true, index: true, sparse: true }, //, unique: true, required: true },
 		description: { type: String },
 		link: { type: String },
 		documents: [{ url: { type: String }, name: { type: String } }],
