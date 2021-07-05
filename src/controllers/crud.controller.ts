@@ -11,7 +11,7 @@ import {
 import { getPagination } from '../utils/controllers.utils';
 import { GenericModel } from '../interfaces/models.interface';
 import { BaseError } from '@errors/base.error';
-import { isValidObjectId } from 'mongoose';
+import { FilterQuery, isValidObjectId } from 'mongoose';
 
 // Creamos un controlador genérico usando una interface T que tendrá el valor del modelo que nosotros le pasemos.
 export const GetAll =
@@ -47,13 +47,13 @@ export const Create =
 
 export const Read =
 	<Doc, M extends GenericModel<Doc> = GenericModel<Doc>>(
-		model: M
+		model: M,
+		query: FilterQuery<Document>
 	): ((req: Request, res: Response, next: NextFunction) => Promise<void>) =>
 	async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
-			const { body, query } = req;
-			const pagination = getPagination(query);
-			const document = await read<Doc, M>(model, body, pagination);
+			const pagination = getPagination(req.query);
+			const document = await read<Doc, M>(model, query, pagination);
 			res.status(200).json(document);
 		} catch (err) {
 			logger.error(`Error read ${model.collection.name}`);

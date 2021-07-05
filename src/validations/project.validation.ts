@@ -1,3 +1,4 @@
+import { GROUP_PROJECT } from '@constants/group.constans';
 import Joi from 'joi';
 import { mongoIdValidation } from './common.validation';
 
@@ -25,4 +26,8 @@ export const updateProjectValidation = Joi.object().keys({
 	focusPoint: mongoIdValidation,
 	testSystems: Joi.array().items(mongoIdValidation),
 	tags: Joi.array().items(mongoIdValidation)
+});
+
+export const orderProjectValidation = Joi.object().keys({
+	group: Joi.string().valid(...GROUP_PROJECT)
 });

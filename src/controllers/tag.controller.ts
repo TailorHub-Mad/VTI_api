@@ -2,8 +2,8 @@ import { BaseError } from '@errors/base.error';
 import { getPagination } from '@utils/controllers.utils';
 import { Request, Response, NextFunction } from 'express';
 import Joi from 'joi';
-import { updateRepository } from 'src/repositories/common.repository';
-import { mongoIdValidation } from 'src/validations/common.validation';
+import { updateRepository } from '../repositories/common.repository';
+import { mongoIdValidation } from '../validations/common.validation';
 import { GenericModel, ITag, ITagBothDocument } from '../interfaces/models.interface';
 import { create, read, update } from '../services/crud.service';
 

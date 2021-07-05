@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { createProject, updateProject } from '../services/project.service';
+import { createProject, orderProject, updateProject } from '../services/project.service';
 
 export const CreateProject = async (
 	req: Request,
@@ -24,6 +24,19 @@ export const UpdateProject = async (
 		const { body, params } = req;
 		await updateProject(params.id_project as string, body);
 		res.sendStatus(200);
+	} catch (err) {
+		next(err);
+	}
+};
+
+export const OrderProject = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		const projects = await orderProject(req.query);
+		res.json(projects);
 	} catch (err) {
 		next(err);
 	}

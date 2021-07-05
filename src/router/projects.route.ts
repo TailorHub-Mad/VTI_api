@@ -1,11 +1,13 @@
 import { PROJECTS_PATH } from '@constants/routes.constants';
 import { Router } from 'express';
-import { CreateProject, UpdateProject } from '../controllers/project.controller';
+import { CreateProject, OrderProject, UpdateProject } from '../controllers/project.controller';
 import { GetAllAggregate, GetByIdAggregate } from '../controllers/crud.controller';
 
 const router = Router();
 
 router.get('/', GetAllAggregate('projects'));
+
+router.get('/group', OrderProject);
 
 // router.get('/help')
 

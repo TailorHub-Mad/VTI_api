@@ -3,13 +3,15 @@ import {
 	createModelsInClientRepository,
 	updateModelsInClientRepository
 } from '../repositories/client.repository';
-import { checkAlias } from '../repositories/project.respository';
+import { checkAlias, groupProjectRepository } from '../repositories/project.respository';
 import { mongoIdValidation } from '../validations/common.validation';
 import {
 	createProjectValidation,
+	orderProjectValidation,
 	updateProjectValidation
 } from '../validations/project.validation';
 import { IProjects } from '../interfaces/models.interface';
+import QueryString from 'qs';
 
 export const createProject = async (body: Partial<IProjects>): Promise<void> => {
 	const projectValidation = await createProjectValidation.validateAsync(body);
@@ -33,4 +35,10 @@ export const updateProject = async (
 	}
 
 	await updateModelsInClientRepository('projects', projectIdValidation, projectValidation);
+};
+
+export const orderProject = async (query: QueryString.ParsedQs): Promise<IProjects[]> => {
+	const queryValid = await orderProjectValidation.validateAsync(query);
+	const projects = await groupProjectRepository(queryValid.group);
+	return projects;
 };
