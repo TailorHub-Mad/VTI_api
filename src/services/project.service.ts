@@ -12,6 +12,8 @@ import {
 } from '../validations/project.validation';
 import { IProjects } from '../interfaces/models.interface';
 import QueryString from 'qs';
+import { groupRepository } from 'src/repositories/aggregate.repository';
+import { GROUP_PROJECT } from '@constants/group.constans';
 
 export const createProject = async (body: Partial<IProjects>): Promise<void> => {
 	const projectValidation = await createProjectValidation.validateAsync(body);
@@ -39,6 +41,9 @@ export const updateProject = async (
 
 export const orderProject = async (query: QueryString.ParsedQs): Promise<IProjects[]> => {
 	const queryValid = await orderProjectValidation.validateAsync(query);
-	const projects = await groupProjectRepository(queryValid.group);
+	const projects = await groupRepository<IProjects, typeof GROUP_PROJECT[number]>(
+		queryValid.group,
+		'projects'
+	);
 	return projects;
 };

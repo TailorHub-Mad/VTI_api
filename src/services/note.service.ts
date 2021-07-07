@@ -2,7 +2,8 @@ import {
 	createMessageNoteValidation,
 	createNoteValidation,
 	updateNoteValidationAdmin,
-	updateMessageNoteValidation
+	updateMessageNoteValidation,
+	groupNotesValidation
 } from '../validations/note.validation';
 import {
 	IClientDocument,
@@ -19,6 +20,9 @@ import { createSet, transformStringToObjectId } from '@utils/model.utils';
 import { updateRepository } from '../repositories/common.repository';
 import { mongoIdValidation } from '../validations/common.validation';
 import { MessageModel } from '../models/message.model';
+import { GROUP_NOTES } from '@constants/group.constans';
+import QueryString from 'qs';
+import { groupRepository } from 'src/repositories/aggregate.repository';
 
 export const createNote = async (body: Partial<INote>): Promise<void> => {
 	const validateBody = await createNoteValidation.validateAsync(body);
@@ -99,4 +103,10 @@ export const updateMessage = async (message_id: string, body: Partial<IMessage>)
 		{ $set: updated },
 		{ arrayFilters: [{ 'message._id': validateIdNote }] }
 	);
+};
+
+export const groupNotes = async (query: QueryString.ParsedQs): Promise<INote[]> => {
+	const queryValid = await groupNotesValidation.validateAsync(query);
+	const notes = await groupRepository<INote, typeof GROUP_NOTES[number]>(queryValid.group, 'notes');
+	return notes;
 };

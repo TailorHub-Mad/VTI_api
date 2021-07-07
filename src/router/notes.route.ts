@@ -3,6 +3,7 @@ import { Router } from 'express';
 import {
 	CreateMessage,
 	CreateNote,
+	GroupNotes,
 	UpdateMessage,
 	UpdateNote
 } from '../controllers/note.controller';
@@ -11,6 +12,8 @@ import { GetAllAggregate, GetByIdAggregate } from '../controllers/crud.controlle
 const router = Router();
 
 router.get('/', GetAllAggregate('notes'));
+
+router.get('/group', GroupNotes);
 
 router.get('/:id', GetByIdAggregate('notes'));
 

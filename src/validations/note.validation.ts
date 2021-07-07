@@ -1,3 +1,4 @@
+import { GROUP_NOTES } from '@constants/group.constans';
 import Joi from 'joi';
 import { mongoIdValidation } from './common.validation';
 
@@ -25,4 +26,8 @@ export const updateMessageNoteValidation = Joi.object().keys({
 	message: Joi.string(),
 	formalized: Joi.boolean(),
 	approved: Joi.boolean()
+});
+
+export const groupNotesValidation = Joi.object().keys({
+	group: Joi.string().valid(...GROUP_NOTES)
 });

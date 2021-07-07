@@ -121,3 +121,34 @@ export const aggregateCrud = async (
 		numericOrdering: true
 	});
 };
+
+export const groupRepository = async <T, G>(group: G, field: string): Promise<T[]> => {
+	const properties = await ClientModel.aggregate([
+		{
+			$unwind: `$${field}`
+		},
+		{
+			$project: {
+				_id: 0,
+				aux: `$${field}`
+			}
+		}
+	])
+		.sort({ [`aux.${group}`]: 1 })
+		.collation({
+			locale: 'es',
+			numericOrdering: true
+		})
+		.limit(10)
+		.skip(0);
+	console.log(properties);
+	return properties.reduce((projectsGroup, { aux }) => {
+		const key = aux[group].match(/^\d/) ? '0-9' : (aux[group][0] as string).toUpperCase();
+		if (projectsGroup[key]) {
+			projectsGroup[key].push(aux);
+		} else {
+			projectsGroup[key] = [aux];
+		}
+		return projectsGroup;
+	}, {} as { [key: string]: T[] });
+};
