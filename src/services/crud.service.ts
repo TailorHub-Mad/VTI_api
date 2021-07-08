@@ -8,6 +8,7 @@ import {
 } from '../repositories/common.repository';
 import Joi from 'joi';
 import { GenericModel } from '../interfaces/models.interface';
+import QueryString from 'qs';
 
 export const getAll = async <Doc, M extends GenericModel<Doc>>(
 	model: M,
@@ -65,4 +66,21 @@ export const getByIdAggregate = async (id: string, _extends?: string): Promise<u
 		nameFild: nameField,
 		querys: { [`${nameField}._id`]: Types.ObjectId(id) }
 	});
+};
+
+export const getByQueryAggregate = async (
+	query: QueryString.ParsedQs,
+	pagination: Pagination,
+	_extends?: string
+): Promise<unknown> => {
+	const transformExtendsToArray = _extends?.split('.');
+	const nameField = transformExtendsToArray?.slice(-1)[0];
+	return await aggregateCrud(
+		{
+			_extends,
+			nameFild: nameField,
+			querys: query
+		},
+		pagination
+	);
 };

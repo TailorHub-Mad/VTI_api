@@ -3,7 +3,7 @@ import {
 	createModelsInClientRepository,
 	updateModelsInClientRepository
 } from '../repositories/client.repository';
-import { checkAlias, groupProjectRepository } from '../repositories/project.respository';
+import { checkAlias } from '../repositories/project.respository';
 import { mongoIdValidation } from '../validations/common.validation';
 import {
 	createProjectValidation,
@@ -43,7 +43,8 @@ export const orderProject = async (query: QueryString.ParsedQs): Promise<IProjec
 	const queryValid = await orderProjectValidation.validateAsync(query);
 	const projects = await groupRepository<IProjects, typeof GROUP_PROJECT[number]>(
 		queryValid.group,
-		'projects'
+		'projects',
+		queryValid.real
 	);
 	return projects;
 };

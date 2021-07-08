@@ -5,6 +5,7 @@ import {
 	getAll,
 	getAllAggregate,
 	getByIdAggregate,
+	getByQueryAggregate,
 	read,
 	update
 } from '../services/crud.service';
@@ -117,6 +118,19 @@ export const GetByIdAggregate =
 			const { id } = req.params;
 			if (!id || !isValidObjectId(id)) throw new BaseError('Not ID');
 			const result = await getByIdAggregate(id, field);
+			res.json(result);
+		} catch (err) {
+			next(err);
+		}
+	};
+
+export const GetByQueryAggregate =
+	(field?: string): ((req: Request, res: Response, next: NextFunction) => Promise<void>) =>
+	async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+		try {
+			const { query } = req;
+			const pagination = getPagination(req.query);
+			const result = await getByQueryAggregate(query, pagination, field);
 			res.json(result);
 		} catch (err) {
 			next(err);

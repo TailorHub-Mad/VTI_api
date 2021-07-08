@@ -26,7 +26,7 @@ import { groupRepository } from 'src/repositories/aggregate.repository';
 
 export const createNote = async (body: Partial<INote>): Promise<void> => {
 	const validateBody = await createNoteValidation.validateAsync(body);
-	const { title, description, link = null, project, testSystems } = validateBody;
+	const { title, description, link = null, project, testSystems, tags } = validateBody;
 
 	const client = (
 		await read<IClientDocument>(
@@ -40,7 +40,7 @@ export const createNote = async (body: Partial<INote>): Promise<void> => {
 
 	if (!client) throw new BaseError('Not found project');
 
-	client.notes.push({ title, description, link });
+	client.notes.push({ title, description, link, tags });
 	const newClient = await client.save();
 	const note: INoteDocument = newClient.notes.find((note) => note.title === title);
 	const projectId = transformStringToObjectId(project);
@@ -107,6 +107,10 @@ export const updateMessage = async (message_id: string, body: Partial<IMessage>)
 
 export const groupNotes = async (query: QueryString.ParsedQs): Promise<INote[]> => {
 	const queryValid = await groupNotesValidation.validateAsync(query);
-	const notes = await groupRepository<INote, typeof GROUP_NOTES[number]>(queryValid.group, 'notes');
+	const notes = await groupRepository<INote, typeof GROUP_NOTES[number]>(
+		queryValid.group,
+		'notes',
+		queryValid.real
+	);
 	return notes;
 };

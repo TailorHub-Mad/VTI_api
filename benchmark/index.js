@@ -83,6 +83,17 @@ apiBenchmark.measure(services, routeWithoutCache, options, function (_err, resul
   });
 });
 
+// const routeWithCache = {
+//   'reduce': {
+//     method: 'post',
+//     route: 'test'
+//   },
+//   'for': {
+//     method: 'post',
+//     route: 'test/cache'
+//   },
+// }
+
 // apiBenchmark.measure(services, routeWithCache, options, function (_err, results) {
 //   apiBenchmark.getHtml(results, function (_error, html) {
 //     fs.writeFile('cache-results.html', html, function (err) {

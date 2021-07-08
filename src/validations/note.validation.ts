@@ -7,7 +7,8 @@ export const createNoteValidation = Joi.object().keys({
 	description: Joi.string().required(),
 	link: Joi.string(),
 	project: mongoIdValidation.required(),
-	testSystems: Joi.array().items(mongoIdValidation)
+	testSystems: Joi.array().items(mongoIdValidation),
+	tags: Joi.array().items(mongoIdValidation)
 });
 
 export const updateNoteValidationAdmin = Joi.object().keys({
@@ -29,5 +30,6 @@ export const updateMessageNoteValidation = Joi.object().keys({
 });
 
 export const groupNotesValidation = Joi.object().keys({
-	group: Joi.string().valid(...GROUP_NOTES)
+	group: Joi.string().valid(...GROUP_NOTES),
+	real: Joi.boolean()
 });

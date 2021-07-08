@@ -29,5 +29,6 @@ export const updateProjectValidation = Joi.object().keys({
 });
 
 export const orderProjectValidation = Joi.object().keys({
-	group: Joi.string().valid(...GROUP_PROJECT)
+	group: Joi.string().valid(...GROUP_PROJECT),
+	real: Joi.boolean()
 });

@@ -8,9 +8,38 @@ export const FindModelCarTest = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
+		const allSoftwareEngineers = [
+			{ salary: 123344 },
+			{ salary: 123344 },
+			{ salary: 123344 },
+			{ salary: 123344 },
+			{ salary: 123344 },
+			{ salary: 123344 },
+			{ salary: 123344 },
+			{ salary: 123344 },
+			{ salary: 123344 },
+			{ salary: 123344 },
+			{ salary: 123344 },
+			{ salary: 123344 },
+			{ salary: 123344 },
+			{ salary: 123344 },
+			{ salary: 123344 },
+			{ salary: 123344 },
+			{ salary: 123344 },
+			{ salary: 123344 },
+			{ salary: 123344 },
+			{ salary: 123344 }
+		];
 		const { offset = 0, limit = 0 } = req.query;
-		const models = await aggregateCrud(req.body, { offset: +offset, limit: +limit });
-		res.json(models);
+		const results2 = allSoftwareEngineers.reduce((result, engineer) => {
+			const { salary } = engineer;
+			if (salary > 100000) {
+				result += salary;
+			}
+			return result;
+		}, 0);
+		// const models = await aggregateCrud(req.body, { offset: +offset, limit: +limit });
+		res.json(results2);
 	} catch (err) {
 		next(err);
 	}
@@ -22,8 +51,35 @@ export const FindModelCarTestCache = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
-		const models = await searchModelCarCahce(req.body);
-		res.json(models);
+		const allSoftwareEngineers = [
+			{ salary: 123344 },
+			{ salary: 123344 },
+			{ salary: 123344 },
+			{ salary: 123344 },
+			{ salary: 123344 },
+			{ salary: 123344 },
+			{ salary: 123344 },
+			{ salary: 123344 },
+			{ salary: 123344 },
+			{ salary: 123344 },
+			{ salary: 123344 },
+			{ salary: 123344 },
+			{ salary: 123344 },
+			{ salary: 123344 },
+			{ salary: 123344 },
+			{ salary: 123344 },
+			{ salary: 123344 },
+			{ salary: 123344 },
+			{ salary: 123344 },
+			{ salary: 123344 }
+		];
+		let results = 0;
+		for (const engineer of allSoftwareEngineers) {
+			// Check if salary is above 100000
+			if (engineer.salary > 100000) results += engineer.salary;
+		}
+		// const models = await searchModelCarCahce(req.body);
+		res.json(results);
 	} catch (err) {
 		next(err);
 	}
