@@ -1,5 +1,6 @@
 import { populateAggregate } from '@utils/aggregate.utils';
 import { FilterQuery } from 'mongoose';
+import { IPopulateGroup } from 'src/interfaces/aggregate.interface';
 import { Pagination } from '../interfaces/config.interface';
 import { IClientModel } from '../interfaces/models.interface';
 import { ClientModel } from '../models/client.model';
@@ -126,16 +127,14 @@ export const aggregateCrud = async (
 export const groupRepository = async <T, G extends string>(
 	group: G,
 	field: string,
-	real?: boolean
+	options?: { real?: boolean; populate?: IPopulateGroup }
 ): Promise<T[]> => {
 	const searchField = group.split('.');
 	searchField.splice(-1);
 
-	const properties = await ClientModel.aggregate([
-		// ...populateAggregate(field, {
-		// 	searchModel: 'tagnotes',
-		// 	searchField: searchField.join('.')
-		// }),
+	const pipeline = [];
+
+	pipeline.push(
 		{
 			$unwind: `$${field}`
 		},
@@ -150,28 +149,54 @@ export const groupRepository = async <T, G extends string>(
 			$addFields: {
 				'aux.client': '$alias'
 			}
-		} // ,
-		// {
-		// 	$unwind: `$aux.tags`
-		// }
-	])
+		}
+	);
+
+	if (options?.populate) {
+		pipeline.unshift(
+			...populateAggregate(field, {
+				searchModel: options.populate.field,
+				searchField: searchField.join('.')
+			})
+		);
+		pipeline.push({
+			$unwind: `$aux.${options.populate.property}`
+		});
+	}
+
+	const properties = await ClientModel.aggregate(pipeline)
 		.sort({ [`aux.${group}`]: 1 })
 		.collation({
 			locale: 'es',
 			numericOrdering: true
 		});
 
+	const findKey = (value: string, aux: any, real?: boolean) => {
+		return real ? value : value.match(/^\d/) ? '0-9' : (aux[group][0] as string).toUpperCase();
+	};
+
+	const addGroup = (aux: any, property: { [key: string]: { alias: string }[] }, key: string) => {
+		if (property[key]) {
+			if (!property[key].find((group) => group.alias === aux.alias)) property[key].push(aux);
+		} else {
+			property[key] = [aux];
+		}
+	};
+
 	return properties.reduce((projectsGroup, { aux }) => {
 		const valueGroup = group.split('.').filter((property) => property !== field);
-		const value = valueGroup.reduce((field, property) => {
+		let value = valueGroup.reduce((field, property) => {
 			return aux[property] || (field as unknown as { [key: string]: string })[property];
 		}, '');
 
-		const key = real ? value : value.match(/^\d/) ? '0-9' : (aux[group][0] as string).toUpperCase();
-		if (projectsGroup[key]) {
-			projectsGroup[key].push(aux);
-		} else {
-			projectsGroup[key] = [aux];
+		let key = findKey(value, aux, options?.real);
+		addGroup(aux, projectsGroup, key);
+		if (aux?.tags?.relatedTags) {
+			for (const tag of aux.tags.relatedTags) {
+				value = tag.name;
+				key = findKey(value, aux, options?.real);
+				addGroup(aux, projectsGroup, key);
+			}
 		}
 		return projectsGroup;
 	}, {} as { [key: string]: T[] });

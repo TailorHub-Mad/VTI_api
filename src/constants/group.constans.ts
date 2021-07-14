@@ -1,14 +1,21 @@
 // Option order by projects.
 
-export const GROUP_PROJECT = ['client', 'years', 'sector', 'date.year'] as const;
+export const GROUP_PROJECT = [
+	'client',
+	'years',
+	'sector',
+	'date.year',
+	'projects.tags.name',
+	'tags'
+] as const;
 
 // Notes.
 
-export const GROUP_NOTES = ['title', 'year', 'sector', 'notes.tags.name'] as const;
+export const GROUP_NOTES = ['title', 'year', 'sector', 'notes.tags.name', 'tags'] as const;
 
 // Test System.
 
-export const GROUP_TEST_SYSTEM = ['alias', 'year', 'CodVTI', 'sector'] as const;
+export const GROUP_TEST_SYSTEM = ['alias', 'date.year', 'CodVTI', 'sector'] as const;
 
 // Users.
 

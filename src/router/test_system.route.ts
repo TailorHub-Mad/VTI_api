@@ -1,11 +1,17 @@
-import { TEST_SYSTEM_PATH } from '@constants/routes.constants';
 import { Router } from 'express';
-import { CreateTestSystem, UpdateTestSystem } from '../controllers/test_system.controller';
+import { TEST_SYSTEM_PATH } from '@constants/routes.constants';
+import {
+	CreateTestSystem,
+	GroupTestSystem,
+	UpdateTestSystem
+} from '../controllers/test_system.controller';
 import { GetAllAggregate, GetByIdAggregate } from '../controllers/crud.controller';
 
 const router = Router();
 
 router.get('/', GetAllAggregate('testSystem'));
+
+router.get('/group', GroupTestSystem);
 
 router.get('/:id', GetByIdAggregate('testSystem'));
 

@@ -26,6 +26,8 @@ export const populateAggregate = (
 ): [
 	TUnwindPopulateAggregate,
 	TLookupPopulateAggrefate,
+	TUnwindPopulateAggregate,
+	TLookupPopulateAggrefate,
 	TGroupPopulateAggregate,
 	TReplaceRootPopulateAggregate
 ] => {
@@ -37,6 +39,16 @@ export const populateAggregate = (
 			localField: searchField,
 			foreignField: '_id',
 			as: searchField
+		}
+	};
+	const unwind2 = { $unwind: `$${field}.tags` };
+
+	const lookup2: TLookupPopulateAggrefate = {
+		$lookup: {
+			from: searchModel,
+			localField: `${searchField}.relatedTags`,
+			foreignField: '_id',
+			as: `${searchField}.relatedTags`
 		}
 	};
 	const group: TGroupPopulateAggregate = {
@@ -52,5 +64,5 @@ export const populateAggregate = (
 		$replaceRoot: { newRoot: { $mergeObjects: ['$old', { [field]: `$${field}` }] } }
 	};
 
-	return [unwind, lookup, group, replaceRoot];
+	return [unwind, lookup, unwind2, lookup2, group, replaceRoot];
 };

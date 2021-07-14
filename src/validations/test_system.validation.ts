@@ -1,3 +1,4 @@
+import { GROUP_TEST_SYSTEM } from '@constants/group.constans';
 import Joi from 'joi';
 import { mongoIdValidation } from './common.validation';
 
@@ -16,4 +17,9 @@ export const updateTestSystemValidation = Joi.object().keys({
 	date: Joi.object().keys({
 		year: Joi.string()
 	})
+});
+
+export const groupTestSystemValidation = Joi.object().keys({
+	group: Joi.string().valid(...GROUP_TEST_SYSTEM),
+	real: Joi.boolean()
 });

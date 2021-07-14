@@ -1,5 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
-import { createTestSystem, updateTestSystem } from '../services/test_system.service';
+import {
+	createTestSystem,
+	updateTestSystem,
+	groupTestSystem
+} from '../services/test_system.service';
 
 export const CreateTestSystem = async (
 	req: Request,
@@ -24,6 +28,19 @@ export const UpdateTestSystem = async (
 		const { body, params } = req;
 		await updateTestSystem(params.id_testSystem as string, body);
 		res.sendStatus(200);
+	} catch (err) {
+		next(err);
+	}
+};
+
+export const GroupTestSystem = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		const testSystem = await groupTestSystem(req.query);
+		res.json(testSystem);
 	} catch (err) {
 		next(err);
 	}

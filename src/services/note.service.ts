@@ -23,6 +23,7 @@ import { MessageModel } from '../models/message.model';
 import { GROUP_NOTES } from '@constants/group.constans';
 import QueryString from 'qs';
 import { groupRepository } from 'src/repositories/aggregate.repository';
+import { IPopulateGroup } from 'src/interfaces/aggregate.interface';
 
 export const createNote = async (body: Partial<INote>): Promise<void> => {
 	const validateBody = await createNoteValidation.validateAsync(body);
@@ -107,10 +108,15 @@ export const updateMessage = async (message_id: string, body: Partial<IMessage>)
 
 export const groupNotes = async (query: QueryString.ParsedQs): Promise<INote[]> => {
 	const queryValid = await groupNotesValidation.validateAsync(query);
+	let populate: IPopulateGroup | undefined;
+	if (queryValid.group.includes('tags')) {
+		queryValid.group = 'notes.tags.name';
+		populate = { field: 'tagnotes', property: 'tags' };
+	}
 	const notes = await groupRepository<INote, typeof GROUP_NOTES[number]>(
 		queryValid.group,
 		'notes',
-		queryValid.real
+		{ real: queryValid.real, populate }
 	);
 	return notes;
 };

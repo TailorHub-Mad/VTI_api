@@ -10,7 +10,7 @@ export const projectSchema = new Schema<IProjectsDocument, IProjectsModel>(
 		sector: { type: Types.ObjectId, ref: 'Sector' },
 		focusPoint: [{ type: Types.ObjectId, ref: 'User' }],
 		testSystems: [{ type: Types.ObjectId }], // Quizás crear aquí los test system.
-		tag: [{ type: Types.ObjectId, ref: 'Tag' }],
+		tags: [{ type: Types.ObjectId, ref: 'Tag' }],
 		notes: [{ type: Types.ObjectId }],
 		closed: { type: Date }
 		// users: [{ type: Types.ObjectId, ref: 'User' }]

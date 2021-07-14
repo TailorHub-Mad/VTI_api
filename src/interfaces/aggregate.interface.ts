@@ -34,3 +34,8 @@ export type TReplaceRootPopulateAggregate = {
 		};
 	};
 };
+
+export interface IPopulateGroup {
+	field: string;
+	property: string;
+}
