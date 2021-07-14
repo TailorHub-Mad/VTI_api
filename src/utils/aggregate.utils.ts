@@ -67,3 +67,24 @@ export const populateAggregate = (
 
 	return [unwind, lookup, unwind2, lookup2, group, replaceRoot];
 };
+
+export const findKey = <T extends Record<string, string[]>>(
+	value: string,
+	aux: T,
+	group: keyof T,
+	real?: boolean
+): string => {
+	return real ? value : value.match(/^\d/) ? '0-9' : (aux[group][0] as string).toUpperCase();
+};
+
+export const addGroup = (
+	aux: { alias: string },
+	property: { [key: string]: { alias: string }[] },
+	key: string
+): void => {
+	if (property[key]) {
+		if (!property[key].find((group) => group.alias === aux.alias)) property[key].push(aux);
+	} else {
+		property[key] = [aux];
+	}
+};

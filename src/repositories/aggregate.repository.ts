@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { populateAggregate } from '@utils/aggregate.utils';
+import { addGroup, findKey, populateAggregate } from '@utils/aggregate.utils';
 import { FilterQuery } from 'mongoose';
 import { IPopulateGroup } from 'src/interfaces/aggregate.interface';
 import { Pagination } from '../interfaces/config.interface';
@@ -17,6 +17,7 @@ import { ClientModel } from '../models/client.model';
  * @match Filtro principal
  * Filtrará por index: 'testSystem.vtiCode' 'testSystem.alias' 'testSystem.notes.title' 'projects.alias' 'projects.notes.title'
  *
+
  * @_extends Separación de arrays en objectos
  * Ejemplo: 'testSystem.notes'
  * Separará el array de testSystem en objectos y luego estos otra vez por cada notes que tenga para poder filtrar por ellos.
@@ -172,17 +173,17 @@ export const groupRepository = async <T, G extends string>(
 			numericOrdering: true
 		});
 
-	const findKey = (value: string, aux: any, real?: boolean) => {
-		return real ? value : value.match(/^\d/) ? '0-9' : (aux[group][0] as string).toUpperCase();
-	};
+	// const findKey = (value: string, aux: any, real?: boolean) => {
+	// 	return real ? value : value.match(/^\d/) ? '0-9' : (aux[group][0] as string).toUpperCase();
+	// };
 
-	const addGroup = (aux: any, property: { [key: string]: { alias: string }[] }, key: string) => {
-		if (property[key]) {
-			if (!property[key].find((group) => group.alias === aux.alias)) property[key].push(aux);
-		} else {
-			property[key] = [aux];
-		}
-	};
+	// const addGroup = (aux: any, property: { [key: string]: { alias: string }[] }, key: string) => {
+	// 	if (property[key]) {
+	// 		if (!property[key].find((group) => group.alias === aux.alias)) property[key].push(aux);
+	// 	} else {
+	// 		property[key] = [aux];
+	// 	}
+	// };
 
 	return properties.reduce((projectsGroup, { aux }) => {
 		const valueGroup = group.split('.').filter((property) => property !== field);
@@ -190,12 +191,12 @@ export const groupRepository = async <T, G extends string>(
 			return aux[property] || (field as unknown as { [key: string]: string })[property];
 		}, '');
 
-		let key = findKey(value, aux, options?.real);
+		let key = findKey(value, aux, group, options?.real);
 		addGroup(aux, projectsGroup, key);
 		if (aux?.tags?.relatedTags) {
 			for (const tag of aux.tags.relatedTags) {
 				value = tag.name;
-				key = findKey(value, aux, options?.real);
+				key = findKey(value, aux, group, options?.real);
 				addGroup(aux, projectsGroup, key);
 			}
 		}

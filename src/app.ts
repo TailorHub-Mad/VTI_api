@@ -11,6 +11,7 @@ import compression from 'compression';
 import { errorHandler } from './middleware/error.middleware';
 import redisLoader from './loaders/redis.loader';
 import dbLoader from './loaders/db.loader';
+// import './loaders/backup.loader';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const packageJson = require('../package.json');
 
