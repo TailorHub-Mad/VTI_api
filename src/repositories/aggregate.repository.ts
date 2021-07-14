@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { populateAggregate } from '@utils/aggregate.utils';
 import { FilterQuery } from 'mongoose';
 import { IPopulateGroup } from 'src/interfaces/aggregate.interface';

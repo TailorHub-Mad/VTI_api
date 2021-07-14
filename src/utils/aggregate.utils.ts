@@ -5,6 +5,7 @@ import {
 	TUnwindPopulateAggregate
 } from 'src/interfaces/aggregate.interface';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const groupByAlphanumeric = <T extends { aux: any }>(
 	documents: T[],
 	group: string
