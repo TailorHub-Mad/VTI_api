@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import {
 	createMessage,
 	createNote,
+	downloadDocument,
 	groupNotes,
 	updateMessage,
 	updateNote
@@ -13,8 +14,9 @@ export const CreateNote = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
-		const { body } = req;
-		await createNote(body);
+		const { body, files } = req;
+		console.log(req);
+		await createNote(body, files as Express.Multer.File[] | undefined);
 		res.sendStatus(201);
 	} catch (err) {
 		next(err);
@@ -74,6 +76,19 @@ export const GroupNotes = async (
 	try {
 		const notes = await groupNotes(req.query);
 		res.json(notes);
+	} catch (err) {
+		next(err);
+	}
+};
+
+export const DownloadDocumentNote = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		const document = await downloadDocument(req.params.document);
+		res.download(document);
 	} catch (err) {
 		next(err);
 	}

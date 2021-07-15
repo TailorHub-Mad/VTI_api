@@ -17,7 +17,7 @@ import { ClientModel } from '../models/client.model';
 import { BaseError } from '@errors/base.error';
 import { getPagination } from '@utils/controllers.utils';
 import { createSet, transformStringToObjectId } from '@utils/model.utils';
-import { updateRepository } from '../repositories/common.repository';
+import { findOneRepository, updateRepository } from '../repositories/common.repository';
 import { mongoIdValidation } from '../validations/common.validation';
 import { MessageModel } from '../models/message.model';
 import { GROUP_NOTES } from '@constants/group.constans';
@@ -25,10 +25,25 @@ import QueryString from 'qs';
 import { groupRepository } from 'src/repositories/aggregate.repository';
 import { IPopulateGroup } from 'src/interfaces/aggregate.interface';
 
-export const createNote = async (body: Partial<INote>): Promise<void> => {
+export const createNote = async (
+	body: Partial<INote>,
+	files: Express.Multer.File[] | undefined
+): Promise<void> => {
+	if (!Array.isArray(body.testSystems)) {
+		body.testSystems = [body.testSystems];
+	}
+	if (!Array.isArray(body.tags)) {
+		body.tags = [body.tags];
+	}
 	const validateBody = await createNoteValidation.validateAsync(body);
 	const { title, description, link = null, project, testSystems, tags } = validateBody;
-
+	let documents: { url: string; name: string }[] = [];
+	if (files) {
+		documents = files.map((file: Express.Multer.File) => ({
+			url: file.path,
+			name: file.fieldname
+		}));
+	}
 	const client = (
 		await read<IClientDocument>(
 			ClientModel,
@@ -41,7 +56,7 @@ export const createNote = async (body: Partial<INote>): Promise<void> => {
 
 	if (!client) throw new BaseError('Not found project');
 
-	client.notes.push({ title, description, link, tags });
+	client.notes.push({ title, description, link, tags, documents });
 	const newClient = await client.save();
 	const note: INoteDocument = newClient.notes.find((note) => note.title === title);
 	const projectId = transformStringToObjectId(project);
@@ -119,4 +134,24 @@ export const groupNotes = async (query: QueryString.ParsedQs): Promise<INote[]> 
 		{ real: queryValid.real, populate }
 	);
 	return notes;
+};
+
+export const downloadDocument = async (id_document: string): Promise<string> => {
+	const validateIdDocument = await mongoIdValidation.validateAsync(id_document);
+	const client = await findOneRepository<IClientDocument>(
+		ClientModel,
+		{ 'notes.documents._id': validateIdDocument },
+		{ _id: 0, notes: { $elemMatch: { documents: { $elemMatch: { _id: validateIdDocument } } } } }
+	);
+	if (!client) {
+		throw new BaseError('Missing Document');
+	}
+	const note: INote = client.notes[0];
+
+	const url = note.documents.find((document) => document._id.toString() === id_document);
+
+	if (!url) {
+		throw new BaseError('Missing Document');
+	}
+	return url.url;
 };
