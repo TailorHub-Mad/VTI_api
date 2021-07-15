@@ -13,6 +13,8 @@ import { getPagination } from '../utils/controllers.utils';
 import { GenericModel } from '../interfaces/models.interface';
 import { BaseError } from '@errors/base.error';
 import { FilterQuery, isValidObjectId } from 'mongoose';
+import { purgeObj } from '@utils/index';
+import { OrderAggregate } from '@utils/order.utils';
 
 // Creamos un controlador genérico usando una interface T que tendrá el valor del modelo que nosotros le pasemos.
 export const GetAll =
@@ -104,7 +106,11 @@ export const GetAllAggregate =
 	async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const pagination = getPagination(req.query);
-			const result = await getAllAggregate(pagination, field);
+			const result = await getAllAggregate(
+				pagination,
+				field,
+				purgeObj(new OrderAggregate(req.query as { [key: string]: 'asc' | 'des' }))
+			);
 			res.json(result);
 		} catch (err) {
 			next(err);

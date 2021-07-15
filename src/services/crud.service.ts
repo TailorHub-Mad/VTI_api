@@ -48,13 +48,15 @@ export const update = async <Doc, M extends GenericModel<Doc> = GenericModel<Doc
 
 export const getAllAggregate = async (
 	pagination: Pagination,
-	_extends?: string
+	_extends?: string,
+	order?: { [key: string]: -1 | 1 }
 ): Promise<unknown> => {
 	const transformExtendsToArray = _extends?.split('.');
 	const nameField = transformExtendsToArray?.slice(-1)[0];
 	return await aggregateCrud(
 		{ _extends, nameFild: nameField, querys: {}, group: 'null' },
-		pagination
+		pagination,
+		order
 	);
 };
 

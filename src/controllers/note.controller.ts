@@ -44,9 +44,9 @@ export const UpdateNote = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
-		const { body, params } = req;
+		const { body, params, files } = req;
 		const { id } = params;
-		await updateNote(id, body);
+		await updateNote(id, body, files as Express.Multer.File[] | undefined);
 		res.sendStatus(200);
 	} catch (err) {
 		next(err);

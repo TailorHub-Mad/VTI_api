@@ -27,7 +27,7 @@ import { IPopulateGroup } from 'src/interfaces/aggregate.interface';
 
 export const createNote = async (
 	body: Partial<INote>,
-	files: Express.Multer.File[] | undefined
+	files?: Express.Multer.File[]
 ): Promise<void> => {
 	if (!Array.isArray(body.testSystems)) {
 		body.testSystems = [body.testSystems];
@@ -99,7 +99,26 @@ export const createMessage = async (
 	);
 };
 
-export const updateNote = async (note_id: string, body: Partial<INote>): Promise<void> => {
+export const updateNote = async (
+	note_id: string,
+	body: Partial<INote>,
+	files?: Express.Multer.File[]
+): Promise<void> => {
+	console.log(body);
+	if (body.testSystems && !Array.isArray(body.testSystems)) {
+		body.testSystems = [body.testSystems];
+	}
+	if (body.tags && !Array.isArray(body.tags)) {
+		body.tags = [body.tags];
+	}
+	if (files) {
+		body.documents = (body.documents || []).concat(
+			files.map((file: Express.Multer.File) => ({
+				url: file.path,
+				name: file.fieldname
+			}))
+		);
+	}
 	const validateBody = await updateNoteValidationAdmin.validateAsync(body);
 	const validateIdNote = await mongoIdValidation.validateAsync(note_id);
 
@@ -148,7 +167,7 @@ export const downloadDocument = async (id_document: string): Promise<string> => 
 	}
 	const note: INote = client.notes[0];
 
-	const url = note.documents.find((document) => document._id.toString() === id_document);
+	const url = note.documents.find((document) => document._id?.toString() === id_document);
 
 	if (!url) {
 		throw new BaseError('Missing Document');

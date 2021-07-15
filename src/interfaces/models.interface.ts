@@ -15,7 +15,7 @@ interface IDepartament {
 interface IDocument {
 	url: string;
 	name: string;
-	_id: string;
+	_id?: string;
 }
 
 export interface IDepartamentDocument extends IDepartament, Document {}
