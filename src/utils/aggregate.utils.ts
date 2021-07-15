@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
 	TGroupPopulateAggregate,
 	TLookupPopulateAggrefate,
@@ -87,4 +88,27 @@ export const addGroup = (
 	} else {
 		property[key] = [aux];
 	}
+};
+
+export const groupAggregate = <T, G extends string>(
+	properties: any[],
+	{ group, field, real }: { group: G; field: string; real?: boolean }
+): T[] => {
+	return properties.reduce((projectsGroup, { aux }) => {
+		const valueGroup = group.split('.').filter((property) => property !== field);
+		let value = valueGroup.reduce((field, property) => {
+			return aux[property] || (field as unknown as { [key: string]: string })[property];
+		}, '');
+
+		let key = findKey(value, aux, group, real);
+		addGroup(aux, projectsGroup, key);
+		if (aux?.tags?.relatedTags) {
+			for (const tag of aux.tags.relatedTags) {
+				value = tag.name;
+				key = findKey(value, aux, group, real);
+				addGroup(aux, projectsGroup, key);
+			}
+		}
+		return projectsGroup;
+	}, {} as { [key: string]: T[] });
 };

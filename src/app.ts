@@ -37,10 +37,6 @@ app.use(compression());
 app.use(express.json());
 app.use(loaders.morganMiddleware);
 
-app.get('/', async (_req, res) => {
-	res.json({ status: 'ok' });
-});
-
 loaders.middlewares(app);
 loaders.router(app);
 app.use(errorHandler);
