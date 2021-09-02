@@ -1,8 +1,8 @@
 import winston from 'winston';
 
 const levels = {
-	error: 0,
-	notice: 1,
+	notice: 0,
+	error: 1,
 	warn: 2,
 	info: 3,
 	http: 4,

@@ -104,7 +104,6 @@ export const updateNote = async (
 	body: Partial<INote>,
 	files?: Express.Multer.File[]
 ): Promise<void> => {
-	console.log(body);
 	if (body.testSystems && !Array.isArray(body.testSystems)) {
 		body.testSystems = [body.testSystems];
 	}

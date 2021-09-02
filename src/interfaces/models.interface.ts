@@ -192,4 +192,5 @@ export type ICriterionProjectModel = Model<ICriterionProjectDocument>;
 export interface IReqUser {
 	id: string;
 	email: string;
+	role: string;
 }

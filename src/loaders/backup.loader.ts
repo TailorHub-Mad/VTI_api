@@ -1,6 +1,9 @@
 import { spawn } from 'child_process';
 import path from 'path';
 
+// Create interval for 4h and 1 week.
+// Delete files.
+
 function toJSONLocal() {
 	const date = new Date();
 	const local = new Date(date);
@@ -10,9 +13,8 @@ function toJSONLocal() {
 // console.log('--');
 // console.log(path.join(process.cwd(), 'backup', `${toJSONLocal()}.gz`));
 const backupProcess = spawn('mongodump', [
-	'--db=vti-dev',
-	`--archive=${path.join(process.cwd(), 'backup', `${toJSONLocal()}.gz`)}`,
-	'--gzip'
+	'--uri="mongodb://localhost:27017/vti-dev"',
+	`--archive=${path.join(process.cwd(), 'backup', `${toJSONLocal()}`)}`
 ]);
 
 backupProcess.on('exit', (code, signal) => {
