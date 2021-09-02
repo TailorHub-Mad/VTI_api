@@ -14,9 +14,9 @@ export const CreateNote = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
-		const { body, files } = req;
-		console.log(req);
+		const { body, files, user } = req;
 		await createNote(body, files as Express.Multer.File[] | undefined);
+		logger.notice(`El usuario ${user.email} ha creado un apunte con título ${body.title}`);
 		res.sendStatus(201);
 	} catch (err) {
 		next(err);
@@ -32,6 +32,10 @@ export const CreateMessage = async (
 		const { body, params, user } = req;
 		const { id } = params;
 		await createMessage(id, body, user);
+		logger.notice(
+			`El usuario ${user.email} ha creado el mensaje con title ${body.message} en el apunte con la id ${id}`,
+			{ name: 'test' }
+		);
 		res.sendStatus(201);
 	} catch (err) {
 		next(err);
@@ -44,9 +48,10 @@ export const UpdateNote = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
-		const { body, params, files } = req;
+		const { body, params, files, user } = req;
 		const { id } = params;
 		await updateNote(id, body, files as Express.Multer.File[] | undefined);
+		logger.notice(`El usuario ${user.email} ha modificado un apunte con título ${body.title}`);
 		res.sendStatus(200);
 	} catch (err) {
 		next(err);
@@ -59,9 +64,12 @@ export const UpdateMessage = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
-		const { body, params } = req;
+		const { body, params, user } = req;
 		const { id } = params;
 		await updateMessage(id, body);
+		logger.notice(
+			`El usuario ${user.email} ha modificado un mensaje con título ${body.message} en el apunte con la id ${id}`
+		);
 		res.sendStatus(200);
 	} catch (err) {
 		next(err);
@@ -88,6 +96,8 @@ export const DownloadDocumentNote = async (
 ): Promise<void> => {
 	try {
 		const document = await downloadDocument(req.params.document);
+		const user = req.user;
+		logger.notice(`El usuario ${user.email} se ha descargado el archivo ${document}`);
 		res.download(document);
 	} catch (err) {
 		next(err);

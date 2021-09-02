@@ -11,8 +11,11 @@ export const CreateTestSystem = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
-		const { body } = req;
+		const { body, user } = req;
 		await createTestSystem(body);
+		logger.notice(
+			`El usuario ${user.email} ha creado un sistema de ensayo con el alias ${body.alias}`
+		);
 		res.sendStatus(201);
 	} catch (err) {
 		next(err);
@@ -25,8 +28,11 @@ export const UpdateTestSystem = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
-		const { body, params } = req;
+		const { body, params, user } = req;
 		await updateTestSystem(params.id_testSystem as string, body);
+		logger.notice(
+			`El usuario ${user.email} ha modificado un sistema de ensayo con el alias ${params.id_testSystem}`
+		);
 		res.sendStatus(200);
 	} catch (err) {
 		next(err);
