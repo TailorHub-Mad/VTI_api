@@ -13,12 +13,10 @@ export const getProfile = async (
 	try {
 		const { user } = req;
 		if (user) {
-			const userFind = await read<IUserDocument>(
-				UserModel,
-				{ _id: user.id },
-				getPagination(req.query)
-			);
-			res.status(200).json(userFind);
+			const userFind = (
+				await read<IUserDocument>(UserModel, { _id: user.id }, getPagination(req.query))
+			)[0].toObject();
+			res.status(200).json([{ role: user.role, ...userFind }]);
 		} else {
 			throw new NotFoundError();
 		}
