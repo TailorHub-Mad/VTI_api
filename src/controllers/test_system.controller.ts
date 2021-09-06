@@ -2,7 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 import {
 	createTestSystem,
 	updateTestSystem,
-	groupTestSystem
+	groupTestSystem,
+	deleteTestSystem
 } from '../services/test_system.service';
 
 export const CreateTestSystem = async (
@@ -32,6 +33,24 @@ export const UpdateTestSystem = async (
 		await updateTestSystem(params.id_testSystem as string, body);
 		logger.notice(
 			`El usuario ${user.email} ha modificado un sistema de ensayo con el alias ${params.id_testSystem}`
+		);
+		res.sendStatus(200);
+	} catch (err) {
+		next(err);
+	}
+};
+
+export const DeleteTestSystem = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		const { user } = req;
+		const { id_testSystem } = req.params;
+		await deleteTestSystem(id_testSystem);
+		logger.notice(
+			`El usuario ${user.email} ha eliminado un sistema de ensayo con el id ${id_testSystem}`
 		);
 		res.sendStatus(200);
 	} catch (err) {

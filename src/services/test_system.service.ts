@@ -8,6 +8,7 @@ import { BaseError } from '@errors/base.error';
 import { checkVtiCode } from '../repositories/test_system.repository';
 import {
 	createModelsInClientRepository,
+	deleteModelInClientRepository,
 	updateModelsInClientRepository
 } from '../repositories/client.repository';
 import { mongoIdValidation } from '../validations/common.validation';
@@ -55,4 +56,10 @@ export const groupTestSystem = async (query: QueryString.ParsedQs): Promise<ITes
 		{ real: queryValid.real, populate }
 	);
 	return testSystem;
+};
+
+export const deleteTestSystem = async (id_testSystem: string): Promise<void> => {
+	const validateId = await mongoIdValidation.validateAsync(id_testSystem);
+
+	await deleteModelInClientRepository('testSystem', validateId);
 };

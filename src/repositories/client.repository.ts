@@ -20,3 +20,13 @@ export const updateModelsInClientRepository = async (
 	const update = createSet(body, `${field}.$`);
 	return await ClientModel.findOneAndUpdate({ [`${field}._id`]: find_id }, update);
 };
+
+export const deleteModelInClientRepository = async (
+	field: 'testSystem' | 'projects',
+	find_id: string
+): Promise<IClientDocument | null> => {
+	return await ClientModel.findOneAndUpdate(
+		{ [`${field}._id`]: find_id },
+		{ $pull: { [field]: { _id: find_id } } }
+	);
+};

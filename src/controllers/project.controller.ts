@@ -1,5 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
-import { createProject, orderProject, updateProject } from '../services/project.service';
+import {
+	createProject,
+	deleteProject,
+	orderProject,
+	updateProject
+} from '../services/project.service';
 
 export const CreateProject = async (
 	req: Request,
@@ -27,6 +32,22 @@ export const UpdateProject = async (
 		logger.notice(
 			`El usuario ${user.email} ha modificado un proyecto con el id ${params.id_project}`
 		);
+		res.sendStatus(200);
+	} catch (err) {
+		next(err);
+	}
+};
+
+export const DeleteProject = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		const { user } = req;
+		const { id_project } = req.params;
+		await deleteProject(id_project);
+		logger.notice(`El usuario ${user.email} ha eliminado un proyecto con el id ${id_project}`);
 		res.sendStatus(200);
 	} catch (err) {
 		next(err);

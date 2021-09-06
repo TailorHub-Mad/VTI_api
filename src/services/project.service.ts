@@ -1,6 +1,7 @@
 import { BaseError } from '@errors/base.error';
 import {
 	createModelsInClientRepository,
+	deleteModelInClientRepository,
 	updateModelsInClientRepository
 } from '../repositories/client.repository';
 import { checkAlias } from '../repositories/project.respository';
@@ -38,6 +39,12 @@ export const updateProject = async (
 	}
 
 	await updateModelsInClientRepository('projects', projectIdValidation, projectValidation);
+};
+
+export const deleteProject = async (id_project: string): Promise<void> => {
+	const projectIdValidation = await mongoIdValidation.validateAsync(id_project);
+
+	await deleteModelInClientRepository('projects', projectIdValidation);
 };
 
 export const orderProject = async (query: QueryString.ParsedQs): Promise<IProjects[]> => {
