@@ -13,9 +13,9 @@ import {
 } from '../validations/project.validation';
 import { IProjects } from '../interfaces/models.interface';
 import QueryString from 'qs';
-import { groupRepository } from 'src/repositories/aggregate.repository';
+import { groupRepository } from '../repositories/aggregate.repository';
 import { GROUP_PROJECT } from '@constants/group.constans';
-import { IPopulateGroup } from 'src/interfaces/aggregate.interface';
+import { IPopulateGroup } from '../interfaces/aggregate.interface';
 
 export const createProject = async (body: Partial<IProjects>): Promise<void> => {
 	const projectValidation = await createProjectValidation.validateAsync(body);

@@ -22,8 +22,8 @@ import { mongoIdValidation } from '../validations/common.validation';
 import { MessageModel } from '../models/message.model';
 import { GROUP_NOTES } from '@constants/group.constans';
 import QueryString from 'qs';
-import { groupRepository } from 'src/repositories/aggregate.repository';
-import { IPopulateGroup } from 'src/interfaces/aggregate.interface';
+import { groupRepository } from '../repositories/aggregate.repository';
+import { IPopulateGroup } from '../interfaces/aggregate.interface';
 
 export const createNote = async (
 	body: Partial<INote>,

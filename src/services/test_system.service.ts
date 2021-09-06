@@ -13,8 +13,8 @@ import {
 } from '../repositories/client.repository';
 import { mongoIdValidation } from '../validations/common.validation';
 import QueryString from 'qs';
-import { IPopulateGroup } from 'src/interfaces/aggregate.interface';
-import { groupRepository } from 'src/repositories/aggregate.repository';
+import { IPopulateGroup } from '../interfaces/aggregate.interface';
+import { groupRepository } from '../repositories/aggregate.repository';
 import { GROUP_TEST_SYSTEM } from '@constants/group.constans';
 
 export const createTestSystem = async (body: Partial<IClient>): Promise<void> => {

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { groupAggregate, populateAggregate } from '@utils/aggregate.utils';
 import { FilterQuery } from 'mongoose';
-import { IPopulateGroup } from 'src/interfaces/aggregate.interface';
+import { IPopulateGroup } from '../interfaces/aggregate.interface';
 import { Pagination } from '../interfaces/config.interface';
 import { IClientModel } from '../interfaces/models.interface';
 import { ClientModel } from '../models/client.model';

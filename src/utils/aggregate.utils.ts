@@ -4,7 +4,7 @@ import {
 	TLookupPopulateAggrefate,
 	TReplaceRootPopulateAggregate,
 	TUnwindPopulateAggregate
-} from 'src/interfaces/aggregate.interface';
+} from '../interfaces/aggregate.interface';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const groupByAlphanumeric = <T extends { aux: any }>(
