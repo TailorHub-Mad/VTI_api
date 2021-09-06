@@ -37,7 +37,7 @@ export const GetAll =
 export const Create =
 	<Doc, M extends GenericModel<Doc> = GenericModel<Doc>>(
 		model: M,
-		validate: Joi.ObjectSchema<Partial<Doc>>
+		validate: Joi.ObjectSchema<Partial<Doc>> | Joi.ArraySchema
 	): ((req: Request, res: Response, next: NextFunction) => Promise<void>) =>
 	async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {

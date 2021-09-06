@@ -20,6 +20,9 @@ export const signup = async ({
 			password,
 			email
 		});
+		if (Array.isArray(savedUser)) {
+			throw new BaseError();
+		}
 		return {
 			alias: savedUser.alias,
 			token: signJWT(savedUser.id, savedUser.isAdmin, email!),

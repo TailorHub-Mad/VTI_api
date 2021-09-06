@@ -29,10 +29,13 @@ export const read = async <Doc, M extends GenericModel<Doc> = GenericModel<Doc>>
 
 export const create = async <Doc, M extends GenericModel<Doc> = GenericModel<Doc>>(
 	model: M,
-	validate: Joi.ObjectSchema<Doc>,
+	validate: Joi.ObjectSchema<Doc> | Joi.ArraySchema,
 	body: Partial<unknown>
-): Promise<Doc> => {
+): Promise<Doc | Doc[]> => {
 	const newInfo = await validate.validateAsync(body);
+	if (Array.isArray(newInfo)) {
+		return await Promise.all(newInfo.map((document) => createRepository<Doc>(model, document)));
+	}
 	return await createRepository<Doc>(model, newInfo);
 };
 
