@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import Joi from 'joi';
 import {
 	create,
+	deleteCrud,
 	getAll,
 	getAllAggregate,
 	getByIdAggregate,
@@ -98,6 +99,21 @@ export const Update =
 			res.status(200).json(document);
 		} catch (err) {
 			logger.error(`Error update ${model.collection.name}`);
+			next(err);
+		}
+	};
+
+export const DeleteCrud =
+	<Doc, M extends GenericModel<Doc> = GenericModel<Doc>>(
+		model: M
+	): ((req: Request, res: Response, next: NextFunction) => Promise<void>) =>
+	async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+		try {
+			const { id } = req.params;
+			if (!id || !isValidObjectId(id)) throw new BaseError('Not ID', 400);
+			await deleteCrud<Doc, M>(model, { _id: id });
+			res.json(200).send();
+		} catch (err) {
 			next(err);
 		}
 	};

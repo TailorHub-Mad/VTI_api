@@ -3,6 +3,7 @@ import { aggregateCrud } from '../repositories/aggregate.repository';
 import { Pagination } from '../interfaces/config.interface';
 import {
 	createRepository,
+	deleteRepository,
 	findWithPagination,
 	updateRepository
 } from '../repositories/common.repository';
@@ -44,6 +45,13 @@ export const update = async <Doc, M extends GenericModel<Doc> = GenericModel<Doc
 	const updateInfo = await validate.validateAsync(body);
 	Object.keys(updateInfo).forEach((key) => updateInfo[key] === undefined && delete updateInfo[key]);
 	return await updateRepository<Doc>(model, query, updateInfo);
+};
+
+export const deleteCrud = async <Doc, M extends GenericModel<Doc> = GenericModel<Doc>>(
+	model: M,
+	filter: FilterQuery<Document>
+): Promise<Doc | null> => {
+	return await deleteRepository<Doc>(model, filter);
 };
 
 export const getAllAggregate = async (

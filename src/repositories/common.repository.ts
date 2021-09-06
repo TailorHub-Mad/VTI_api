@@ -43,3 +43,10 @@ export const updateRepository = async <Doc, M extends GenericModel<Doc> = Generi
 		...options
 	});
 };
+
+export const deleteRepository = async <Doc, M extends GenericModel<Doc> = GenericModel<Doc>>(
+	model: M,
+	filter: FilterQuery<Document>
+): Promise<Doc | null> => {
+	return await model.findOneAndRemove(filter);
+};
