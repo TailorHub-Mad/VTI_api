@@ -25,7 +25,7 @@ const TEST_SYSTEM_NAME = [
 ];
 
 export default async (): Promise<void> => {
-	// const allClients = await (ClientModel as any).updateMany({}, { $unset: 'testSystem' });
+	// const allClients = await ClientModel.find({});
 	await ClientModel.updateMany({}, { $unset: { testSystem: 1 } }, { multi: true });
 	// await Promise.all(
 	// 	allClients.map((client) => {
@@ -37,8 +37,7 @@ export default async (): Promise<void> => {
 	// 		// 	return testSystems;
 	// 		// });
 	// 		return client.updateOne({
-	// 			testSystems: (client.toObject() as any).testSystem,
-	// 			testSystem: undefined
+	// 			testSystems: (client.toObject() as any).testSystem
 	// 		});
 	// 	})
 	// );

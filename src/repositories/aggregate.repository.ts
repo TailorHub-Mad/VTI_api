@@ -38,14 +38,14 @@ export const aggregateCrud = async (
 		querys,
 		nameFild,
 		group,
-		populate
+		populates
 	}: {
 		match?: string;
 		_extends?: string;
 		nameFild?: string;
 		querys: FilterQuery<IClientModel>;
 		group?: string;
-		populate?: string;
+		populates?: string[];
 	},
 	pagination?: Pagination,
 	order?: { [key: string]: -1 | 1 }
@@ -111,56 +111,54 @@ export const aggregateCrud = async (
 		pipeline.push({
 			$sort: order || { [`${nameFild}.updatedAt`]: -1 }
 		});
-		if (populate)
-			pipeline.push(
-				{
-					$unwind: {
-						path: '$testSystems'
-					}
-				},
-				{
-					$unwind: {
-						path: '$projects.testSystems'
-					}
-				},
-				{
-					$match: {
-						$expr: {
-							$eq: ['$projects.testSystems', '$testSystems._id']
+		if (populates) {
+			populates.forEach((populate) => {
+				pipeline.push(
+					{
+						$unwind: {
+							path: `$${populate}`
+						}
+					},
+					{
+						$unwind: {
+							path: `$${nameFild}.${populate}`
+						}
+					},
+					{
+						$match: {
+							$expr: {
+								$eq: [`$${nameFild}.${populate}`, `$${populate}._id`]
+							}
+						}
+					},
+					{
+						$addFields: {
+							[`${nameFild}.${populate}`]: `$${populate}`
 						}
 					}
-				},
-				{
-					$addFields: {
-						'projects.testSystems': '$testSystems'
-					}
-				},
-				{
-					$group: {
-						_id: '$projects._id',
-						projects: {
-							$first: '$projects'
-						},
-						testSystems: {
-							$push: '$projects.testSystems'
+				);
+			});
+			populates.forEach((populate) => {
+				pipeline.push(
+					{
+						$group: {
+							_id: `$${nameFild}._id`,
+							projects: {
+								$first: `$${nameFild}`
+							},
+							[populate]: {
+								$push: `$${nameFild}.${populate}`
+							}
+						}
+					},
+					{
+						$addFields: {
+							[`${nameFild}.${populate}`]: `$${populate}`
 						}
 					}
-				},
-				{
-					$addFields: {
-						'projects.testSystems': '$testSystems'
-					}
-				}
-				// {
-				// 	$group: {
-				// 		_id: '$_id',
-				// 		projects: {
-				// 			$first: { $arrayElemAt: ['$projects', 0] }
-				// 		}
-				// 	}
-				// }
-			);
-
+				);
+			});
+		}
 		pipeline.push({
 			$group: {
 				_id: group || '$_id',

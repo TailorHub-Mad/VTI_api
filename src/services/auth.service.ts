@@ -5,8 +5,8 @@ import { IDepartmentDocument, IUser, IUserDocument } from '../interfaces/models.
 import { create, read } from './crud.service';
 import { signJWT } from './jwt.service';
 import { BaseError } from '@errors/base.error';
-import { updateRepository } from 'src/repositories/common.repository';
-import { DepartmentModel } from 'src/models/department.model';
+import { updateRepository } from '../repositories/common.repository';
+import { DepartmentModel } from '../models/department.model';
 
 export const signup = async ({
 	email,

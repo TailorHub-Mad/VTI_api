@@ -61,24 +61,30 @@ export const deleteCrud = async <Doc, M extends GenericModel<Doc> = GenericModel
 export const getAllAggregate = async (
 	pagination: Pagination,
 	_extends?: string,
-	order?: { [key: string]: -1 | 1 }
+	order?: { [key: string]: -1 | 1 },
+	populates?: string[]
 ): Promise<unknown> => {
 	const transformExtendsToArray = _extends?.split('.');
 	const nameField = transformExtendsToArray?.slice(-1)[0];
 	return await aggregateCrud(
-		{ _extends, nameFild: nameField, querys: {}, group: 'null' },
+		{ _extends, nameFild: nameField, querys: {}, group: 'null', populates },
 		pagination,
 		order
 	);
 };
 
-export const getByIdAggregate = async (id: string, _extends?: string): Promise<unknown> => {
+export const getByIdAggregate = async (
+	id: string,
+	_extends?: string,
+	populates?: string[]
+): Promise<unknown> => {
 	const transformExtendsToArray = _extends?.split('.');
 	const nameField = transformExtendsToArray?.slice(-1)[0];
 	return await aggregateCrud({
 		_extends,
 		nameFild: nameField,
-		querys: { [`${nameField}._id`]: Types.ObjectId(id) }
+		querys: { [`${nameField}._id`]: Types.ObjectId(id) },
+		populates
 	});
 };
 

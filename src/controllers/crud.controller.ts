@@ -122,7 +122,10 @@ export const DeleteCrud =
 	};
 
 export const GetAllAggregate =
-	(field?: string): ((req: Request, res: Response, next: NextFunction) => Promise<void>) =>
+	(
+		field?: string,
+		populates?: string[]
+	): ((req: Request, res: Response, next: NextFunction) => Promise<void>) =>
 	async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const pagination = getPagination(req.query);
@@ -131,7 +134,8 @@ export const GetAllAggregate =
 				field,
 				purgeObj(
 					Object.assign({}, new OrderAggregate(req.query as { [key: string]: 'asc' | 'des' }))
-				)
+				),
+				populates
 			);
 			res.json(result);
 		} catch (err) {
@@ -140,12 +144,15 @@ export const GetAllAggregate =
 	};
 
 export const GetByIdAggregate =
-	(field?: string): ((req: Request, res: Response, next: NextFunction) => Promise<void>) =>
+	(
+		field?: string,
+		populates?: string[]
+	): ((req: Request, res: Response, next: NextFunction) => Promise<void>) =>
 	async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const { id } = req.params;
 			if (!id || !isValidObjectId(id)) throw new BaseError('Not ID');
-			const result = await getByIdAggregate(id, field);
+			const result = await getByIdAggregate(id, field, populates);
 			res.json(result);
 		} catch (err) {
 			next(err);

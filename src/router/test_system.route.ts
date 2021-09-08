@@ -10,11 +10,11 @@ import { GetAllAggregate, GetByIdAggregate } from '../controllers/crud.controlle
 
 const router = Router();
 
-router.get('/', GetAllAggregate('testSystems'));
+router.get('/', GetAllAggregate('testSystems', ['projects', 'notes']));
 
 router.get('/group', GroupTestSystem);
 
-router.get('/:id', GetByIdAggregate('testSystems'));
+router.get('/:id', GetByIdAggregate('testSystems', ['projects', 'notes']));
 
 router.post('/', CreateTestSystem);
 
