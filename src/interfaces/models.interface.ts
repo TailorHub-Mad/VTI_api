@@ -97,7 +97,7 @@ export type IProjectsModel = Model<IProjectsDocument>;
 export interface IClient {
 	alias: string;
 	name: string;
-	testSystem: ITestSystemDocument['_id'][];
+	testSystems: ITestSystemDocument['_id'][];
 	projects: IProjectsDocument['_id'][];
 	notes: INoteDocument['_id'][];
 }

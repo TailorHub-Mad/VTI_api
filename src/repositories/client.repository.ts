@@ -4,7 +4,7 @@ import { IClientDocument } from '../interfaces/models.interface';
 import { ClientModel } from '../models/client.model';
 
 export const createModelsInClientRepository = async (
-	field: 'testSystem' | 'projects',
+	field: 'testSystems' | 'projects',
 	find_id: string,
 	body: UpdateQuery<IClientDocument>
 ): Promise<IClientDocument | undefined> => {
@@ -13,7 +13,7 @@ export const createModelsInClientRepository = async (
 };
 
 export const updateModelsInClientRepository = async (
-	field: 'testSystem' | 'projects',
+	field: 'testSystems' | 'projects',
 	find_id: string,
 	body: UpdateQuery<IClientDocument>
 ): Promise<IClientDocument | null> => {
@@ -22,7 +22,7 @@ export const updateModelsInClientRepository = async (
 };
 
 export const deleteModelInClientRepository = async (
-	field: 'testSystem' | 'projects',
+	field: 'testSystems' | 'projects',
 	find_id: string
 ): Promise<IClientDocument | null> => {
 	return await ClientModel.findOneAndUpdate(

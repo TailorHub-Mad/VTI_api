@@ -8,6 +8,7 @@ const clientSchema = new Schema<IClientDocument, IClientModel>(
 	{
 		alias: { type: String, unique: true, required: true, index: true },
 		name: { type: String },
+		testSystems: [testSystemSchema],
 		testSystem: [testSystemSchema],
 		projects: [projectSchema],
 		notes: [noteSchema]
@@ -31,8 +32,8 @@ const clientSchema = new Schema<IClientDocument, IClientModel>(
 );
 clientSchema.index({
 	alias: 'text',
-	'testSystem.vtiCode': 'text',
-	'testSystem.alias': 'text',
+	'testSystems.vtiCode': 'text',
+	'testSystems.alias': 'text',
 	'projects.alias': 'text',
 	'notes.title': 'text'
 });

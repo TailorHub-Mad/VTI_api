@@ -24,6 +24,6 @@ export const GROUP_USER = ['department'] as const;
 export enum Test {
 	'year' = 'date.year',
 	'tags' = 'notes.tags.name',
-	'sector' = 'testSystem.sector',
+	'sector' = 'testSystems.sector',
 	'department' = 'department'
 }

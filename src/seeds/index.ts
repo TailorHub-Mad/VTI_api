@@ -1,11 +1,13 @@
 import 'dotenv/config';
 import logger from '@log';
 import dbLoader from '../loaders/db.loader';
-import testSeed from './test.seed';
+import testSeed from './client.seed';
+import script from './script';
 (async () => {
 	await dbLoader.open();
 	try {
-		await testSeed();
+		// await testSeed();
+		await script();
 	} catch (err) {
 		logger.error(err.message);
 	} finally {

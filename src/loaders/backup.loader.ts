@@ -12,9 +12,12 @@ function toJSONLocal() {
 }
 // console.log('--');
 // console.log(path.join(process.cwd(), 'backup', `${toJSONLocal()}.gz`));
+console.log(`--archive=${path.join(process.cwd(), 'backup', `${toJSONLocal()}`)}`);
 const backupProcess = spawn('mongodump', [
-	'--uri="mongodb://localhost:27017/vti-dev"',
-	`--archive=${path.join(process.cwd(), 'backup', `${toJSONLocal()}`)}`
+	`--archive="${path.join(process.cwd(), 'backup', `${toJSONLocal()}`)}"`,
+	'--uri="mongodb://localhost:27017/vti-dev"'
+	// '--nsFrom="vti-dev.*"',
+	// '--nsTo="vti-backup.*"'
 ]);
 
 backupProcess.on('exit', (code, signal) => {

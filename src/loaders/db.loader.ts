@@ -2,9 +2,9 @@ import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { DATABASEURL } from '@constants/env.constants';
 
-if (process.env.NODE_ENV === 'development') {
-	mongoose.set('debug', true); // disabled to production
-}
+// if (process.env.NODE_ENV === 'development') {
+// }
+mongoose.set('debug', true); // disabled to production
 
 const options = {
 	useNewUrlParser: true,
@@ -38,6 +38,7 @@ class MongoConnection {
 				const mongoUrl = await this._mongoServer.getUri();
 				await mongoose.connect(mongoUrl, options);
 			} else {
+				console.log(DATABASEURL);
 				logger.debug('connecting to mongo db: ' + DATABASEURL);
 				await mongoose.connect(DATABASEURL, options);
 			}

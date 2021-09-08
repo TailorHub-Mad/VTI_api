@@ -132,15 +132,15 @@ describe('Aggregate', () => {
 
 	describe('Test Systems', () => {
 		it('All test systems', async () => {
-			const { testSystem } = (
+			const { testSystems } = (
 				await aggregateCrud(
-					{ _extends: 'testSystem', nameFild: 'testSystem', querys: {}, group: 'null' },
+					{ _extends: 'testSystems', nameFild: 'testSystems', querys: {}, group: 'null' },
 					pagination
 				)
 			)[0];
 
-			const _testSystem = testSystem[0];
-			expect(testSystem).toBeDefined();
+			const _testSystem = testSystems[0];
+			expect(testSystems).toBeDefined();
 			expect(_testSystem).toBeDefined();
 		});
 	});

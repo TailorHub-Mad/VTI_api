@@ -37,13 +37,15 @@ export const aggregateCrud = async (
 		_extends,
 		querys,
 		nameFild,
-		group
+		group,
+		populate
 	}: {
 		match?: string;
 		_extends?: string;
 		nameFild?: string;
 		querys: FilterQuery<IClientModel>;
 		group?: string;
+		populate?: string;
 	},
 	pagination?: Pagination,
 	order?: { [key: string]: -1 | 1 }
@@ -109,6 +111,55 @@ export const aggregateCrud = async (
 		pipeline.push({
 			$sort: order || { [`${nameFild}.updatedAt`]: -1 }
 		});
+		if (populate)
+			pipeline.push(
+				{
+					$unwind: {
+						path: '$testSystems'
+					}
+				},
+				{
+					$unwind: {
+						path: '$projects.testSystems'
+					}
+				},
+				{
+					$match: {
+						$expr: {
+							$eq: ['$projects.testSystems', '$testSystems._id']
+						}
+					}
+				},
+				{
+					$addFields: {
+						'projects.testSystems': '$testSystems'
+					}
+				},
+				{
+					$group: {
+						_id: '$projects._id',
+						projects: {
+							$first: '$projects'
+						},
+						testSystems: {
+							$push: '$projects.testSystems'
+						}
+					}
+				},
+				{
+					$addFields: {
+						'projects.testSystems': '$testSystems'
+					}
+				}
+				// {
+				// 	$group: {
+				// 		_id: '$_id',
+				// 		projects: {
+				// 			$first: { $arrayElemAt: ['$projects', 0] }
+				// 		}
+				// 	}
+				// }
+			);
 
 		pipeline.push({
 			$group: {

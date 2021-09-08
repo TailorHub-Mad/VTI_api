@@ -68,11 +68,11 @@ export const createNote = async (
 		return project;
 	});
 
-	newClient.testSystem = client.testSystem.map((testSystem) => {
-		if ((testSystems || []).includes(testSystem._id.toString())) {
-			testSystem.notes.push(note._id);
+	newClient.testSystems = client.testSystems.map((testSystems) => {
+		if ((testSystems || []).includes(testSystems._id.toString())) {
+			testSystems.notes.push(note._id);
 		}
-		return testSystem;
+		return testSystems;
 	});
 	await newClient.save();
 };
