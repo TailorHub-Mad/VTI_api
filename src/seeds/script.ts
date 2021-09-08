@@ -1,6 +1,6 @@
-import { randomBytes } from 'crypto';
+// import { randomBytes } from 'crypto';
 import { ClientModel } from '../models/client.model';
-import { randomNumberFnc } from './client.seed';
+// import { randomNumberFnc } from './client.seed';
 
 const TEST_SYSTEM_NAME = [
 	'ADS-DALPHI-003',
