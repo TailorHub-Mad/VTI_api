@@ -7,7 +7,7 @@ interface IDate {
 	year: string;
 }
 
-interface IDepartament {
+interface IDepartment {
 	name: string;
 	users: IUserDocument['_id'][];
 }
@@ -18,9 +18,9 @@ interface IDocument {
 	_id?: string;
 }
 
-export interface IDepartamentDocument extends IDepartament, Document {}
+export interface IDepartmentDocument extends IDepartment, Document {}
 
-export type IDepartamentModel = Model<IDepartamentDocument>;
+export type IDepartmentModel = Model<IDepartmentDocument>;
 
 export const NOTIFICATION_STATUS = ['no read', 'read'] as const;
 
@@ -32,7 +32,7 @@ export interface IUser {
 	name: string;
 	lastName: string;
 	isAdmin: boolean;
-	department: IDepartamentDocument['_id'];
+	department: IDepartmentDocument['_id'];
 	projectsComments: IProjectsDocument['_id'][];
 	focusPoint: IUserDocument['_id'][];
 	favorites: {

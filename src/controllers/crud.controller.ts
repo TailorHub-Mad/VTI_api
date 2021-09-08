@@ -13,20 +13,20 @@ import {
 import { getPagination } from '../utils/controllers.utils';
 import { GenericModel } from '../interfaces/models.interface';
 import { BaseError } from '@errors/base.error';
-import { FilterQuery, isValidObjectId } from 'mongoose';
-// import { purgeObj } from '@utils/index';
+import { FilterQuery, isValidObjectId, PopulateOptions } from 'mongoose';
 import { OrderAggregate } from '@utils/order.utils';
 import { purgeObj } from '@utils/index';
 
 // Creamos un controlador genérico usando una interface T que tendrá el valor del modelo que nosotros le pasemos.
 export const GetAll =
 	<Doc, M extends GenericModel<Doc> = GenericModel<Doc>>(
-		model: M
+		model: M,
+		populate?: PopulateOptions
 	): ((req: Request, res: Response, next: NextFunction) => Promise<void>) =>
 	async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const pagination = getPagination(req.query);
-			const result = await getAll<Doc, M>(model, pagination);
+			const result = await getAll<Doc, M>(model, pagination, populate);
 			res.status(200).json(result);
 		} catch (err) {
 			logger.error(`Error get all ${model.collection.name}`);
@@ -68,13 +68,16 @@ export const Read =
 
 export const ReadById =
 	<Doc, M extends GenericModel<Doc> = GenericModel<Doc>>(
-		model: M
+		model: M,
+		populate?: PopulateOptions
 	): ((req: Request, res: Response, next: NextFunction) => Promise<void>) =>
 	async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const { id } = req.params;
 			if (!id || !isValidObjectId(id)) throw new BaseError('Not ID');
-			const document = (await read<Doc, M>(model, { _id: id }, { offset: 0, limit: 0 }))[0];
+			const document = (
+				await read<Doc, M>(model, { _id: id }, { offset: 0, limit: 0 }, { populate })
+			)[0];
 			if (!document) {
 				throw new BaseError(`Error read by id in ${model.collection.name}`);
 			}

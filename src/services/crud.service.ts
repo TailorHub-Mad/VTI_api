@@ -1,4 +1,4 @@
-import { FilterQuery, Types, UpdateQuery } from 'mongoose';
+import { FilterQuery, PopulateOptions, Types, UpdateQuery } from 'mongoose';
 import { aggregateCrud } from '../repositories/aggregate.repository';
 import { Pagination } from '../interfaces/config.interface';
 import {
@@ -13,18 +13,19 @@ import QueryString from 'qs';
 
 export const getAll = async <Doc, M extends GenericModel<Doc>>(
 	model: M,
-	pagination: Pagination
+	pagination: Pagination,
+	populate?: PopulateOptions
 ): Promise<Doc[] | []> => {
-	return await findWithPagination(model, {}, pagination);
+	return await findWithPagination(model, {}, pagination, { populate });
 };
 
 export const read = async <Doc, M extends GenericModel<Doc> = GenericModel<Doc>>(
 	model: M,
 	query: FilterQuery<Document>,
 	pagination: Pagination,
-	select?: string
+	options?: { select?: string; populate?: PopulateOptions }
 ): Promise<Doc[]> => {
-	return await findWithPagination<Doc>(model, query, pagination, select);
+	return await findWithPagination<Doc>(model, query, pagination, options);
 };
 
 export const create = async <Doc, M extends GenericModel<Doc> = GenericModel<Doc>>(

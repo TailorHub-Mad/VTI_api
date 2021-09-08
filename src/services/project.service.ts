@@ -11,20 +11,29 @@ import {
 	orderProjectValidation,
 	updateProjectValidation
 } from '../validations/project.validation';
-import { IProjects } from '../interfaces/models.interface';
+import { IProjects, ISectorDocument } from '../interfaces/models.interface';
 import QueryString from 'qs';
 import { groupRepository } from '../repositories/aggregate.repository';
 import { GROUP_PROJECT } from '@constants/group.constans';
 import { IPopulateGroup } from '../interfaces/aggregate.interface';
+import { SectorModel } from '../models/sector.model';
+import { updateRepository } from '../repositories/common.repository';
 
 export const createProject = async (body: Partial<IProjects>): Promise<void> => {
 	const projectValidation = await createProjectValidation.validateAsync(body);
 
-	if (await checkAlias(projectValidation.alias)) {
+	if (await checkAlias(projectValidation.alias, { id_client: projectValidation.client })) {
 		throw new BaseError('Alias in used', 400);
 	}
 
 	await createModelsInClientRepository('projects', projectValidation.client, projectValidation);
+	await updateRepository<ISectorDocument>(
+		SectorModel,
+		{
+			_id: projectValidation.sector
+		},
+		{ $addToSet: { projects: projectValidation.alias } }
+	);
 };
 
 export const updateProject = async (
@@ -34,11 +43,37 @@ export const updateProject = async (
 	const projectValidation = await updateProjectValidation.validateAsync(body);
 	const projectIdValidation = await mongoIdValidation.validateAsync(id_project);
 
-	if (await checkAlias(projectValidation.alias)) {
+	if (await checkAlias(projectValidation.alias, { id_project })) {
 		throw new BaseError('Alias in used', 400);
 	}
 
-	await updateModelsInClientRepository('projects', projectIdValidation, projectValidation);
+	const client = await updateModelsInClientRepository(
+		'projects',
+		projectIdValidation,
+		projectValidation
+	);
+	if (client) {
+		const project = client.projects.find((project) => project._id.toString() === id_project);
+		if (
+			project?.sector?.toString() !== projectValidation?.sector ||
+			project?.alias !== projectValidation.alias
+		) {
+			await updateRepository<ISectorDocument>(
+				SectorModel,
+				{
+					_id: project.sector
+				},
+				{ $pull: { projects: project.alias } }
+			);
+			await updateRepository<ISectorDocument>(
+				SectorModel,
+				{
+					_id: projectValidation.sector
+				},
+				{ $addToSet: { projects: projectValidation.alias } }
+			);
+		}
+	}
 };
 
 export const deleteProject = async (id_project: string): Promise<void> => {

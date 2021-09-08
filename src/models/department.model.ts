@@ -1,7 +1,7 @@
 import { model, Schema, Types } from 'mongoose';
-import { IDepartamentDocument, IDepartamentModel } from '../interfaces/models.interface';
+import { IDepartmentDocument, IDepartmentModel } from '../interfaces/models.interface';
 
-const departmentSchema = new Schema<IDepartamentDocument, IDepartamentModel>(
+const departmentSchema = new Schema<IDepartmentDocument, IDepartmentModel>(
 	{
 		name: { type: String, unique: true, required: true },
 		users: [{ type: Types.ObjectId, ref: 'User' }]

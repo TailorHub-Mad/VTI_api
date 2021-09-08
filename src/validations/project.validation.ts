@@ -25,7 +25,7 @@ export const updateProjectValidation = Joi.object().keys({
 	}),
 	focusPoint: mongoIdValidation,
 	testSystems: Joi.array().items(mongoIdValidation),
-	tags: Joi.array().items(mongoIdValidation)
+	tag: Joi.array().items(mongoIdValidation)
 });
 
 export const orderProjectValidation = Joi.object().keys({

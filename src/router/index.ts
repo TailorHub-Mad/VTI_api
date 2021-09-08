@@ -7,3 +7,5 @@ export { ClientsRouter } from './client.route';
 export { UserRouter } from './user.route';
 export { TagRouter } from './tag.route';
 export { CriterionRouter } from './criterion.route';
+export { SectorRouter } from './sector.route';
+export { DepartmentRouter } from './department.route';

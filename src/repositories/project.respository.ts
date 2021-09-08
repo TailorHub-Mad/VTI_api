@@ -1,10 +1,20 @@
 import { GROUP_PROJECT } from '@constants/group.constans';
-import { IClientDocument, IProjects } from '../interfaces/models.interface';
+import { IProjects } from '../interfaces/models.interface';
 import { ClientModel } from '../models/client.model';
 
-export const checkAlias = async (alias: string): Promise<IClientDocument | null> => {
+export const checkAlias = async (
+	alias: string,
+	{ id_client, id_project }: { id_client?: string; id_project?: string }
+): Promise<boolean | undefined> => {
 	const client = await ClientModel.findOne({ 'projects.alias': alias });
-	return client;
+	if (!client) return false;
+	if (id_client) {
+		return id_client === client._id.toString();
+	}
+	if (id_project) {
+		const project = client.projects.find((project) => project._id.toString() === id_project);
+		return project?.alias !== alias;
+	}
 };
 
 export const groupProjectRepository = async (

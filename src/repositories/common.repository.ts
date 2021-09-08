@@ -1,4 +1,4 @@
-import { Document, FilterQuery, QueryOptions, UpdateQuery } from 'mongoose';
+import { Document, FilterQuery, PopulateOptions, QueryOptions, UpdateQuery } from 'mongoose';
 import { GenericModel } from '../interfaces/models.interface';
 import { Pagination } from '../interfaces/config.interface';
 
@@ -7,9 +7,17 @@ export const findWithPagination = async <Doc, M extends GenericModel<Doc> = Gene
 	model: M,
 	find: FilterQuery<Doc>,
 	pagination: Pagination,
-	select = ''
+	options?: {
+		select?: string;
+		populate?: PopulateOptions;
+	}
 ): Promise<Doc[]> => {
-	return await model.find(find).limit(pagination.limit).skip(pagination.offset).select(select);
+	return await model
+		.find(find)
+		.populate(options?.populate || '')
+		.limit(pagination.limit)
+		.skip(pagination.offset)
+		.select(options?.select || '');
 };
 
 export const findOneRepository = async <
