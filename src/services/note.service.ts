@@ -68,8 +68,8 @@ export const createNote = async (
 		return project;
 	});
 
-	newClient.testSystems = client.testSystems.map((testSystems) => {
-		if ((testSystems || []).includes(testSystems._id.toString())) {
+	newClient.testSystems = client.testSystems.map((testSystem) => {
+		if ((testSystems || []).includes(testSystem._id.toString())) {
 			testSystems.notes.push(note._id);
 		}
 		return testSystems;
