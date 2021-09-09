@@ -8,7 +8,9 @@ export const createProjectValidation = Joi.object().keys({
 	sector: mongoIdValidation,
 	date: Joi.object()
 		.keys({
-			year: Joi.string().required()
+			year: Joi.string().required(),
+			month: Joi.string().required(),
+			day: Joi.string().required()
 		})
 		.required(),
 	focusPoint: mongoIdValidation.required(),
@@ -21,11 +23,18 @@ export const updateProjectValidation = Joi.object().keys({
 	client: Joi.string(),
 	sector: mongoIdValidation,
 	date: Joi.object().keys({
-		year: Joi.string()
+		year: Joi.string(),
+		month: Joi.string(),
+		day: Joi.string()
 	}),
 	focusPoint: mongoIdValidation,
 	testSystems: Joi.array().items(mongoIdValidation),
-	tag: Joi.array().items(mongoIdValidation)
+	tag: Joi.array().items(mongoIdValidation),
+	closed: Joi.object().keys({
+		year: Joi.string(),
+		month: Joi.string(),
+		day: Joi.string()
+	})
 });
 
 export const orderProjectValidation = Joi.object().keys({

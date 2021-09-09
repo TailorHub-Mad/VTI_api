@@ -87,7 +87,7 @@ export interface IProjects {
 	testSystems: ITestSystemDocument['_id'][];
 	tags: [];
 	notes: [];
-	closed: Date;
+	closed: IDate;
 }
 
 export interface IProjectsDocument extends IProjects, Document {}
