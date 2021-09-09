@@ -2,9 +2,9 @@ import { USER_PATH } from '@constants/routes.constants';
 import { Router } from 'express';
 import { getProfile } from '../controllers/user.controller';
 import { Login, SignUp } from '../controllers/auth.controller';
-import { GetAll } from 'src/controllers/crud.controller';
-import { IUserDocument } from 'src/interfaces/models.interface';
-import { UserModel } from 'src/models/user.model';
+import { GetAll } from '../controllers/crud.controller';
+import { IUserDocument } from '../interfaces/models.interface';
+import { UserModel } from '../models/user.model';
 
 const router = Router();
 

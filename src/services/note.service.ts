@@ -26,7 +26,7 @@ import QueryString from 'qs';
 import { groupRepository } from '../repositories/aggregate.repository';
 import { IPopulateGroup } from '../interfaces/aggregate.interface';
 import { Types } from 'mongoose';
-import { UserModel } from 'src/models/user.model';
+import { UserModel } from '../models/user.model';
 
 export const createNote = async (
 	body: Partial<INote>,
