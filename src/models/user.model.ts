@@ -11,9 +11,9 @@ const userSchema = new Schema<IUserDocument, IUserModel>(
 		lastName: { type: String },
 		isAdmin: { type: Boolean, default: false },
 		password: { type: String, required: true, select: false },
-		department: { type: Types.ObjectId, ref: '' },
-		projectsComments: [{ type: Types.ObjectId, ref: '' }],
-		focusPoint: [{ type: Types.ObjectId, ref: '' }],
+		department: { type: Types.ObjectId, ref: 'Department' },
+		projectsComments: [{ type: String }],
+		focusPoint: [{ type: String }],
 		favorites: {
 			notes: [{ type: Types.ObjectId, ref: '' }],
 			projects: [{ type: Types.ObjectId, ref: '' }]

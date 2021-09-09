@@ -11,13 +11,14 @@ import {
 	orderProjectValidation,
 	updateProjectValidation
 } from '../validations/project.validation';
-import { IProjects, ISectorDocument } from '../interfaces/models.interface';
+import { IProjects, ISectorDocument, IUserDocument } from '../interfaces/models.interface';
 import QueryString from 'qs';
 import { groupRepository } from '../repositories/aggregate.repository';
 import { GROUP_PROJECT } from '@constants/group.constans';
 import { IPopulateGroup } from '../interfaces/aggregate.interface';
 import { SectorModel } from '../models/sector.model';
 import { updateRepository } from '../repositories/common.repository';
+import { UserModel } from '../models/user.model';
 
 export const createProject = async (body: Partial<IProjects>): Promise<void> => {
 	const projectValidation = await createProjectValidation.validateAsync(body);
@@ -26,7 +27,37 @@ export const createProject = async (body: Partial<IProjects>): Promise<void> => 
 		throw new BaseError('Alias in used', 400);
 	}
 
-	await createModelsInClientRepository('projects', projectValidation.client, projectValidation);
+	const client = await createModelsInClientRepository(
+		'projects',
+		projectValidation.client,
+		projectValidation
+	);
+
+	if (client) {
+		const project = client.projects.find((project) => project.alias === projectValidation.alias);
+		if (projectValidation.focusPoint) {
+			updateRepository<IUserDocument>(
+				UserModel,
+				{ _id: projectValidation.focusPoint },
+				{ $addToSet: { focusPoint: project.alias } }
+			);
+		}
+		if (projectValidation.testSystems && client) {
+			Promise.all(
+				projectValidation.testSystems.map((testSystem: string) => {
+					return updateModelsInClientRepository(
+						'testSystems',
+						testSystem,
+						{
+							$addToSet: { 'testSystems.$.projects': project._id }
+						},
+						true
+					);
+				})
+			);
+		}
+	}
+
 	await updateRepository<ISectorDocument>(
 		SectorModel,
 		{
@@ -54,6 +85,43 @@ export const updateProject = async (
 	);
 	if (client) {
 		const project = client.projects.find((project) => project._id.toString() === id_project);
+		if (projectValidation.testSystems) {
+			project.testSystems = project.testSystems.map((testSystem: string) => testSystem.toString());
+			const addToSet = projectValidation.testSystems.filter(
+				(testSystem: string) => !project.testSystems.includes(testSystem)
+			);
+			const pull = project.testSystems.filter(
+				(testSystem: string) => !projectValidation.testSystems.includes(testSystem)
+			);
+			console.log('addToSet');
+			console.log(addToSet);
+			console.log('pull');
+			console.log(pull);
+			await Promise.all(
+				addToSet.map((testSystem: string) => {
+					return updateModelsInClientRepository(
+						'testSystems',
+						testSystem,
+						{
+							$addToSet: { 'testSystems.$.projects': project._id }
+						},
+						true
+					);
+				})
+			);
+			await Promise.all(
+				pull.map((testSystem: string) => {
+					return updateModelsInClientRepository(
+						'testSystems',
+						testSystem,
+						{
+							$pull: { 'testSystems.$.projects': project._id }
+						},
+						true
+					);
+				})
+			);
+		}
 		if (
 			project?.sector?.toString() !== projectValidation?.sector ||
 			project?.alias !== projectValidation.alias
@@ -71,6 +139,16 @@ export const updateProject = async (
 					_id: projectValidation.sector
 				},
 				{ $addToSet: { projects: projectValidation.alias } }
+			);
+			updateRepository<IUserDocument>(
+				UserModel,
+				{ _id: { $in: project.focusPoint } },
+				{ $pull: { focusPoint: project.alias } }
+			);
+			updateRepository<IUserDocument>(
+				UserModel,
+				{ _id: { $in: project.focusPoint } },
+				{ $addToSet: { focusPoint: projectValidation.alias } }
 			);
 		}
 	}

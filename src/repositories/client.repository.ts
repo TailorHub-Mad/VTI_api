@@ -8,16 +8,21 @@ export const createModelsInClientRepository = async (
 	find_id: string,
 	body: UpdateQuery<IClientDocument>
 ): Promise<IClientDocument | undefined> => {
-	const client = await ClientModel.findOneAndUpdate({ _id: find_id }, { $push: { [field]: body } });
+	const client = await ClientModel.findOneAndUpdate(
+		{ _id: find_id },
+		{ $push: { [field]: body } },
+		{ new: true }
+	);
 	return client?.save();
 };
 
 export const updateModelsInClientRepository = async (
 	field: 'testSystems' | 'projects',
 	find_id: string,
-	body: UpdateQuery<IClientDocument>
+	body: UpdateQuery<IClientDocument>,
+	disabledSet = false
 ): Promise<IClientDocument | null> => {
-	const update = createSet(body, `${field}.$`);
+	const update = disabledSet ? body : createSet(body, `${field}.$`);
 	return await ClientModel.findOneAndUpdate({ [`${field}._id`]: find_id }, update);
 };
 

@@ -10,7 +10,8 @@ import {
 	IMessage,
 	INote,
 	INoteDocument,
-	IReqUser
+	IReqUser,
+	IUserDocument
 } from '../interfaces/models.interface';
 import { read } from './crud.service';
 import { ClientModel } from '../models/client.model';
@@ -24,6 +25,8 @@ import { GROUP_NOTES } from '@constants/group.constans';
 import QueryString from 'qs';
 import { groupRepository } from '../repositories/aggregate.repository';
 import { IPopulateGroup } from '../interfaces/aggregate.interface';
+import { Types } from 'mongoose';
+import { UserModel } from 'src/models/user.model';
 
 export const createNote = async (
 	body: Partial<INote>,
@@ -93,9 +96,16 @@ export const createMessage = async (
 	);
 	await client?.save();
 	const _note = client?.notes.find(({ _id }) => _id.toString() === note);
+	const project = client?.projects.find(({ notes }) => notes.includes(new Types.ObjectId(note)));
+	if (project) {
+		updateRepository<IUserDocument>(
+			UserModel,
+			{ _id: user.id },
+			{ $addToSet: { projectsComments: project.alias } }
+		);
+	}
 	logger.notice(
-		`El usuario ${user.email} ha creado el mensaje con title ${validateBody.message} en el apunte ${_note?.title}`,
-		{ name: 'test' }
+		`El usuario ${user.email} ha creado el mensaje con title ${validateBody.message} en el apunte ${_note?.title}`
 	);
 };
 

@@ -23,7 +23,7 @@ export const createTestSystem = async (body: Partial<IClient>): Promise<void> =>
 
 	delete bodyValidation.clientId;
 
-	if (await checkVtiCode(bodyValidation.vtiCode)) {
+	if (await checkVtiCode(bodyValidation.vtiCode, { id_client: clientId })) {
 		throw new BaseError('vti code in used.', 400);
 	}
 
@@ -37,7 +37,7 @@ export const updateTestSystem = async (
 	const bodyValidation = await updateTestSystemValidation.validateAsync(body);
 	const validateId = await mongoIdValidation.validateAsync(id_testSystem);
 
-	if (await checkVtiCode(bodyValidation.vtiCode)) {
+	if (await checkVtiCode(bodyValidation.vtiCode, { id_testSystem })) {
 		throw new BaseError('vti code in used.', 400);
 	}
 	await updateModelsInClientRepository('testSystems', validateId, bodyValidation);
@@ -46,10 +46,10 @@ export const updateTestSystem = async (
 export const groupTestSystem = async (query: QueryString.ParsedQs): Promise<ITestSystem[]> => {
 	const queryValid = await groupTestSystemValidation.validateAsync(query);
 	let populate: IPopulateGroup | undefined;
-	// if (queryValid.group.includes('tags')) {
-	// 	queryValid.group = 'notes.tags.name';
-	// 	populate = { field: 'tagnotes', property: 'tags' };
-	// }
+	if (queryValid.group.includes('tags')) {
+		queryValid.group = 'notes.tags.name';
+		populate = { field: 'tagnotes', property: 'tags' };
+	}
 	const testSystems = await groupRepository<ITestSystem, typeof GROUP_TEST_SYSTEM[number]>(
 		queryValid.group,
 		'testSystems',
