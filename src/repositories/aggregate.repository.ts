@@ -159,6 +159,27 @@ export const aggregateCrud = async (
 				);
 			});
 		}
+
+		if (nameFild === 'projects') {
+			pipeline.push(
+				{
+					$lookup: {
+						from: 'sectors',
+						localField: 'projects.sector',
+						foreignField: '_id',
+						as: 'projects.sector'
+					}
+				},
+				{
+					$lookup: {
+						from: 'users',
+						localField: 'projects.focusPoint',
+						foreignField: '_id',
+						as: 'projects.focusPoint'
+					}
+				}
+			);
+		}
 		pipeline.push({
 			$group: {
 				_id: group || '$_id',
