@@ -41,11 +41,12 @@ loaders.middlewares(app);
 loaders.router(app);
 app.use(errorHandler);
 
-redisLoader
+// redisLoader
+// 	.open()
+// 	.then(() => {
+// })
+dbLoader
 	.open()
-	.then(() => {
-		dbLoader.open();
-	})
 	.then(() => {
 		const server = http.createServer(app);
 		return server;

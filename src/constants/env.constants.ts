@@ -6,5 +6,5 @@ export const DATABASEURL =
 		: process.env.DATABASEURL_PROD) || 'mongodb://localhost:27017/vti-dev';
 
 export const REDISURL =
-	(process.env.NODE_ENV === 'development' ? process.env.REDISURL_DEV : process.env.REDISURL_PROD) ||
+	(process.env.NODE_ENV === 'development' ? process.env.REDISURL_DEV : process.env.REDIS_URL) ||
 	'redis://localhost:6379';
