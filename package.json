@@ -20,7 +20,7 @@
     "postpublish": "pinst --enable",
     "install:db": "bash ./scripts/dbs.sh -c -r",
     "clinic": "yarn run build && NODE_ENV=production clinic doctor --on-port 'autocannon localhost:$PORT' -- node -r module-alias/register dist/app.js",
-    "heroku-postbuild": "yarn run install:db && yarn run build"
+    "heroku-postbuild": "yarn run build"
   },
   "keywords": [
     "template",
