@@ -10,7 +10,7 @@ import {
 const router = Router();
 
 router.get(
-	'/all',
+	'/',
 	GetAll<IDepartmentDocument>(DepartmentModel, { path: 'users', select: 'alias -_id' })
 );
 

@@ -6,7 +6,7 @@ import { createSectorValidation, updateSectorValidation } from '../validations/s
 
 const router = Router();
 
-router.get('/all', GetAll<ISectorDocument>(SectorModel));
+router.get('/', GetAll<ISectorDocument>(SectorModel));
 
 router.get('/:id', ReadById<ISectorDocument>(SectorModel));
 

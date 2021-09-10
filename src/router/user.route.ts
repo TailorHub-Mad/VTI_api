@@ -14,6 +14,6 @@ router.post('/login', Login);
 
 router.get('/me', getProfile);
 
-router.get('/all', GetAll<IUserDocument>(UserModel, { path: 'department', select: 'name -_id' }));
+router.get('/', GetAll<IUserDocument>(UserModel, { path: 'department', select: 'name -_id' }));
 
 export const UserRouter = { router, path: USER_PATH };
