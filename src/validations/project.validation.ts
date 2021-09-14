@@ -9,8 +9,8 @@ export const createProjectValidation = Joi.object().keys({
 	date: Joi.object()
 		.keys({
 			year: Joi.string().required(),
-			month: Joi.string().required(),
-			day: Joi.string().required()
+			month: Joi.string(),
+			day: Joi.string()
 		})
 		.required(),
 	focusPoint: mongoIdValidation.required(),

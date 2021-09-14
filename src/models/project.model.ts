@@ -17,18 +17,6 @@ export const projectSchema = new Schema<IProjectsDocument, IProjectsModel>(
 	},
 	{
 		timestamps: true,
-		versionKey: false,
-		toJSON: {
-			transform: function (doc, ret) {
-				ret.id = doc._id;
-				delete ret._id;
-			}
-		},
-		toObject: {
-			transform: function (doc, ret) {
-				ret.id = doc._id;
-				delete ret._id;
-			}
-		}
+		versionKey: false
 	}
 );

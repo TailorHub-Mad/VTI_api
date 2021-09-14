@@ -12,21 +12,7 @@ export const messageSchema = new Schema<IMessageDocument, IMessageModel>(
 	},
 	{
 		timestamps: true,
-		versionKey: false,
-		toJSON: {
-			transform: (doc, ret) => {
-				ret.id = doc._id;
-
-				delete ret._id;
-			}
-		},
-		toObject: {
-			transform: (doc, ret) => {
-				ret.id = doc._id;
-
-				delete ret._id;
-			}
-		}
+		versionKey: false
 	}
 );
 

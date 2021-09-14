@@ -13,19 +13,7 @@ const tagSchema = new Schema<ITagDocument, ITagModel>(
 	{
 		timestamps: true,
 		versionKey: false,
-		discriminatorKey: 'type',
-		toJSON: {
-			transform: function (doc, ret) {
-				ret.id = doc._id;
-				delete ret._id;
-			}
-		},
-		toObject: {
-			transform: function (doc, ret) {
-				ret.id = doc._id;
-				delete ret._id;
-			}
-		}
+		discriminatorKey: 'type'
 	}
 );
 

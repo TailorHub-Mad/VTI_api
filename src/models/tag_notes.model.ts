@@ -12,21 +12,7 @@ const TagNoteSchema = new Schema<ITagNoteDocument, ITagNoteModel>(
 	{
 		timestamps: true,
 		versionKey: false,
-		discriminatorKey: 'type',
-		toJSON: {
-			virtuals: true,
-			transform: function (doc, ret) {
-				ret.id = doc._id;
-				delete ret._id;
-			}
-		},
-		toObject: {
-			virtuals: true,
-			transform: function (doc, ret) {
-				ret.id = doc._id;
-				delete ret._id;
-			}
-		}
+		discriminatorKey: 'type'
 	}
 );
 

@@ -12,19 +12,7 @@ export const testSystemSchema = new Schema<ITestSystemDocument, ITestSystemModel
 	},
 	{
 		timestamps: true,
-		versionKey: false,
-		toJSON: {
-			transform: function (doc, ret) {
-				ret.id = doc._id;
-				delete ret._id;
-			}
-		},
-		toObject: {
-			transform: function (doc, ret) {
-				ret.id = doc._id;
-				delete ret._id;
-			}
-		}
+		versionKey: false
 	}
 );
 
