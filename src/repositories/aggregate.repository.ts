@@ -111,6 +111,16 @@ export const aggregateCrud = async (
 		});
 	}
 
+	const fields = _extends?.split('.');
+	if (fields) {
+		fields.forEach((_, index, array) => {
+			pipeline.push({
+				$unwind: {
+					path: `$${array.slice(0, index + 1).join('.')}`
+				}
+			});
+		});
+	}
 	if (nameFild === 'notes') {
 		pipeline.push({
 			$lookup: {
@@ -122,16 +132,6 @@ export const aggregateCrud = async (
 		});
 	}
 
-	const fields = _extends?.split('.');
-	if (fields) {
-		fields.forEach((_, index, array) => {
-			pipeline.push({
-				$unwind: {
-					path: `$${array.slice(0, index + 1).join('.')}`
-				}
-			});
-		});
-	}
 	// console.log(querys)
 	pipeline.push({
 		$match: querys

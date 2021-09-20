@@ -1,6 +1,5 @@
 import { Types } from 'mongoose';
 import { RefsEnum } from 'src/enums/client.enum';
-import { GenericModel } from 'src/interfaces/models.interface';
 import { findLastField } from 'src/repositories/client.repository';
 
 export const transformStringToObjectId = (id: string): Types.ObjectId => {
