@@ -16,6 +16,7 @@ import QueryString from 'qs';
 import { IPopulateGroup } from '../interfaces/aggregate.interface';
 import { groupRepository } from '../repositories/aggregate.repository';
 import { GROUP_TEST_SYSTEM } from '@constants/group.constans';
+import { createRef } from '@utils/model.utils';
 
 export const createTestSystem = async (body: Partial<IClient>): Promise<void> => {
 	const bodyValidation = await createTestSystemValidation.validateAsync(body);
@@ -27,6 +28,8 @@ export const createTestSystem = async (body: Partial<IClient>): Promise<void> =>
 		throw new BaseError('vti code in used.', 400);
 	}
 
+	const newRef = await createRef('testSystems');
+	bodyValidation.ref = newRef;
 	await createModelsInClientRepository('testSystems', clientId, bodyValidation);
 };
 

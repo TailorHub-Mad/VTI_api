@@ -8,7 +8,8 @@ export const testSystemSchema = new Schema<ITestSystemDocument, ITestSystemModel
 		alias: { type: String },
 		date: DATE_SCHEMA,
 		projects: [{ type: Types.ObjectId }],
-		notes: [{ type: Types.ObjectId }]
+		notes: [{ type: Types.ObjectId }],
+		ref: { type: String }
 	},
 	{
 		timestamps: true,

@@ -12,7 +12,8 @@ export const projectSchema = new Schema<IProjectsDocument, IProjectsModel>(
 		testSystems: [{ type: Types.ObjectId }], // Quizás crear aquí los test system.
 		tags: [{ type: Types.ObjectId, ref: 'Tag' }],
 		notes: [{ type: Types.ObjectId }],
-		closed: DATE_SCHEMA
+		closed: DATE_SCHEMA,
+		ref: { type: String }
 		// users: [{ type: Types.ObjectId, ref: 'User' }]
 	},
 	{

@@ -17,7 +17,7 @@ import { read } from './crud.service';
 import { ClientModel } from '../models/client.model';
 import { BaseError } from '@errors/base.error';
 import { getPagination } from '@utils/controllers.utils';
-import { createSet, transformStringToObjectId } from '@utils/model.utils';
+import { createRef, createSet, transformStringToObjectId } from '@utils/model.utils';
 import { findOneRepository, updateRepository } from '../repositories/common.repository';
 import { mongoIdValidation } from '../validations/common.validation';
 import { MessageModel } from '../models/message.model';
@@ -59,7 +59,9 @@ export const createNote = async (
 
 	if (!client) throw new BaseError('Not found project');
 
-	client.notes.push({ title, description, link, tags, documents });
+	const newRef = await createRef('notes');
+
+	client.notes.push({ title, description, link, tags, documents, ref: newRef });
 	const newClient = await client.save();
 	const note: INoteDocument = newClient.notes.find((note) => note.title === title);
 	const projectId = transformStringToObjectId(project);

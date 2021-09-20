@@ -19,6 +19,7 @@ import { IPopulateGroup } from '../interfaces/aggregate.interface';
 import { SectorModel } from '../models/sector.model';
 import { updateRepository } from '../repositories/common.repository';
 import { UserModel } from '../models/user.model';
+import { createRef } from '@utils/model.utils';
 
 export const createProject = async (body: Partial<IProjects>): Promise<void> => {
 	const projectValidation = await createProjectValidation.validateAsync(body);
@@ -26,7 +27,8 @@ export const createProject = async (body: Partial<IProjects>): Promise<void> => 
 	if (await checkAlias(projectValidation.alias, { id_client: projectValidation.client })) {
 		throw new BaseError('Alias in used', 400);
 	}
-
+	const newRef = await createRef('projects');
+	projectValidation.ref = newRef;
 	const client = await createModelsInClientRepository(
 		'projects',
 		projectValidation.client,

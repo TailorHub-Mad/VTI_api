@@ -62,6 +62,65 @@ export const aggregateCrud = async (
 				}
 		  ]
 		: [];
+	if (populates) {
+		populates.forEach((populate) => {
+			pipeline.push(
+				{
+					$unwind: {
+						path: `$${populate}`
+					}
+				},
+				{
+					$unwind: {
+						path: `$${nameFild}.${populate}`
+					}
+				},
+				{
+					$match: {
+						$expr: {
+							$eq: [`$${nameFild}.${populate}`, `$${populate}._id`]
+						}
+					}
+				},
+				{
+					$addFields: {
+						[`${nameFild}.${populate}`]: `$${populate}`
+					}
+				}
+			);
+		});
+		populates.forEach((populate) => {
+			pipeline.push(
+				{
+					$group: {
+						_id: `$${nameFild}._id`,
+						projects: {
+							$first: `$${nameFild}`
+						},
+						[populate]: {
+							$push: `$${nameFild}.${populate}`
+						}
+					}
+				},
+				{
+					$addFields: {
+						[`${nameFild}.${populate}`]: `$${populate}`
+					}
+				}
+			);
+		});
+	}
+
+	if (nameFild === 'notes') {
+		pipeline.push({
+			$lookup: {
+				from: 'tagnotes',
+				localField: 'notes.tags',
+				foreignField: '_id',
+				as: 'notes.tags'
+			}
+		});
+	}
 
 	const fields = _extends?.split('.');
 	if (fields) {
@@ -73,7 +132,7 @@ export const aggregateCrud = async (
 			});
 		});
 	}
-
+	// console.log(querys)
 	pipeline.push({
 		$match: querys
 	});
@@ -111,54 +170,6 @@ export const aggregateCrud = async (
 		pipeline.push({
 			$sort: order || { [`${nameFild}.updatedAt`]: -1 }
 		});
-		if (populates) {
-			populates.forEach((populate) => {
-				pipeline.push(
-					{
-						$unwind: {
-							path: `$${populate}`
-						}
-					},
-					{
-						$unwind: {
-							path: `$${nameFild}.${populate}`
-						}
-					},
-					{
-						$match: {
-							$expr: {
-								$eq: [`$${nameFild}.${populate}`, `$${populate}._id`]
-							}
-						}
-					},
-					{
-						$addFields: {
-							[`${nameFild}.${populate}`]: `$${populate}`
-						}
-					}
-				);
-			});
-			populates.forEach((populate) => {
-				pipeline.push(
-					{
-						$group: {
-							_id: `$${nameFild}._id`,
-							projects: {
-								$first: `$${nameFild}`
-							},
-							[populate]: {
-								$push: `$${nameFild}.${populate}`
-							}
-						}
-					},
-					{
-						$addFields: {
-							[`${nameFild}.${populate}`]: `$${populate}`
-						}
-					}
-				);
-			});
-		}
 
 		if (nameFild === 'projects') {
 			pipeline.push(
@@ -235,13 +246,22 @@ export const groupRepository = async <T, G extends string>(
 			$unwind: `$aux.${options.populate.property}`
 		});
 	}
+	// pipeline.push({
+	// 	$group: {
+	// 		_id: `$aux.${group}`,
+	// 		[field]: {
+	// 			$push: '$aux'
+	// 		}
+	// 	}
+	// });
 
 	const properties = await ClientModel.aggregate(pipeline)
-		.sort({ [`aux.${group}`]: 1 })
+		.sort({ [`aux._id`]: 1 })
 		.collation({
 			locale: 'es',
 			numericOrdering: true
 		});
-
+	// console.log(properties);
+	// return properties;
 	return groupAggregate<T, G>(properties, { group, field, real: options?.real });
 };

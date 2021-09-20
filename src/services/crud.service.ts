@@ -95,11 +95,20 @@ export const getByQueryAggregate = async (
 ): Promise<unknown> => {
 	const transformExtendsToArray = _extends?.split('.');
 	const nameField = transformExtendsToArray?.slice(-1)[0];
+	const transformQueryToArray = Object.entries(query).map(([key, value]) => {
+		return { [key]: value };
+	});
+	const transformQuery =
+		transformQueryToArray.length > 0
+			? {
+					$or: transformQueryToArray
+			  }
+			: {};
 	return await aggregateCrud(
 		{
 			_extends,
 			nameFild: nameField,
-			querys: query
+			querys: transformQuery
 		},
 		pagination
 	);

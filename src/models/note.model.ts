@@ -1,4 +1,4 @@
-import { model, Schema, Types } from 'mongoose';
+import { Schema, Types } from 'mongoose';
 import { INoteDocument, INoteModel } from '../interfaces/models.interface';
 import { messageSchema } from './message.model';
 
@@ -14,8 +14,9 @@ export const noteSchema = new Schema<INoteDocument, INoteModel>(
 		updateTime: { type: Date, default: () => new Date() },
 		owner: { type: Types.ObjectId, ref: 'User' }, // ad required: true
 		readBy: [{ type: Types.ObjectId, ref: 'User' }],
-		approved: { type: Boolean, default: false },
-		formalized: { type: Boolean, default: false }
+		isClosed: { type: Boolean, default: false },
+		formalized: { type: Boolean, default: false },
+		ref: { type: String }
 	},
 	{
 		timestamps: true,
@@ -23,4 +24,4 @@ export const noteSchema = new Schema<INoteDocument, INoteModel>(
 	}
 );
 
-export const NoteModel = model('Note', noteSchema);
+// export const NoteModel = model('Note', noteSchema);

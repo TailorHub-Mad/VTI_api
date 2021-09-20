@@ -35,3 +35,27 @@ export const deleteModelInClientRepository = async (
 		{ $pull: { [field]: { _id: find_id } } }
 	);
 };
+
+export const findLastField = async <T>(field: 'testSystems' | 'projects' | 'notes'): Promise<T> => {
+	const [{ [field]: lastField }] = await ClientModel.aggregate([
+		{
+			$project: {
+				[field]: 1
+			}
+		},
+		{
+			$unwind: {
+				path: `$${field}`
+			}
+		},
+		{
+			$sort: {
+				[`${field}.createdAt`]: -1
+			}
+		},
+		{
+			$limit: 1
+		}
+	]);
+	return lastField;
+};
