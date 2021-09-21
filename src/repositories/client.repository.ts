@@ -59,6 +59,6 @@ export const findLastField = async <T>(field: 'testSystems' | 'projects' | 'note
 	]);
 	console.log(aggregate);
 	const { [field]: lastField } = aggregate.length > 0 ? aggregate[0] : [{ [field]: { ref: '' } }];
-
+	console.log(lastField);
 	return lastField;
 };
