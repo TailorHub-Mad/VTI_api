@@ -37,7 +37,7 @@ export const deleteModelInClientRepository = async (
 };
 
 export const findLastField = async <T>(field: 'testSystems' | 'projects' | 'notes'): Promise<T> => {
-	const [{ [field]: lastField }] = (await ClientModel.aggregate([
+	const [aggregate] = await ClientModel.aggregate([
 		{
 			$project: {
 				[field]: 1
@@ -56,6 +56,8 @@ export const findLastField = async <T>(field: 'testSystems' | 'projects' | 'note
 		{
 			$limit: 1
 		}
-	])) || [{ [field]: { ref: '' } }];
+	]);
+	const [{ [field]: lastField }] = aggregate ?? { [field]: { ref: '' } };
+
 	return lastField;
 };
