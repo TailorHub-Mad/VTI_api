@@ -56,6 +56,6 @@ export const findLastField = async <T>(field: 'testSystems' | 'projects' | 'note
 		{
 			$limit: 1
 		}
-	])) || [{}];
+	])) || [{ [field]: { ref: '' } }];
 	return lastField;
 };
