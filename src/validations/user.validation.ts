@@ -12,3 +12,8 @@ export const loginUserValidation = Joi.object().keys({
 	email: Joi.string().email().required(),
 	password: Joi.string().required() // TODO: Create regExp
 });
+
+export const updateUserValidation = Joi.object().keys({
+	alias: Joi.string(),
+	department: mongoIdValidation.required()
+});
