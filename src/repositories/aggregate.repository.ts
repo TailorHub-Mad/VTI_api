@@ -62,54 +62,6 @@ export const aggregateCrud = async (
 				}
 		  ]
 		: [];
-	if (populates) {
-		populates.forEach((populate) => {
-			pipeline.push(
-				{
-					$unwind: {
-						path: `$${populate}`
-					}
-				},
-				{
-					$unwind: {
-						path: `$${nameFild}.${populate}`
-					}
-				},
-				{
-					$match: {
-						$expr: {
-							$eq: [`$${nameFild}.${populate}`, `$${populate}._id`]
-						}
-					}
-				},
-				{
-					$addFields: {
-						[`${nameFild}.${populate}`]: `$${populate}`
-					}
-				}
-			);
-		});
-		populates.forEach((populate) => {
-			pipeline.push(
-				{
-					$group: {
-						_id: `$${nameFild}._id`,
-						projects: {
-							$first: `$${nameFild}`
-						},
-						[populate]: {
-							$push: `$${nameFild}.${populate}`
-						}
-					}
-				},
-				{
-					$addFields: {
-						[`${nameFild}.${populate}`]: `$${populate}`
-					}
-				}
-			);
-		});
-	}
 
 	const fields = _extends?.split('.');
 	if (fields) {
@@ -170,6 +122,55 @@ export const aggregateCrud = async (
 		pipeline.push({
 			$sort: order || { [`${nameFild}.updatedAt`]: -1 }
 		});
+
+		if (populates) {
+			populates.forEach((populate) => {
+				pipeline.push(
+					{
+						$unwind: {
+							path: `$${populate}`
+						}
+					},
+					{
+						$unwind: {
+							path: `$${nameFild}.${populate}`
+						}
+					},
+					// {
+					// 	$match: {
+					// 		$expr: {
+					// 			$eq: [`$${nameFild}.${populate}`, `$${populate}._id`]
+					// 		}
+					// 	}
+					// },
+					{
+						$addFields: {
+							[`${nameFild}.${populate}`]: `$${populate}`
+						}
+					}
+				);
+			});
+			populates.forEach((populate) => {
+				pipeline.push(
+					{
+						$group: {
+							_id: `$${nameFild}._id`,
+							[nameFild]: {
+								$first: `$${nameFild}`
+							},
+							[populate]: {
+								$push: `$${nameFild}.${populate}`
+							}
+						}
+					},
+					{
+						$addFields: {
+							[`${nameFild}.${populate}`]: `$${populate}`
+						}
+					}
+				);
+			});
+		}
 
 		if (nameFild === 'projects') {
 			pipeline.push(
