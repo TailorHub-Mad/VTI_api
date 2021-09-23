@@ -10,7 +10,7 @@ import {
 } from '../controllers/crud.controller';
 import { newClientValidation, updateClientValidation } from '../validations/client.validation';
 import { IClientDocument } from '../interfaces/models.interface';
-import { FilterClient } from 'src/controllers/client.controller';
+import { FilterClient } from '../controllers/client.controller';
 
 const router = Router();
 

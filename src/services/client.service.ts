@@ -1,7 +1,7 @@
 import { formatFilter } from '@utils/client.utils';
-import { Pagination } from 'src/interfaces/config.interface';
-import { ClientModel } from 'src/models/client.model';
-import { findWithPagination } from 'src/repositories/common.repository';
+import { Pagination } from '../interfaces/config.interface';
+import { ClientModel } from '../models/client.model';
+import { findWithPagination } from '../repositories/common.repository';
 import { IClientDocument } from '../interfaces/models.interface';
 import { FilterClientValidation } from '../validations/client.validation';
 

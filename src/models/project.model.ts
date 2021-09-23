@@ -13,8 +13,8 @@ export const projectSchema = new Schema<IProjectsDocument, IProjectsModel>(
 		tags: [{ type: Types.ObjectId, ref: 'Tag' }],
 		notes: [{ type: Types.ObjectId }],
 		closed: DATE_SCHEMA,
-		ref: { type: String }
-		// users: [{ type: Types.ObjectId, ref: 'User' }]
+		ref: { type: String },
+		users: [{ type: Types.ObjectId, ref: 'User' }]
 	},
 	{
 		timestamps: true,
