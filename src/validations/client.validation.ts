@@ -13,3 +13,10 @@ export const updateClientValidation = Joi.object().keys({
 	alias: Joi.string(),
 	name: Joi.string()
 });
+
+export const FilterClientValidation = Joi.object().keys({
+	alias: Joi.string(),
+	name: Joi.string(),
+	_id: Joi.string(),
+	ref: Joi.string()
+});

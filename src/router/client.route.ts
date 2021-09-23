@@ -10,11 +10,15 @@ import {
 } from '../controllers/crud.controller';
 import { newClientValidation, updateClientValidation } from '../validations/client.validation';
 import { IClientDocument } from '../interfaces/models.interface';
+import { FilterClient } from 'src/controllers/client.controller';
 
 const router = Router();
 
 // Get all clients
 router.get('/', GetAllAggregate());
+
+// Filter Client By alias, name and id
+router.get('/filter', FilterClient);
 
 // Create new Client
 router.post('/create', Create<IClientDocument>(ClientModel, newClientValidation));
