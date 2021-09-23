@@ -132,11 +132,11 @@ export const aggregateCrud = async (
 		if (populates) {
 			populates.forEach((populate) => {
 				pipeline.push(
-					// {
-					// 	$unwind: {
-					// 		path: `$${populate}`
-					// 	}
-					// },
+					{
+						$unwind: {
+							path: `$${populate}`
+						}
+					},
 					{
 						$unwind: {
 							path: `$${nameFild}.${populate}`
