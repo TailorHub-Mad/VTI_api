@@ -6,13 +6,19 @@ import {
 	OrderProject,
 	UpdateProject
 } from '../controllers/project.controller';
-import { GetAllAggregate, GetByIdAggregate } from '../controllers/crud.controller';
+import {
+	GetAllAggregate,
+	GetByIdAggregate,
+	GetByQueryAggregate
+} from '../controllers/crud.controller';
 
 const router = Router();
 
 router.get('/', GetAllAggregate('projects', ['testSystems']));
 
 router.get('/group', OrderProject);
+
+router.get('/filter', GetByQueryAggregate('projects'));
 
 router.post('/', CreateProject);
 

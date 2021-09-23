@@ -6,15 +6,21 @@ import {
 	GroupTestSystem,
 	UpdateTestSystem
 } from '../controllers/test_system.controller';
-import { GetAllAggregate, GetByIdAggregate } from '../controllers/crud.controller';
+import {
+	GetAllAggregate,
+	GetByIdAggregate,
+	GetByQueryAggregate
+} from '../controllers/crud.controller';
 
 const router = Router();
 
-router.get('/', GetAllAggregate('testSystems', []));
+router.get('/', GetAllAggregate('testSystems', ['projects']));
 
 router.get('/group', GroupTestSystem);
 
-router.get('/:id', GetByIdAggregate('testSystems', []));
+router.get('/filter', GetByQueryAggregate('testSystems'));
+
+router.get('/:id', GetByIdAggregate('testSystems', ['projects']));
 
 router.post('/', CreateTestSystem);
 

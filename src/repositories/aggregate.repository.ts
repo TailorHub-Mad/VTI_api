@@ -84,6 +84,12 @@ export const aggregateCrud = async (
 		});
 	}
 
+	pipeline.push({
+		$addFields: {
+			[`${nameFild}.clientAlias`]: '$alias'
+		}
+	});
+
 	// console.log(querys)
 	pipeline.push({
 		$match: querys
@@ -126,11 +132,11 @@ export const aggregateCrud = async (
 		if (populates) {
 			populates.forEach((populate) => {
 				pipeline.push(
-					{
-						$unwind: {
-							path: `$${populate}`
-						}
-					},
+					// {
+					// 	$unwind: {
+					// 		path: `$${populate}`
+					// 	}
+					// },
 					{
 						$unwind: {
 							path: `$${nameFild}.${populate}`
