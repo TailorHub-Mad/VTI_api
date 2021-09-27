@@ -19,7 +19,8 @@ import { IPopulateGroup } from '../interfaces/aggregate.interface';
 import { SectorModel } from '../models/sector.model';
 import { updateRepository } from '../repositories/common.repository';
 import { UserModel } from '../models/user.model';
-import { createRef } from '@utils/model.utils';
+import { addToSetTags, createRef, updateTags } from '@utils/model.utils';
+import { TagProjectModel } from 'src/models/tag_project.model';
 
 export const createProject = async (body: Partial<IProjects>): Promise<void> => {
 	const projectValidation = await createProjectValidation.validateAsync(body);
@@ -58,6 +59,11 @@ export const createProject = async (body: Partial<IProjects>): Promise<void> => 
 				})
 			);
 		}
+		await addToSetTags(
+			project,
+			{ field: 'projects', property: 'alias', model: TagProjectModel },
+			projectValidation.tags
+		);
 	}
 
 	await updateRepository<ISectorDocument>(
@@ -87,6 +93,11 @@ export const updateProject = async (
 	);
 	if (client) {
 		const project = client.projects.find((project) => project._id.toString() === id_project);
+		await updateTags(project, projectValidation.tags, {
+			field: 'projects',
+			property: 'alias',
+			model: TagProjectModel
+		});
 		if (projectValidation.testSystems) {
 			project.testSystems = project.testSystems.map((testSystem: string) => testSystem.toString());
 			const addToSet = projectValidation.testSystems.filter(
@@ -95,10 +106,6 @@ export const updateProject = async (
 			const pull = project.testSystems.filter(
 				(testSystem: string) => !projectValidation.testSystems.includes(testSystem)
 			);
-			console.log('addToSet');
-			console.log(addToSet);
-			console.log('pull');
-			console.log(pull);
 			await Promise.all(
 				addToSet.map((testSystem: string) => {
 					return updateModelsInClientRepository(

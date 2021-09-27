@@ -21,7 +21,7 @@ export const updateNoteValidationAdmin = Joi.object().keys({
 	title: Joi.string(),
 	description: Joi.string(),
 	link: Joi.string(),
-	approved: Joi.boolean(),
+	isClosed: Joi.boolean(),
 	formalized: Joi.boolean(),
 	documents: Joi.array().items(
 		Joi.object({

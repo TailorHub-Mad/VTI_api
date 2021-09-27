@@ -90,7 +90,9 @@ export interface IProjects {
 	closed: IDate;
 }
 
-export interface IProjectsDocument extends IProjects, Document {}
+export interface IProjectsDocument extends IProjects, Document {
+	title?: string; // to resolve error.
+}
 
 export type IProjectsModel = Model<IProjectsDocument>;
 

@@ -6,8 +6,8 @@ const tagProjectSchema = new Schema<ITagProjectDocument, ITagProjectModel>(
 	{
 		name: { type: String, unique: true },
 		updated: DATE_SCHEMA,
-		relatedTags: [{ type: Types.ObjectId, ref: 'Tag' }],
-		projects: [{ type: Types.ObjectId, ref: 'Project' }]
+		relatedTags: [{ type: Types.ObjectId, ref: 'TagProject' }],
+		projects: [{ _id: Types.ObjectId, alias: String }]
 	},
 	{
 		timestamps: true,

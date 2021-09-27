@@ -5,13 +5,13 @@ import { CreateTag, UpdateTag } from '../controllers/tag.controller';
 import { TagNoteModel } from '../models/tag_notes.model';
 import { TagProjectModel } from '../models/tag_project.model';
 import { ITagNoteDocument, ITagProjectDocument } from '../interfaces/models.interface';
-import { GetAll } from '../controllers/crud.controller';
+import { DeleteCrud, GetAll } from '../controllers/crud.controller';
 
 const router = Router();
 
-router.get('/notes', GetAll<ITagNoteDocument>(TagNoteModel));
+router.get('/notes', GetAll<ITagNoteDocument>(TagNoteModel, { path: 'relatedTags' }));
 
-router.get('/projects', GetAll<ITagProjectDocument>(TagProjectModel));
+router.get('/projects', GetAll<ITagProjectDocument>(TagProjectModel, { path: 'relatedTags' }));
 
 router.post('/notes', CreateTag<ITagNoteDocument>(TagNoteModel, createTagValidation));
 
@@ -23,5 +23,9 @@ router.put(
 	'/projects/:id_tag',
 	UpdateTag<ITagProjectDocument>(TagProjectModel, updateTagValidation)
 );
+
+router.delete('/projects/:id', DeleteCrud<ITagProjectDocument>(TagProjectModel));
+
+router.delete('/notes/:id', DeleteCrud<ITagNoteDocument>(TagNoteModel));
 
 export const TagRouter = { router, path: TAG_PATH };

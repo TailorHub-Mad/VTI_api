@@ -5,7 +5,8 @@ import Joi from 'joi';
 import { updateRepository } from '../repositories/common.repository';
 import { mongoIdValidation } from '../validations/common.validation';
 import { GenericModel, ITag, ITagBothDocument } from '../interfaces/models.interface';
-import { create, read, update } from '../services/crud.service';
+import { create, deleteCrud, read, update } from '../services/crud.service';
+import { isValidObjectId } from 'mongoose';
 
 export const CreateTag =
 	<Doc, M extends GenericModel<Doc> = GenericModel<Doc>>(

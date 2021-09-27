@@ -29,7 +29,7 @@ export const updateProjectValidation = Joi.object().keys({
 	}),
 	focusPoint: mongoIdValidation,
 	testSystems: Joi.array().items(mongoIdValidation),
-	tag: Joi.array().items(mongoIdValidation),
+	tags: Joi.array().items(mongoIdValidation),
 	closed: Joi.object().keys({
 		year: Joi.string(),
 		month: Joi.string(),

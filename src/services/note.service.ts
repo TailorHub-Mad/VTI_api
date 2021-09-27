@@ -17,7 +17,13 @@ import { read } from './crud.service';
 import { ClientModel } from '../models/client.model';
 import { BaseError } from '@errors/base.error';
 import { getPagination } from '@utils/controllers.utils';
-import { createRef, createSet, transformStringToObjectId } from '@utils/model.utils';
+import {
+	addToSetTags,
+	createRef,
+	createSet,
+	transformStringToObjectId,
+	updateTags
+} from '@utils/model.utils';
 import { findOneRepository, updateRepository } from '../repositories/common.repository';
 import { mongoIdValidation } from '../validations/common.validation';
 import { MessageModel } from '../models/message.model';
@@ -27,6 +33,7 @@ import { groupRepository } from '../repositories/aggregate.repository';
 import { IPopulateGroup } from '../interfaces/aggregate.interface';
 import { Types } from 'mongoose';
 import { UserModel } from '../models/user.model';
+import { TagNoteModel } from 'src/models/tag_notes.model';
 
 export const createNote = async (
 	body: Partial<INote>,
@@ -65,6 +72,12 @@ export const createNote = async (
 	const newClient = await client.save();
 	const note: INoteDocument = newClient.notes.find((note) => note.title === title);
 	const projectId = transformStringToObjectId(project);
+
+	addToSetTags(
+		note,
+		{ field: 'notes', property: 'title', model: TagNoteModel as any },
+		validateBody.tags
+	);
 
 	newClient.projects = newClient.projects.map((project) => {
 		if (project._id.equals(projectId)) {
@@ -106,6 +119,7 @@ export const createMessage = async (
 			{ $addToSet: { projectsComments: project.alias } }
 		);
 	}
+
 	logger.notice(
 		`El usuario ${user.email} ha creado el mensaje con title ${validateBody.message} en el apunte ${_note?.title}`
 	);
@@ -134,8 +148,17 @@ export const updateNote = async (
 	const validateIdNote = await mongoIdValidation.validateAsync(note_id);
 
 	const updated = createSet(validateBody, 'notes.$');
-
-	await updateRepository<IClientDocument>(ClientModel, { 'notes._id': validateIdNote }, updated);
+	const client = await updateRepository<IClientDocument>(
+		ClientModel,
+		{ 'notes._id': validateIdNote },
+		updated
+	);
+	const _note = client?.notes.find(({ _id }) => _id.toString() === validateIdNote);
+	await updateTags(_note, validateBody.tags, {
+		field: 'notes',
+		property: 'title',
+		model: TagNoteModel
+	});
 };
 
 export const updateMessage = async (message_id: string, body: Partial<IMessage>): Promise<void> => {
