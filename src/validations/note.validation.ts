@@ -33,13 +33,27 @@ export const updateNoteValidationAdmin = Joi.object().keys({
 });
 
 export const createMessageNoteValidation = Joi.object().keys({
-	message: Joi.string().required()
+	message: Joi.string().required(),
+	link: Joi.string(),
+	documents: Joi.array().items(
+		Joi.object({
+			url: Joi.string().required(),
+			name: Joi.string().required()
+		})
+	)
 });
 
 export const updateMessageNoteValidation = Joi.object().keys({
 	message: Joi.string(),
 	formalized: Joi.boolean(),
-	approved: Joi.boolean()
+	link: Joi.string(),
+	approved: Joi.boolean(),
+	documents: Joi.array().items(
+		Joi.object({
+			url: Joi.string().required(),
+			name: Joi.string().required()
+		})
+	)
 });
 
 export const groupNotesValidation = Joi.object().keys({

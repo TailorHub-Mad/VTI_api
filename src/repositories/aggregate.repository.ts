@@ -209,6 +209,51 @@ export const aggregateCrud = async (
 		});
 	}
 
+	if (nameFild === 'notes') {
+		pipeline.push(
+			{
+				$unwind: {
+					path: '$notes'
+				}
+			},
+			{
+				$unwind: {
+					path: '$notes.messages',
+					preserveNullAndEmptyArrays: true
+				}
+			},
+			{
+				$lookup: {
+					from: 'users',
+					localField: 'notes.messages.owner',
+					foreignField: '_id',
+					as: 'notes.messages.owner'
+				}
+			},
+			{
+				$replaceRoot: {
+					newRoot: { $mergeObjects: ['$notes'] }
+				}
+			},
+			{
+				$group: {
+					_id: '$_id',
+					notes: {
+						$first: '$$ROOT'
+					},
+					messages: {
+						$push: '$messages'
+					}
+				}
+			},
+			{
+				$replaceRoot: {
+					newRoot: { $mergeObjects: ['$notes', { messages: '$messages' }] }
+				}
+			}
+		);
+	}
+
 	return await ClientModel.aggregate(pipeline).collation({
 		locale: 'es',
 		numericOrdering: true
