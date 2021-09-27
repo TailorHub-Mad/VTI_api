@@ -23,6 +23,7 @@ export const updateNoteValidationAdmin = Joi.object().keys({
 	link: Joi.string(),
 	isClosed: Joi.boolean(),
 	formalized: Joi.boolean(),
+	tags: Joi.array().items(mongoIdValidation),
 	documents: Joi.array().items(
 		Joi.object({
 			url: Joi.string().required(),

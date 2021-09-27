@@ -40,6 +40,7 @@ export const updateTags = async <T extends Document & { tags: string[] }>(
 	newTags: string[],
 	{ field, property, model }: { field: string; property: keyof T; model: Model<T> }
 ): Promise<void> => {
+	if (!newTags) return;
 	const oldTags = project.tags.map((tag: string) => tag.toString());
 	const addToSet = newTags.filter((tag: string) => !(oldTags as string[]).includes(tag));
 	const pull = oldTags.filter((tag: string) => !newTags.includes(tag));
