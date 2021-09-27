@@ -250,6 +250,14 @@ export const aggregateCrud = async (
 				$replaceRoot: {
 					newRoot: { $mergeObjects: ['$notes', { messages: '$messages' }] }
 				}
+			},
+			{
+				$group: {
+					_id: null,
+					notes: {
+						$push: '$notes'
+					}
+				}
 			}
 		);
 	}
