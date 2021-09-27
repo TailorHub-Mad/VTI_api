@@ -255,7 +255,7 @@ export const aggregateCrud = async (
 				$group: {
 					_id: null,
 					notes: {
-						$push: '$notes'
+						$push: '$$ROOT'
 					}
 				}
 			}
