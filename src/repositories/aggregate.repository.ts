@@ -125,9 +125,9 @@ export const aggregateCrud = async (
 			}
 		});
 
-		pipeline.push({
-			$sort: order || { [`${nameFild}.updatedAt`]: -1 }
-		});
+		// pipeline.push({
+		// 	$sort: order || { [`${nameFild}.updatedAt`]: -1 }
+		// });
 
 		if (populates) {
 			populates.forEach((populate) => {
@@ -139,7 +139,8 @@ export const aggregateCrud = async (
 					},
 					{
 						$unwind: {
-							path: `$${nameFild}.${populate}`
+							path: `$${nameFild}.${populate}`,
+							preserveNullAndEmptyArrays: true
 						}
 					},
 					// {
@@ -208,7 +209,7 @@ export const aggregateCrud = async (
 		});
 	}
 
-	return await ClientModel.aggregate(pipeline).sort({ _id: 1 }).collation({
+	return await ClientModel.aggregate(pipeline).collation({
 		locale: 'es',
 		numericOrdering: true
 	});
