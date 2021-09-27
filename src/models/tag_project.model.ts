@@ -12,7 +12,10 @@ const tagProjectSchema = new Schema<ITagProjectDocument, ITagProjectModel>(
 	{
 		timestamps: true,
 		versionKey: false,
-		discriminatorKey: 'type'
+		discriminatorKey: 'type',
+		toJSON: {
+			virtuals: true
+		}
 	}
 );
 
