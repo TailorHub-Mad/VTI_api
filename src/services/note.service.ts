@@ -33,7 +33,7 @@ import { groupRepository } from '../repositories/aggregate.repository';
 import { IPopulateGroup } from '../interfaces/aggregate.interface';
 import { Types } from 'mongoose';
 import { UserModel } from '../models/user.model';
-import { TagNoteModel } from 'src/models/tag_notes.model';
+import { TagNoteModel } from '../models/tag_notes.model';
 
 export const createNote = async (
 	body: Partial<INote>,

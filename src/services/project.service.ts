@@ -20,7 +20,7 @@ import { SectorModel } from '../models/sector.model';
 import { updateRepository } from '../repositories/common.repository';
 import { UserModel } from '../models/user.model';
 import { addToSetTags, createRef, updateTags } from '@utils/model.utils';
-import { TagProjectModel } from 'src/models/tag_project.model';
+import { TagProjectModel } from '../models/tag_project.model';
 
 export const createProject = async (body: Partial<IProjects>): Promise<void> => {
 	const projectValidation = await createProjectValidation.validateAsync(body);

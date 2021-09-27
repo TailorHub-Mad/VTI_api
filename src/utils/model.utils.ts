@@ -1,7 +1,7 @@
 import { Document, Model, Types } from 'mongoose';
-import { ITagProjectDocument } from 'src/interfaces/models.interface';
-import { TagProjectModel } from 'src/models/tag_project.model';
-import { updateRepository } from 'src/repositories/common.repository';
+import { ITagProjectDocument } from '../interfaces/models.interface';
+import { TagProjectModel } from '../models/tag_project.model';
+import { updateRepository } from '../repositories/common.repository';
 import { RefsEnum } from '../enums/client.enum';
 import { findLastField } from '../repositories/client.repository';
 
