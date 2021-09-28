@@ -3,7 +3,7 @@
 export const GROUP_PROJECT = [
 	'client',
 	'years',
-	'sector',
+	'sector.0.title',
 	'date.year',
 	'projects.tags.name',
 	'tags'
@@ -15,7 +15,14 @@ export const GROUP_NOTES = ['title', 'year', 'sector', 'notes.tags.name', 'tags'
 
 // Test System.
 
-export const GROUP_TEST_SYSTEM = ['alias', 'date.year', 'CodVTI', 'sector'] as const;
+export const GROUP_TEST_SYSTEM = [
+	'alias',
+	'date.year',
+	'vtiCode',
+	'sector',
+	'client',
+	'ref'
+] as const;
 
 // Users.
 

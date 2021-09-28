@@ -316,12 +316,24 @@ export const groupRepository = async <T, G extends string>(
 	// 	}
 	// });
 
+	if (field === 'projects') {
+		pipeline.push({
+			$lookup: {
+				from: 'sectors',
+				localField: 'aux.sector',
+				foreignField: '_id',
+				as: 'aux.sector'
+			}
+		});
+	}
+
 	const properties = await ClientModel.aggregate(pipeline)
-		.sort({ [`aux._id`]: 1 })
+		.sort({ [`aux.${group}`]: -1 })
 		.collation({
 			locale: 'es',
 			numericOrdering: true
 		});
+	console.log(properties);
 	// console.log(properties);
 	// return properties;
 	return groupAggregate<T, G>(properties, { group, field, real: options?.real });

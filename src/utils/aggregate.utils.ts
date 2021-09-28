@@ -97,7 +97,7 @@ export const groupAggregate = <T, G extends string>(
 	return properties.reduce((projectsGroup, { aux }) => {
 		const valueGroup = group.split('.').filter((property) => property !== field);
 		let value = valueGroup.reduce((field, property) => {
-			return aux[property] || (field as unknown as { [key: string]: string })[property];
+			return aux[property] || (field as unknown as { [key: string]: string })?.[property];
 		}, '');
 
 		let key = findKey(value, aux, group, real);
