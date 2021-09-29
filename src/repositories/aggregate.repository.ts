@@ -126,9 +126,9 @@ export const aggregateCrud = async (
 			}
 		});
 
-		// pipeline.push({
-		// 	$sort: order || { [`${nameFild}.updatedAt`]: -1 }
-		// });
+		pipeline.push({
+			$sort: order || { [`${nameFild}.updatedAt`]: -1 }
+		});
 
 		if (populates) {
 			populates.forEach((populate) => {
@@ -177,8 +177,8 @@ export const aggregateCrud = async (
 						$match: {
 							$expr: {
 								$or: [
-									{ $eq: [`$${nameFild}.${populate}`, `$${populate}._id`] }
-									// { $eq: [{ $size: `$${nameFild}.${populate}` }, 0] }
+									{ $eq: [`$${nameFild}.${populate}`, `$${populate}._id`] },
+									{ $eq: [`$${nameFild}.${populate}Index`, null] }
 								]
 							}
 						}
@@ -206,15 +206,6 @@ export const aggregateCrud = async (
 							},
 							[populate]: {
 								$push: `$${nameFild}.${populate}`
-								// {
-								// 	$cond: {
-								// 		if: {
-								// 			$eq: [`$${populate}.0`, undefined]
-								// 		},
-								// 		then: 'pepe',
-								// 		else: `$${nameFild}.${populate}`
-								// 	}
-								// }
 							}
 						}
 					},
