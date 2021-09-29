@@ -136,25 +136,62 @@ export const aggregateCrud = async (
 					{
 						$unwind: {
 							path: `$${populate}`,
+							includeArrayIndex: `${populate}Index`,
 							preserveNullAndEmptyArrays: true
+						}
+					},
+					{
+						$addFields: {
+							[`${populate}`]: {
+								$cond: {
+									if: {
+										$eq: [`$${populate}Index`, null]
+									},
+									then: [],
+									else: `$${populate}`
+								}
+							}
 						}
 					},
 					{
 						$unwind: {
 							path: `$${nameFild}.${populate}`,
+							includeArrayIndex: `${nameFild}.${populate}Index`,
 							preserveNullAndEmptyArrays: true
+						}
+					},
+					{
+						$addFields: {
+							[`${nameFild}.${populate}`]: {
+								$cond: {
+									if: {
+										$eq: [`$${nameFild}.${populate}Index`, null]
+									},
+									then: [],
+									else: `$${nameFild}.${populate}`
+								}
+							}
 						}
 					},
 					{
 						$match: {
 							$expr: {
-								$eq: [`$${nameFild}.${populate}`, `$${populate}._id`]
+								$or: [
+									{ $eq: [`$${nameFild}.${populate}`, `$${populate}._id`] }
+									// { $eq: [{ $size: `$${nameFild}.${populate}` }, 0] }
+								]
 							}
 						}
 					},
 					{
 						$addFields: {
-							[`${nameFild}.${populate}`]: `$${populate}`
+							[`${nameFild}.${populate}`]: {
+								$cond: {
+									if: { $eq: [`$${nameFild}.${populate}`, `$${populate}._id`] },
+									then: `$${populate}`,
+									else: '$a'
+								}
+							}
 						}
 					}
 				);
@@ -169,6 +206,15 @@ export const aggregateCrud = async (
 							},
 							[populate]: {
 								$push: `$${nameFild}.${populate}`
+								// {
+								// 	$cond: {
+								// 		if: {
+								// 			$eq: [`$${populate}.0`, undefined]
+								// 		},
+								// 		then: 'pepe',
+								// 		else: `$${nameFild}.${populate}`
+								// 	}
+								// }
 							}
 						}
 					},
