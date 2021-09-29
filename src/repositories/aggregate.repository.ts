@@ -68,7 +68,8 @@ export const aggregateCrud = async (
 		fields.forEach((_, index, array) => {
 			pipeline.push({
 				$unwind: {
-					path: `$${array.slice(0, index + 1).join('.')}`
+					path: `$${array.slice(0, index + 1).join('.')}`,
+					preserveNullAndEmptyArrays: true
 				}
 			});
 		});
@@ -134,7 +135,8 @@ export const aggregateCrud = async (
 				pipeline.push(
 					{
 						$unwind: {
-							path: `$${populate}`
+							path: `$${populate}`,
+							preserveNullAndEmptyArrays: true
 						}
 					},
 					{
@@ -143,13 +145,13 @@ export const aggregateCrud = async (
 							preserveNullAndEmptyArrays: true
 						}
 					},
-					// {
-					// 	$match: {
-					// 		$expr: {
-					// 			$eq: [`$${nameFild}.${populate}`, `$${populate}._id`]
-					// 		}
-					// 	}
-					// },
+					{
+						$match: {
+							$expr: {
+								$eq: [`$${nameFild}.${populate}`, `$${populate}._id`]
+							}
+						}
+					},
 					{
 						$addFields: {
 							[`${nameFild}.${populate}`]: `$${populate}`
