@@ -33,8 +33,7 @@ export const CreateMessage = async (
 		const { id } = params;
 		await createMessage(id, body, user);
 		logger.notice(
-			`El usuario ${user.email} ha creado el mensaje con title ${body.message} en el apunte con la id ${id}`,
-			{ name: 'test' }
+			`El usuario ${user.email} ha creado el mensaje con title ${body.message} en el apunte con la id ${id}`
 		);
 		res.sendStatus(201);
 	} catch (err) {
