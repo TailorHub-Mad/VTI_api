@@ -2,10 +2,9 @@ import { NotFoundError } from '@errors/not_found.error';
 import { getPagination } from '@utils/controllers.utils';
 import { Request, Response, NextFunction } from 'express';
 import { recovery, resetPassword } from '../services/user.service';
-import { recoveryValidation } from '../validations/user.validation';
 import { IUserDocument } from '../interfaces/models.interface';
 import { UserModel } from '../models/user.model';
-import { read, update } from '../services/crud.service';
+import { read } from '../services/crud.service';
 
 export const getProfile = async (
 	req: Request,

@@ -31,7 +31,7 @@ import { GROUP_NOTES } from '@constants/group.constans';
 import QueryString from 'qs';
 import { groupRepository } from '../repositories/aggregate.repository';
 import { IPopulateGroup } from '../interfaces/aggregate.interface';
-import { Types } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { UserModel } from '../models/user.model';
 import { TagNoteModel } from '../models/tag_notes.model';
 import { deleteModelInClientRepository } from '../repositories/client.repository';
@@ -76,7 +76,11 @@ export const createNote = async (
 
 	addToSetTags(
 		note,
-		{ field: 'notes', property: 'title', model: TagNoteModel as any },
+		{
+			field: 'notes',
+			property: 'title',
+			model: TagNoteModel as unknown as Model<INoteDocument>
+		},
 		validateBody.tags
 	);
 

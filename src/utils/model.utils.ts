@@ -93,5 +93,5 @@ export const pullTags = async <T extends Document & { tags: string[] }>(
 	);
 };
 
-export const encryptPassword = (password: string) =>
+export const encryptPassword = (password: string): string =>
 	bcrypt.hashSync(password, bcrypt.genSaltSync(8));
