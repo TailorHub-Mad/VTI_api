@@ -217,7 +217,26 @@ export const aggregateCrud = async (
 				);
 			});
 		}
-
+		if (nameFild === 'projects') {
+			pipeline.push(
+				{
+					$lookup: {
+						from: 'sectors',
+						localField: 'projects.sector',
+						foreignField: '_id',
+						as: 'projects.sector'
+					}
+				},
+				{
+					$lookup: {
+						from: 'users',
+						localField: 'projects.focusPoint',
+						foreignField: '_id',
+						as: 'projects.focusPoint'
+					}
+				}
+			);
+		}
 		if (nameFild === 'notes') {
 			pipeline.push(
 				{
@@ -292,35 +311,16 @@ export const aggregateCrud = async (
 					}
 				}
 			);
-		}
-		if (nameFild === 'projects') {
-			pipeline.push(
-				{
-					$lookup: {
-						from: 'sectors',
-						localField: 'projects.sector',
-						foreignField: '_id',
-						as: 'projects.sector'
-					}
-				},
-				{
-					$lookup: {
-						from: 'users',
-						localField: 'projects.focusPoint',
-						foreignField: '_id',
-						as: 'projects.focusPoint'
+		} else {
+			pipeline.push({
+				$group: {
+					_id: group || '$_id',
+					[nameFild]: {
+						$push: `$${nameFild}`
 					}
 				}
-			);
+			});
 		}
-		pipeline.push({
-			$group: {
-				_id: group || '$_id',
-				[nameFild]: {
-					$push: `$${nameFild}`
-				}
-			}
-		});
 	}
 
 	return await ClientModel.aggregate(pipeline).collation({
