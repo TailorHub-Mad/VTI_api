@@ -34,7 +34,7 @@ import { IPopulateGroup } from '../interfaces/aggregate.interface';
 import { Types } from 'mongoose';
 import { UserModel } from '../models/user.model';
 import { TagNoteModel } from '../models/tag_notes.model';
-import { deleteModelInClientRepository } from 'src/repositories/client.repository';
+import { deleteModelInClientRepository } from '../repositories/client.repository';
 
 export const createNote = async (
 	body: Partial<INote>,
@@ -222,7 +222,7 @@ export const deleteMessage = async (id_note: string, id_message: string): Promis
 	await updateRepository<IClientDocument>(
 		ClientModel,
 		{ 'notes._id': noteIdValidation },
-		{ $pull: { 'notes.$.messages.$[_id]._id': messageIdValidation } },
+		{ $pull: { 'notes.$.messages.$[message]._id': messageIdValidation } },
 		{
 			arrayFilters: [{ 'message._id': messageIdValidation }]
 		}
