@@ -5,6 +5,7 @@ import {
 	deleteMessage,
 	deleteNote,
 	downloadDocument,
+	downloadDocumentMessage,
 	groupNotes,
 	updateMessage,
 	updateNote
@@ -97,6 +98,21 @@ export const DownloadDocumentNote = async (
 ): Promise<void> => {
 	try {
 		const document = await downloadDocument(req.params.document);
+		const user = req.user;
+		logger.notice(`El usuario ${user.email} se ha descargado el archivo ${document}`);
+		res.download(document);
+	} catch (err) {
+		next(err);
+	}
+};
+
+export const DownloadDocumentMessage = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		const document = await downloadDocumentMessage(req.params.document);
 		const user = req.user;
 		logger.notice(`El usuario ${user.email} se ha descargado el archivo ${document}`);
 		res.download(document);

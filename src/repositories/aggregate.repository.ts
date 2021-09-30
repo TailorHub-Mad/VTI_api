@@ -115,11 +115,11 @@ export const aggregateCrud = async (
 	}
 
 	if (_extends && nameFild) {
-		pipeline.push({
-			$addFields: {
-				[nameFild]: `$${_extends}`
-			}
-		});
+		// pipeline.push({
+		// 	$addFields: {
+		// 		[nameFild]: `$${_extends}`
+		// 	}
+		// });
 		pipeline.push({
 			$addFields: {
 				[`${nameFild}.clientAlias`]: `$alias`
@@ -218,6 +218,81 @@ export const aggregateCrud = async (
 			});
 		}
 
+		if (nameFild === 'notes') {
+			pipeline.push(
+				{
+					$unwind: {
+						path: '$notes',
+						preserveNullAndEmptyArrays: true
+					}
+				},
+				{
+					$addFields: {
+						'notes.proyects': {
+							$filter: {
+								input: '$projects',
+								as: 'project',
+								cond: {
+									$in: ['$notes._id', '$$project.notes']
+								}
+							}
+						},
+						'notes.testSystems': {
+							$filter: {
+								input: '$testSystems',
+								as: 'testSystem',
+								cond: {
+									$in: ['$notes._id', '$$testSystem.notes']
+								}
+							}
+						}
+					}
+				},
+				{
+					$unwind: {
+						path: '$notes.messages',
+						preserveNullAndEmptyArrays: true
+					}
+				},
+				{
+					$lookup: {
+						from: 'users',
+						localField: 'notes.messages.owner',
+						foreignField: '_id',
+						as: 'notes.messages.owner'
+					}
+				},
+				{
+					$replaceRoot: {
+						newRoot: { $mergeObjects: ['$notes'] }
+					}
+				},
+				{
+					$group: {
+						_id: '$_id',
+						notes: {
+							$first: '$$ROOT'
+						},
+						messages: {
+							$push: '$messages'
+						}
+					}
+				},
+				{
+					$replaceRoot: {
+						newRoot: { $mergeObjects: ['$notes', { messages: '$messages' }] }
+					}
+				},
+				{
+					$group: {
+						_id: null,
+						notes: {
+							$push: '$$ROOT'
+						}
+					}
+				}
+			);
+		}
 		if (nameFild === 'projects') {
 			pipeline.push(
 				{
@@ -246,59 +321,6 @@ export const aggregateCrud = async (
 				}
 			}
 		});
-	}
-
-	if (nameFild === 'notes') {
-		pipeline.push(
-			{
-				$unwind: {
-					path: '$notes'
-				}
-			},
-			{
-				$unwind: {
-					path: '$notes.messages',
-					preserveNullAndEmptyArrays: true
-				}
-			},
-			{
-				$lookup: {
-					from: 'users',
-					localField: 'notes.messages.owner',
-					foreignField: '_id',
-					as: 'notes.messages.owner'
-				}
-			},
-			{
-				$replaceRoot: {
-					newRoot: { $mergeObjects: ['$notes'] }
-				}
-			},
-			{
-				$group: {
-					_id: '$_id',
-					notes: {
-						$first: '$$ROOT'
-					},
-					messages: {
-						$push: '$messages'
-					}
-				}
-			},
-			{
-				$replaceRoot: {
-					newRoot: { $mergeObjects: ['$notes', { messages: '$messages' }] }
-				}
-			},
-			{
-				$group: {
-					_id: null,
-					notes: {
-						$push: '$$ROOT'
-					}
-				}
-			}
-		);
 	}
 
 	return await ClientModel.aggregate(pipeline).collation({

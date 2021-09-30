@@ -5,6 +5,7 @@ import {
 	CreateNote,
 	DeleteMessage,
 	DeleteNote,
+	DownloadDocumentMessage,
 	DownloadDocumentNote,
 	GroupNotes,
 	UpdateMessage,
@@ -26,6 +27,8 @@ router.get('/group', GroupNotes);
 router.get('/filter', GetByQueryAggregate('notes'));
 
 router.get('/download/:document', DownloadDocumentNote);
+
+router.get('/message/download/:document', DownloadDocumentMessage);
 
 router.get('/:id', GetByIdAggregate('notes'));
 

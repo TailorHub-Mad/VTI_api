@@ -230,6 +230,41 @@ export const downloadDocument = async (id_document: string): Promise<string> => 
 	return url.url;
 };
 
+export const downloadDocumentMessage = async (id_document: string): Promise<string> => {
+	const validateIdDocument = await mongoIdValidation.validateAsync(id_document);
+	const client = await findOneRepository<IClientDocument>(
+		ClientModel,
+		{ 'notes.messages.documents._id': validateIdDocument },
+		{
+			_id: 0,
+			notes: {
+				$elemMatch: {
+					messages: { $elemMatch: { documents: { $elemMatch: { _id: validateIdDocument } } } }
+				}
+			}
+		}
+	);
+	if (!client) {
+		throw new BaseError('Missing Document');
+	}
+	const note: INote = client.notes[0];
+
+	const url = note.messages.reduce((url, message) => {
+		const urlFind = message.documents.find(
+			(document: { _id: string }) => document._id?.toString() === id_document
+		);
+		if (urlFind) {
+			return urlFind;
+		}
+		return url;
+	}, {});
+
+	if (!url) {
+		throw new BaseError('Missing Document');
+	}
+	return url.url;
+};
+
 export const deleteNote = async (id_note: string): Promise<void> => {
 	const noteIdValidation = await mongoIdValidation.validateAsync(id_note);
 
