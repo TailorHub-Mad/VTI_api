@@ -219,12 +219,23 @@ export const deleteNote = async (id_note: string): Promise<void> => {
 export const deleteMessage = async (id_note: string, id_message: string): Promise<void> => {
 	const noteIdValidation = await mongoIdValidation.validateAsync(id_note);
 	const messageIdValidation = await mongoIdValidation.validateAsync(id_message);
-	await updateRepository<IClientDocument>(
-		ClientModel,
-		{ 'notes._id': noteIdValidation },
-		{ $pull: { 'notes.$.messages.$[message]._id': messageIdValidation } },
-		{
-			arrayFilters: [{ 'message._id': messageIdValidation }]
+	const client = (
+		await read<IClientDocument>(
+			ClientModel,
+			{ 'notes._id': noteIdValidation },
+			{ limit: 1, offset: 0 }
+		)
+	)[0];
+	if (client) {
+		const notes: INoteDocument = client.notes.find(
+			(note) => note._id.toString() === noteIdValidation
+		);
+		if (notes) {
+			const messages = notes.messages.filter(
+				(message) => message._id.toString() !== messageIdValidation
+			);
+			notes.messages = messages;
+			await client.save();
 		}
-	);
+	}
 };
