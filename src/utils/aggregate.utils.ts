@@ -69,13 +69,8 @@ export const populateAggregate = (
 	return [unwind, lookup, unwind2, lookup2, group, replaceRoot];
 };
 
-export const findKey = <T extends Record<string, string[]>>(
-	value: string,
-	aux: T,
-	group: keyof T,
-	real?: boolean
-): string => {
-	return real ? value : value.match(/^\d/) ? '0-9' : (aux[group][0] as string).toUpperCase();
+export const findKey = (value: string, real?: boolean): string => {
+	return real ? value : value.match(/^\d/) ? '0-9' : (value[0] as string).toUpperCase();
 };
 
 export const addGroup = (
@@ -100,12 +95,12 @@ export const groupAggregate = <T, G extends string>(
 			return aux[property] || (field as unknown as { [key: string]: string })?.[property];
 		}, '');
 
-		let key = findKey(value, aux, group, real);
+		let key = findKey(value, real);
 		addGroup(aux, projectsGroup, key);
 		if (aux?.tags?.relatedTags) {
 			for (const tag of aux.tags.relatedTags) {
 				value = tag.name;
-				key = findKey(value, aux, group, real);
+				key = findKey(value, real);
 				addGroup(aux, projectsGroup, key);
 			}
 		}

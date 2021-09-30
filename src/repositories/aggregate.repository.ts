@@ -339,6 +339,75 @@ export const groupRepository = async <T, G extends string>(
 
 	const pipeline = [];
 
+	if (field === 'notes') {
+		pipeline.push(
+			{
+				$unwind: {
+					path: '$projects',
+					preserveNullAndEmptyArrays: true
+				}
+			},
+			{
+				$lookup: {
+					from: 'sectors',
+					localField: 'projects.sector',
+					foreignField: '_id',
+					as: 'projects.sector'
+				}
+			},
+			{
+				$group: {
+					_id: '$_id',
+					client: {
+						$first: '$$ROOT'
+					},
+					projects: {
+						$push: '$projects'
+					}
+				}
+			},
+			{
+				$replaceRoot: {
+					newRoot: { $mergeObjects: ['$client', { projects: '$projects' }] }
+				}
+			},
+			{
+				$unwind: {
+					path: '$notes',
+					preserveNullAndEmptyArrays: true
+				}
+			},
+			{
+				$addFields: {
+					'notes.projects': {
+						$filter: {
+							input: '$projects',
+							as: 'project',
+							cond: {
+								$in: ['$notes._id', '$$project.notes']
+							}
+						}
+					},
+					'notes.testSystems': {
+						$filter: {
+							input: '$testSystems',
+							as: 'testSystem',
+							cond: {
+								$in: ['$notes._id', '$$testSystem.notes']
+							}
+						}
+					},
+					'notes.year': {
+						$dateToString: {
+							date: '$notes.createdAt',
+							format: '%Y'
+						}
+					}
+				}
+			}
+		);
+	}
+
 	pipeline.push(
 		{
 			$unwind: `$${field}`
@@ -387,14 +456,13 @@ export const groupRepository = async <T, G extends string>(
 			}
 		});
 	}
-
 	const properties = await ClientModel.aggregate(pipeline)
 		.sort({ [`aux.${group}`]: -1 })
 		.collation({
 			locale: 'es',
 			numericOrdering: true
 		});
-	console.log(properties);
+	// console.log(JSON.stringify(properties));
 	// console.log(properties);
 	// return properties;
 	return groupAggregate<T, G>(properties, { group, field, real: options?.real });

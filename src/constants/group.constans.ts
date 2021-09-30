@@ -11,7 +11,7 @@ export const GROUP_PROJECT = [
 
 // Notes.
 
-export const GROUP_NOTES = ['title', 'year', 'sector', 'notes.tags.name', 'tags'] as const;
+export const GROUP_NOTES = ['title', 'year', 'sector', 'notes.tags.name', 'tags', 'alias'] as const;
 
 // Test System.
 

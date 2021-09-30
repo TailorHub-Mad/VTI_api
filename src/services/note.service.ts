@@ -206,6 +206,15 @@ export const groupNotes = async (query: QueryString.ParsedQs): Promise<INote[]> 
 		queryValid.group = 'notes.tags.name';
 		populate = { field: 'tagnotes', property: 'tags' };
 	}
+	if (queryValid.group === 'sector') {
+		queryValid.group = 'notes.projects.0.sector.0.title';
+	}
+	if (queryValid.group === 'alias') {
+		queryValid.group = 'notes.projects.0.alias';
+	}
+	if (queryValid.group === 'year') {
+		queryValid.group = 'notes.year';
+	}
 	const notes = await groupRepository<INote, typeof GROUP_NOTES[number]>(
 		queryValid.group,
 		'notes',
