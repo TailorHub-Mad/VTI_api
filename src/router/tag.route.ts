@@ -9,9 +9,12 @@ import { DeleteCrud, GetAll } from '../controllers/crud.controller';
 
 const router = Router();
 
-router.get('/notes', GetAll<ITagNoteDocument>(TagNoteModel, { path: 'relatedTags' }));
+router.get('/notes', GetAll<ITagNoteDocument>(TagNoteModel, { path: 'relatedTags parent' }));
 
-router.get('/projects', GetAll<ITagProjectDocument>(TagProjectModel, { path: 'relatedTags' }));
+router.get(
+	'/projects',
+	GetAll<ITagProjectDocument>(TagProjectModel, { path: 'relatedTags parent' })
+);
 
 router.post('/notes', CreateTag<ITagNoteDocument>(TagNoteModel, createTagValidation));
 

@@ -17,7 +17,10 @@ export const CreateTag =
 			const { body } = req;
 			const name: string = body.name;
 			await mongoIdValidation.validateAsync(body.relatedTag);
-			const tag = (await create<Doc>(model, validate, { name })) as unknown as ITagBothDocument;
+			const tag = (await create<Doc>(model, validate, {
+				name,
+				parent: body.relatedTag
+			})) as unknown as ITagBothDocument;
 			if (body.relatedTag) {
 				const relatedTag = (
 					await read<Doc>(model, { _id: body.relatedTag }, getPagination())
