@@ -21,3 +21,12 @@ export const updateUserValidation = Joi.object().keys({
 	lastName: Joi.string(),
 	department: mongoIdValidation.required()
 });
+
+export const recoveryValidation = Joi.object().keys({
+	recovery: Joi.string(),
+	password: Joi.string().required()
+});
+
+export const resetPasswordValidation = Joi.object().keys({
+	email: Joi.string().email().required()
+});

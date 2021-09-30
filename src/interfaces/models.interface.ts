@@ -49,6 +49,7 @@ export interface IUser {
 		notification: 'id';
 	};
 	password: string;
+	recovery: string[];
 }
 
 export interface IUserDocument extends IUser, Document {

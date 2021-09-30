@@ -2,6 +2,7 @@ import { PATH_USER_MODEL } from '@constants/model.constants';
 import { HookNextFunction, model, Schema, Types } from 'mongoose';
 import { IUserDocument, IUserModel, NOTIFICATION_STATUS } from '../interfaces/models.interface';
 import bcrypt from 'bcrypt';
+import { encryptPassword } from '@utils/model.utils';
 
 const userSchema = new Schema<IUserDocument, IUserModel>(
 	{
@@ -15,18 +16,19 @@ const userSchema = new Schema<IUserDocument, IUserModel>(
 		projectsComments: [{ type: String }],
 		focusPoint: [{ type: String }],
 		favorites: {
-			notes: [{ type: Types.ObjectId, ref: '' }],
-			projects: [{ type: Types.ObjectId, ref: '' }]
+			notes: [{ type: Types.ObjectId }],
+			projects: [{ type: Types.ObjectId }]
 		},
 		subscribed: {
-			notes: [{ type: Types.ObjectId, ref: '' }],
-			projects: [{ type: Types.ObjectId, ref: '' }],
-			testSystems: [{ type: Types.ObjectId, ref: '' }]
+			notes: [{ type: Types.ObjectId }],
+			projects: [{ type: Types.ObjectId }],
+			testSystems: [{ type: Types.ObjectId }]
 		},
 		notifications: {
 			status: { type: String, enum: NOTIFICATION_STATUS, default: NOTIFICATION_STATUS[0] },
 			notification: { type: Types.ObjectId, ref: '' }
-		}
+		},
+		recovery: [{ type: String }]
 	},
 	{
 		timestamps: true,
@@ -37,7 +39,7 @@ const userSchema = new Schema<IUserDocument, IUserModel>(
 userSchema.pre('save', function (next: HookNextFunction) {
 	if (this.isModified('password')) {
 		try {
-			this.password = bcrypt.hashSync(this.password, bcrypt.genSaltSync(8)); // ToDo: Pass to globlal env.
+			this.password = encryptPassword(this.password);
 		} catch (err) {
 			return next(err);
 		}
