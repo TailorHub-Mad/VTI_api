@@ -10,9 +10,19 @@ import { CriterionNoteModel } from '../models/criterion_note.model';
 
 const router = Router();
 
-router.get('/notes', Read<ICriterionNoteDocument>(CriterionNoteModel, { type: 'note' }));
+router.get(
+	'/notes',
+	Read<ICriterionNoteDocument>(CriterionNoteModel, { type: 'note' }, { path: 'relatedTags' })
+);
 
-router.get('/project', Read<ICriterionProjectDocument>(CriterionProjectModel, { type: 'project' }));
+router.get(
+	'/project',
+	Read<ICriterionProjectDocument>(
+		CriterionProjectModel,
+		{ type: 'project' },
+		{ path: 'relatedTags' }
+	)
+);
 
 router.post(
 	'/notes',

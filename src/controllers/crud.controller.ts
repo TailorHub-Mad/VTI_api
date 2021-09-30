@@ -53,12 +53,13 @@ export const Create =
 export const Read =
 	<Doc, M extends GenericModel<Doc> = GenericModel<Doc>>(
 		model: M,
-		query: FilterQuery<Document>
+		query: FilterQuery<Document>,
+		populate?: PopulateOptions
 	): ((req: Request, res: Response, next: NextFunction) => Promise<void>) =>
 	async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const pagination = getPagination(req.query);
-			const document = await read<Doc, M>(model, query, pagination);
+			const document = await read<Doc, M>(model, query, pagination, { populate });
 			res.status(200).json(document);
 		} catch (err) {
 			logger.error(`Error read ${model.collection.name}`);

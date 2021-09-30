@@ -12,7 +12,9 @@ export const signup = async ({
 	email,
 	password,
 	alias,
-	department
+	department,
+	lastName,
+	name
 }: Partial<IUser>): Promise<{ alias: string; token: string; role: string }> => {
 	const user = await read<IUserDocument>(UserModel, { email }, { limit: 0, offset: 0 });
 
@@ -25,7 +27,9 @@ export const signup = async ({
 			alias,
 			password,
 			email,
-			department
+			department,
+			lastName,
+			name
 		});
 		if (Array.isArray(savedUser)) {
 			throw new BaseError();
