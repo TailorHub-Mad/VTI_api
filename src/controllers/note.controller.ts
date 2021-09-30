@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 import {
 	createMessage,
 	createNote,
+	deleteMessage,
+	deleteNote,
 	downloadDocument,
 	groupNotes,
 	updateMessage,
@@ -98,6 +100,38 @@ export const DownloadDocumentNote = async (
 		const user = req.user;
 		logger.notice(`El usuario ${user.email} se ha descargado el archivo ${document}`);
 		res.download(document);
+	} catch (err) {
+		next(err);
+	}
+};
+
+export const DeleteNote = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		const { user } = req;
+		const { id_note } = req.params;
+		await deleteNote(id_note);
+		logger.notice(`El usuario ${user.email} ha eliminado una nota con el id ${id_note}`);
+		res.sendStatus(200);
+	} catch (err) {
+		next(err);
+	}
+};
+
+export const DeleteMessage = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		const { user } = req;
+		const { id_note, id_message } = req.params;
+		await deleteMessage(id_note, id_message);
+		logger.notice(`El usuario ${user.email} ha eliminado un mensaje con el id ${id_message}`);
+		res.sendStatus(200);
 	} catch (err) {
 		next(err);
 	}

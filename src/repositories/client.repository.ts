@@ -27,7 +27,7 @@ export const updateModelsInClientRepository = async (
 };
 
 export const deleteModelInClientRepository = async (
-	field: 'testSystems' | 'projects',
+	field: 'testSystems' | 'projects' | 'notes',
 	find_id: string
 ): Promise<IClientDocument | null> => {
 	return await ClientModel.findOneAndUpdate(

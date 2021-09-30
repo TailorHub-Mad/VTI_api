@@ -34,6 +34,7 @@ import { IPopulateGroup } from '../interfaces/aggregate.interface';
 import { Types } from 'mongoose';
 import { UserModel } from '../models/user.model';
 import { TagNoteModel } from '../models/tag_notes.model';
+import { deleteModelInClientRepository } from 'src/repositories/client.repository';
 
 export const createNote = async (
 	body: Partial<INote>,
@@ -88,9 +89,9 @@ export const createNote = async (
 
 	newClient.testSystems = client.testSystems.map((testSystem) => {
 		if ((testSystems || []).includes(testSystem._id.toString())) {
-			testSystems.notes.push(note._id);
+			testSystem.notes.push(note._id);
 		}
-		return testSystems;
+		return testSystem;
 	});
 	await newClient.save();
 };
@@ -207,4 +208,23 @@ export const downloadDocument = async (id_document: string): Promise<string> => 
 		throw new BaseError('Missing Document');
 	}
 	return url.url;
+};
+
+export const deleteNote = async (id_note: string): Promise<void> => {
+	const noteIdValidation = await mongoIdValidation.validateAsync(id_note);
+
+	await deleteModelInClientRepository('notes', noteIdValidation);
+};
+
+export const deleteMessage = async (id_note: string, id_message: string): Promise<void> => {
+	const noteIdValidation = await mongoIdValidation.validateAsync(id_note);
+	const messageIdValidation = await mongoIdValidation.validateAsync(id_message);
+	await updateRepository<IClientDocument>(
+		ClientModel,
+		{ 'notes._id': noteIdValidation },
+		{ $pull: { 'notes.$.messages.$[_id]._id': messageIdValidation } },
+		{
+			arrayFilters: [{ 'message._id': messageIdValidation }]
+		}
+	);
 };

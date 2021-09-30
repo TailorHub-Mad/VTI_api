@@ -3,6 +3,8 @@ import { Router } from 'express';
 import {
 	CreateMessage,
 	CreateNote,
+	DeleteMessage,
+	DeleteNote,
 	DownloadDocumentNote,
 	GroupNotes,
 	UpdateMessage,
@@ -34,5 +36,9 @@ router.put('/:id', multerConfig.array('file'), UpdateNote);
 router.post('/:id/message/create', CreateMessage);
 
 router.put('/:id/message/:id', UpdateMessage);
+
+router.delete('/:id_note', DeleteNote);
+
+router.delete('/:id_note/message/:id_message', DeleteMessage);
 
 export const NotesRouter = { router, path: NOTES_PATH };
