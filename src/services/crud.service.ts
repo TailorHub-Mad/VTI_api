@@ -96,7 +96,7 @@ export const getByQueryAggregate = async (
 	const transformExtendsToArray = _extends?.split('.');
 	const nameField = transformExtendsToArray?.slice(-1)[0];
 	const transformQueryToArray = Object.entries(query).map(([key, value]) => {
-		return { [key]: value };
+		return { [key]: { $regex: value, $options: 'i' } };
 	});
 	const transformQuery =
 		transformQueryToArray.length > 0
