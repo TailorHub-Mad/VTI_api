@@ -33,9 +33,9 @@ router.post('/create', multerConfig.array('file'), CreateNote);
 
 router.put('/:id', multerConfig.array('file'), UpdateNote);
 
-router.post('/:id/message/create', CreateMessage);
+router.post('/:id/message/create', multerConfig.array('file'), CreateMessage);
 
-router.put('/:id/message/:id', UpdateMessage);
+router.put('/:id/message/:id', multerConfig.array('file'), UpdateMessage);
 
 router.delete('/:id_note', DeleteNote);
 

@@ -31,9 +31,9 @@ export const CreateMessage = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
-		const { body, params, user } = req;
+		const { body, params, user, files } = req;
 		const { id } = params;
-		await createMessage(id, body, user);
+		await createMessage(id, body, user, files as Express.Multer.File[] | undefined);
 		logger.notice(
 			`El usuario ${user.email} ha creado el mensaje con title ${body.message} en el apunte con la id ${id}`
 		);
@@ -65,9 +65,9 @@ export const UpdateMessage = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
-		const { body, params, user } = req;
+		const { body, params, user, files } = req;
 		const { id } = params;
-		await updateMessage(id, body);
+		await updateMessage(id, body, files as Express.Multer.File[] | undefined);
 		logger.notice(
 			`El usuario ${user.email} ha modificado un mensaje con título ${body.message} en el apunte con la id ${id}`
 		);

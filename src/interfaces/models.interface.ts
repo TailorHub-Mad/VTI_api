@@ -120,7 +120,7 @@ export interface INote {
 	updateTime: Date;
 	owner: IUserDocument['_id'];
 	readBy: IUserDocument['_id'][];
-	message: IMessageDocument['_id'][];
+	messages: IMessageDocument['_id'][];
 	approved: boolean;
 	formalized: boolean;
 }
@@ -133,6 +133,8 @@ export interface IMessage {
 	owner: IUserDocument['_id'];
 	approved: boolean;
 	formalized: boolean;
+	link: string;
+	documents: IDocument[];
 	message: string;
 }
 

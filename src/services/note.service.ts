@@ -99,11 +99,20 @@ export const createNote = async (
 export const createMessage = async (
 	note: string,
 	body: Partial<INote>,
-	user: IReqUser
+	user: IReqUser,
+	files?: Express.Multer.File[]
 ): Promise<void> => {
 	const validateBody = await createMessageNoteValidation.validateAsync(body);
 	const validateIdNote = await mongoIdValidation.validateAsync(note);
 	validateBody.owner = user.id;
+	let documents: { url: string; name: string }[] = [];
+	if (files) {
+		documents = files.map((file: Express.Multer.File) => ({
+			url: file.path,
+			name: file.fieldname
+		}));
+	}
+	validateBody.documents = documents;
 	const message = new MessageModel(validateBody);
 	const client = await updateRepository<IClientDocument>(
 		ClientModel,
@@ -147,7 +156,6 @@ export const updateNote = async (
 	}
 	const validateBody = await updateNoteValidationAdmin.validateAsync(body);
 	const validateIdNote = await mongoIdValidation.validateAsync(note_id);
-
 	const updated = createSet(validateBody, 'notes.$');
 	const client = await updateRepository<IClientDocument>(
 		ClientModel,
@@ -162,9 +170,21 @@ export const updateNote = async (
 	});
 };
 
-export const updateMessage = async (message_id: string, body: Partial<IMessage>): Promise<void> => {
+export const updateMessage = async (
+	message_id: string,
+	body: Partial<IMessage>,
+	files?: Express.Multer.File[]
+): Promise<void> => {
 	const validateBody = await updateMessageNoteValidation.validateAsync(body);
 	const validateIdNote = await mongoIdValidation.validateAsync(message_id);
+	if (files) {
+		validateBody.documents = (validateBody.documents || []).concat(
+			files.map((file: Express.Multer.File) => ({
+				url: file.path,
+				name: file.fieldname
+			}))
+		);
+	}
 
 	const updated = createSet(validateBody, 'notes.$.messages.$[message]');
 	await updateRepository<IClientDocument>(
