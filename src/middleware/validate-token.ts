@@ -7,7 +7,7 @@ import { verifyJWT } from '../services/jwt.service';
 export const validateToken = (req: Request, _res: Response, next: NextFunction): void => {
 	const { authorization } = req.headers;
 	try {
-		if (EXCEPTION_PATH.includes(req.originalUrl)) return next();
+		if (EXCEPTION_PATH.includes(req.path)) return next();
 		if (!authorization) throw new BaseError('No authorization', 401);
 
 		const { sub, email, role } = verifyJWT(removeBearer(authorization));
