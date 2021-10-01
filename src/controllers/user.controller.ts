@@ -32,7 +32,7 @@ export const ResetPassword = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
-		await resetPassword(req.body);
+		await resetPassword(req.body, Boolean(req.query.isRecovery as string));
 		res.sendStatus(202);
 	} catch (err) {
 		next(err);

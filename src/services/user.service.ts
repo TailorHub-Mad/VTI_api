@@ -7,7 +7,10 @@ import { UserModel } from '../models/user.model';
 import { updateRepository } from '../repositories/common.repository';
 import { recoveryValidation, resetPasswordValidation } from '../validations/user.validation';
 
-export const resetPassword = async (body: { email: string }): Promise<void> => {
+export const resetPassword = async (
+	body: { email: string },
+	isRecovery: boolean
+): Promise<void> => {
 	const validateEmail = await resetPasswordValidation.validateAsync(body);
 	const recovery = randomBytes(64).toString('hex');
 	const user = updateRepository<IUserDocument>(
@@ -19,11 +22,13 @@ export const resetPassword = async (body: { email: string }): Promise<void> => {
 	);
 
 	if (!user) throw new BaseError('Not found user', 400);
-
+	const url = `${process.env.FRONT_URL}/${
+		isRecovery ? 'recuperar' : 'crear-contraseña'
+	}/${recovery}`;
 	await sendMail({
 		to: validateEmail.email,
 		subject: 'Recovery',
-		html: `<a href=${process.env.FRONT_URL}/recovery/${recovery}>RECOVERY</a>`
+		html: `<a href=${url}>RECOVERY</a>`
 	});
 };
 

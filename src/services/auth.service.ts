@@ -7,6 +7,7 @@ import { signJWT } from './jwt.service';
 import { BaseError } from '@errors/base.error';
 import { updateRepository } from '../repositories/common.repository';
 import { DepartmentModel } from '../models/department.model';
+import { randomBytes } from 'crypto';
 
 export const signup = async ({
 	email,
@@ -23,13 +24,15 @@ export const signup = async ({
 		if (!password) {
 			password = 'vti-password-1234';
 		}
+		const recovery = [randomBytes(64).toString('hex')];
 		const savedUser = await create<IUserDocument>(UserModel, newUserValidation, {
 			alias,
 			password,
 			email,
 			department,
 			lastName,
-			name
+			name,
+			recovery
 		});
 		if (Array.isArray(savedUser)) {
 			throw new BaseError();
