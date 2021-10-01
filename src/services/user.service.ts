@@ -23,7 +23,7 @@ export const resetPassword = async (
 
 	if (!user) throw new BaseError('Not found user', 400);
 	const url = `${process.env.FRONT_URL}/${
-		isRecovery ? 'recuperar' : 'crear-contraseña'
+		isRecovery ? 'recuperar-acceso' : 'crear-acceso'
 	}/${recovery}`;
 	await sendMail({
 		to: validateEmail.email,
