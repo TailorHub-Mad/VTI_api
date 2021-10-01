@@ -7,5 +7,5 @@ export const createTagValidation = Joi.object().keys({
 
 export const updateTagValidation = Joi.object().keys({
 	name: Joi.string(),
-	parent: Joi.string().required()
+	parent: Joi.string()
 });
