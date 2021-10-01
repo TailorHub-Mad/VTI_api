@@ -373,8 +373,7 @@ export const groupRepository = async <T, G extends string>(
 			},
 			{
 				$unwind: {
-					path: '$notes',
-					preserveNullAndEmptyArrays: true
+					path: '$notes'
 				}
 			},
 			{
