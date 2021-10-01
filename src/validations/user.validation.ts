@@ -19,6 +19,10 @@ export const updateUserValidation = Joi.object().keys({
 	alias: Joi.string(),
 	name: Joi.string(),
 	lastName: Joi.string(),
+	favorites: Joi.object({
+		notes: Joi.array().items(mongoIdValidation),
+		projects: Joi.array().items(mongoIdValidation)
+	}),
 	department: mongoIdValidation.required()
 });
 
