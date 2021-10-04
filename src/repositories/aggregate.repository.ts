@@ -129,93 +129,6 @@ export const aggregateCrud = async (
 			$sort: order || { [`${nameFild}.updatedAt`]: -1 }
 		});
 
-		if (populates) {
-			populates.forEach((populate) => {
-				pipeline.push(
-					{
-						$unwind: {
-							path: `$${populate}`,
-							includeArrayIndex: `${populate}Index`,
-							preserveNullAndEmptyArrays: true
-						}
-					},
-					{
-						$addFields: {
-							[`${populate}`]: {
-								$cond: {
-									if: {
-										$eq: [`$${populate}Index`, null]
-									},
-									then: [],
-									else: `$${populate}`
-								}
-							}
-						}
-					},
-					{
-						$unwind: {
-							path: `$${nameFild}.${populate}`,
-							includeArrayIndex: `${nameFild}.${populate}Index`,
-							preserveNullAndEmptyArrays: true
-						}
-					},
-					{
-						$addFields: {
-							[`${nameFild}.${populate}`]: {
-								$cond: {
-									if: {
-										$eq: [`$${nameFild}.${populate}Index`, null]
-									},
-									then: [],
-									else: `$${nameFild}.${populate}`
-								}
-							}
-						}
-					},
-					{
-						$match: {
-							$expr: {
-								$or: [
-									{ $eq: [`$${nameFild}.${populate}`, `$${populate}._id`] },
-									{ $eq: [`$${nameFild}.${populate}Index`, null] }
-								]
-							}
-						}
-					},
-					{
-						$addFields: {
-							[`${nameFild}.${populate}`]: {
-								$cond: {
-									if: { $eq: [`$${nameFild}.${populate}`, `$${populate}._id`] },
-									then: `$${populate}`,
-									else: '$a'
-								}
-							}
-						}
-					}
-				);
-			});
-			populates.forEach((populate) => {
-				pipeline.push(
-					{
-						$group: {
-							_id: `$${nameFild}._id`,
-							[nameFild]: {
-								$first: `$${nameFild}`
-							},
-							[populate]: {
-								$push: `$${nameFild}.${populate}`
-							}
-						}
-					},
-					{
-						$addFields: {
-							[`${nameFild}.${populate}`]: `$${populate}`
-						}
-					}
-				);
-			});
-		}
 		if (nameFild === 'projects') {
 			pipeline.push(
 				{
@@ -233,8 +146,112 @@ export const aggregateCrud = async (
 						foreignField: '_id',
 						as: 'projects.focusPoint'
 					}
+				},
+				{
+					$lookup: {
+						from: 'tagprojects',
+						localField: 'projects.tags',
+						foreignField: '_id',
+						as: 'projects.tags'
+					}
 				}
 			);
+		}
+
+		if (populates) {
+			populates.forEach((populate) => {
+				pipeline.push({
+					$addFields: {
+						[`${nameFild}.${populate}`]: {
+							$filter: {
+								input: `$${populate}`,
+								as: 'populate',
+								cond: {
+									$in: ['$$populate._id', `$${nameFild}.${populate}`]
+								}
+							}
+						}
+					}
+				});
+			});
+			if (populates.includes('notes')) {
+				pipeline.push(
+					{
+						$unwind: {
+							path: '$projects.notes',
+							preserveNullAndEmptyArrays: true
+						}
+					},
+					{
+						$lookup: {
+							from: 'tagnotes',
+							localField: 'projects.notes.tags',
+							foreignField: '_id',
+							as: 'projects.notes.tags'
+						}
+					},
+					{
+						$replaceRoot: {
+							newRoot: { $mergeObjects: ['$projects'] }
+						}
+					},
+					{
+						$group: {
+							_id: '$_id',
+							projects: {
+								$first: '$$ROOT'
+							},
+							notes: {
+								$push: '$$ROOT.notes'
+							}
+						}
+					},
+					{
+						$replaceRoot: {
+							newRoot: { $mergeObjects: ['$projects', { notes: '$notes' }] }
+						}
+					},
+					{
+						$sort: {
+							updatedAt: -1
+						}
+					},
+					{
+						$group: {
+							_id: null,
+							projects: {
+								$push: '$$ROOT'
+							}
+						}
+					}
+				);
+			}
+			// pipeline.push({
+			// 	$group: {
+			// 		_id: null,
+			// 		[nameFild]: {
+			// 			$push: `$${nameFild}`
+			// 		}
+			// 	}
+			// });
+			// pipeline.push(
+			// 	{
+			// 		$group: {
+			// 			_id: '$_id',
+			// 			client: {
+			// 				$first: '$$ROOT'
+			// 			},
+			// 			[nameFild]: {
+			// 				$push: `$${nameFild}`
+			// 			}
+			// 		}
+			// 	},
+			// 	{
+			// 		$replaceRoot: {
+			// 			newRoot: { $mergeObjects: ['$client', { [nameFild]: `$${nameFild}` }] }
+			// 		}
+			// 	}
+			// );
 		}
 		if (nameFild === 'notes') {
 			pipeline.push(
@@ -310,7 +327,8 @@ export const aggregateCrud = async (
 					}
 				}
 			);
-		} else {
+		}
+		if (!populates) {
 			pipeline.push({
 				$group: {
 					_id: group || '$_id',
