@@ -1,3 +1,3 @@
 export interface IformatFilter {
-	$or: { [key: string]: string }[];
+	$or: { [key: string]: { $regex: string; $options: string } }[];
 }

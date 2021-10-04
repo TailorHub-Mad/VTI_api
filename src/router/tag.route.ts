@@ -1,11 +1,17 @@
 import { TAG_PATH } from '@constants/routes.constants';
 import { Router } from 'express';
-import { createTagValidation, updateTagValidation } from '../validations/tag.validation';
+import {
+	createTagValidation,
+	filterTagNoteValidation,
+	filterTagProjectValidation,
+	updateTagValidation
+} from '../validations/tag.validation';
 import { CreateTag, UpdateTag } from '../controllers/tag.controller';
 import { TagNoteModel } from '../models/tag_notes.model';
 import { TagProjectModel } from '../models/tag_project.model';
 import { ITagNoteDocument, ITagProjectDocument } from '../interfaces/models.interface';
 import { DeleteCrud, GetAll } from '../controllers/crud.controller';
+import { FilterClient } from '../controllers/client.controller';
 
 const router = Router();
 
@@ -14,6 +20,20 @@ router.get('/notes', GetAll<ITagNoteDocument>(TagNoteModel, { path: 'relatedTags
 router.get(
 	'/projects',
 	GetAll<ITagProjectDocument>(TagProjectModel, { path: 'relatedTags parent' })
+);
+
+router.get(
+	'/notes/filter',
+	FilterClient<ITagNoteDocument>(TagNoteModel, filterTagNoteValidation, {
+		path: 'relatedTags parent'
+	})
+);
+
+router.get(
+	'/projects/filter',
+	FilterClient<ITagProjectDocument>(TagProjectModel, filterTagProjectValidation, {
+		path: 'relatedTags parent'
+	})
 );
 
 router.post('/notes', CreateTag<ITagNoteDocument>(TagNoteModel, createTagValidation));

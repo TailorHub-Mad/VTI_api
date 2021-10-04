@@ -263,7 +263,7 @@ export const aggregateCrud = async (
 				},
 				{
 					$addFields: {
-						'notes.proyects': {
+						'notes.projects': {
 							$filter: {
 								input: '$projects',
 								as: 'project',

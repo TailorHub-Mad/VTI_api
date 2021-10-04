@@ -8,7 +8,11 @@ import {
 	ReadById,
 	DeleteCrud
 } from '../controllers/crud.controller';
-import { newClientValidation, updateClientValidation } from '../validations/client.validation';
+import {
+	FilterClientValidation,
+	newClientValidation,
+	updateClientValidation
+} from '../validations/client.validation';
 import { IClientDocument } from '../interfaces/models.interface';
 import { FilterClient } from '../controllers/client.controller';
 
@@ -18,7 +22,7 @@ const router = Router();
 router.get('/', GetAllAggregate());
 
 // Filter Client By alias, name and id
-router.get('/filter', FilterClient);
+router.get('/filter', FilterClient<IClientDocument>(ClientModel, FilterClientValidation));
 
 // Create new Client
 router.post('/create', Create<IClientDocument>(ClientModel, newClientValidation));
