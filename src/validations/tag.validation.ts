@@ -2,7 +2,7 @@ import Joi from 'joi';
 
 export const createTagValidation = Joi.object().keys({
 	name: Joi.string().required(),
-	parent: Joi.string().required()
+	parent: Joi.string()
 });
 
 export const updateTagValidation = Joi.object().keys({
