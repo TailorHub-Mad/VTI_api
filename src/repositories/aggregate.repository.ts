@@ -327,8 +327,7 @@ export const aggregateCrud = async (
 					}
 				}
 			);
-		}
-		if (!populates) {
+		} else if (!populates) {
 			pipeline.push({
 				$group: {
 					_id: group || '$_id',
