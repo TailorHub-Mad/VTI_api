@@ -21,7 +21,7 @@ export const filterTagNoteValidation = Joi.object().keys({
 export const filterTagProjectValidation = Joi.object().keys({
 	name: Joi.string(),
 	'parent.name': Joi.string(),
-	'project.alias': Joi.string(),
+	'projects.alias': Joi.string(),
 	'relatedTags.name': Joi.string(),
 	ref: Joi.string()
 });

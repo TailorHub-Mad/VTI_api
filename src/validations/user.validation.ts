@@ -34,3 +34,12 @@ export const recoveryValidation = Joi.object().keys({
 export const resetPasswordValidation = Joi.object().keys({
 	email: Joi.string().email().required()
 });
+
+export const filterUserValidation = Joi.object().keys({
+	email: Joi.string(),
+	alias: Joi.string(),
+	name: Joi.string(),
+	lastName: Joi.string(),
+	ref: Joi.string(),
+	'department.name': Joi.string()
+});

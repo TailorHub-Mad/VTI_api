@@ -5,7 +5,8 @@ import { Login, SignUp } from '../controllers/auth.controller';
 import { DeleteCrud, GetAll, Update } from '../controllers/crud.controller';
 import { IUserDocument } from '../interfaces/models.interface';
 import { UserModel } from '../models/user.model';
-import { updateUserValidation } from '../validations/user.validation';
+import { filterUserValidation, updateUserValidation } from '../validations/user.validation';
+import { FilterClient } from '../controllers/client.controller';
 
 const router = Router();
 
@@ -20,6 +21,14 @@ router.put('/:id', Update<IUserDocument>(UserModel, updateUserValidation));
 router.delete('/:id', DeleteCrud<IUserDocument>(UserModel));
 
 router.get('/', GetAll<IUserDocument>(UserModel, { path: 'department', select: 'name -_id' }));
+
+router.get(
+	'/filter',
+	FilterClient<IUserDocument>(UserModel, filterUserValidation, {
+		path: 'department',
+		select: 'name -_id'
+	})
+);
 
 router.post('/resetPassword', ResetPassword);
 

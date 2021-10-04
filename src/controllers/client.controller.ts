@@ -2,7 +2,7 @@ import { getPagination } from '@utils/controllers.utils';
 import { Request, Response, NextFunction } from 'express';
 import Joi from 'joi';
 import { PopulateOptions } from 'mongoose';
-import { GenericModel } from 'src/interfaces/models.interface';
+import { GenericModel } from '../interfaces/models.interface';
 import { filterClient } from '../services/client.service';
 
 export const FilterClient =

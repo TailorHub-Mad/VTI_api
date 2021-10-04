@@ -1,9 +1,11 @@
 import { Router } from 'express';
+import { FilterClient } from '../controllers/client.controller';
 import { Create, DeleteCrud, GetAll, ReadById, Update } from '../controllers/crud.controller';
 import { IDepartmentDocument } from '../interfaces/models.interface';
 import { DepartmentModel } from '../models/department.model';
 import {
 	createDepartmentValidation,
+	filterDepartmentvalidation,
 	updateDepartmentValidation
 } from '../validations/department.validations';
 
@@ -12,6 +14,14 @@ const router = Router();
 router.get(
 	'/',
 	GetAll<IDepartmentDocument>(DepartmentModel, { path: 'users', select: 'alias -_id' })
+);
+
+router.get(
+	'/filter',
+	FilterClient<IDepartmentDocument>(DepartmentModel, filterDepartmentvalidation, {
+		path: 'users',
+		select: 'alias -_id'
+	})
 );
 
 router.get(

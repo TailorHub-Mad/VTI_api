@@ -2,17 +2,19 @@ import { Router } from 'express';
 import { CriterionProjectModel } from '../models/criterion_project.model';
 import {
 	CriterionCreateValidation,
-	CriterionUpdateValidation
+	CriterionUpdateValidation,
+	filterCriterionValidation
 } from '../validations/criterion.validation';
 import { Create, Read, Update } from '../controllers/crud.controller';
 import { ICriterionNoteDocument, ICriterionProjectDocument } from '../interfaces/models.interface';
 import { CriterionNoteModel } from '../models/criterion_note.model';
+import { FilterClient } from '../controllers/client.controller';
 
 const router = Router();
 
 router.get(
 	'/notes',
-	Read<ICriterionNoteDocument>(CriterionNoteModel, { type: 'note' }, { path: 'relatedTags' })
+	Read<ICriterionNoteDocument>(CriterionNoteModel, { type: 'note' }, { path: 'relatedTags parent' })
 );
 
 router.get(
@@ -20,8 +22,22 @@ router.get(
 	Read<ICriterionProjectDocument>(
 		CriterionProjectModel,
 		{ type: 'project' },
-		{ path: 'relatedTags' }
+		{ path: 'relatedTags parent' }
 	)
+);
+
+router.get(
+	'/notes/filter',
+	FilterClient<ICriterionNoteDocument>(CriterionNoteModel, filterCriterionValidation, {
+		path: 'relatedTags parent'
+	})
+);
+
+router.get(
+	'/project/filter',
+	FilterClient<ICriterionProjectDocument>(CriterionProjectModel, filterCriterionValidation, {
+		path: 'relatedTags parent'
+	})
 );
 
 router.post(

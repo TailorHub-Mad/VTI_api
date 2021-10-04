@@ -12,3 +12,9 @@ export const CriterionUpdateValidation = Joi.object().keys({
 	title: Joi.string(),
 	relatedTags: Joi.array().items(mongoIdValidation)
 });
+
+export const filterCriterionValidation = Joi.object().keys({
+	type: Joi.string().valid('note', 'project'),
+	name: Joi.string(),
+	title: Joi.string
+});

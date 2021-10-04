@@ -15,3 +15,8 @@ export const updateSectorProjectValidation = Joi.object()
 		projects: Joi.string().required()
 	})
 	.required();
+
+export const filterSectorValidation = Joi.object().keys({
+	ref: Joi.string(),
+	title: Joi.string()
+});

@@ -13,6 +13,7 @@ export const filterClient = async <Doc, M extends GenericModel<Doc>>(
 	populate?: PopulateOptions
 ): Promise<Doc[]> => {
 	const validateFilter = await validate.validateAsync(filter);
+	console.log(formatFilter(validateFilter));
 	const clients = await findWithPagination<Doc>(model, formatFilter(validateFilter), pagiantion, {
 		populate
 	});

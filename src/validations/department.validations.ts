@@ -9,3 +9,9 @@ export const createDepartmentValidation = Joi.array().items(
 export const updateDepartmentValidation = Joi.object().keys({
 	name: Joi.string()
 });
+
+export const filterDepartmentvalidation = Joi.object().keys({
+	title: Joi.string(),
+	ref: Joi.string(),
+	name: Joi.string()
+});
