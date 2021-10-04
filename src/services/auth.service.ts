@@ -24,15 +24,13 @@ export const signup = async ({
 		if (!password) {
 			password = 'vti-password-1234';
 		}
-		const recovery = [randomBytes(64).toString('hex')];
 		const savedUser = await create<IUserDocument>(UserModel, newUserValidation, {
 			alias,
 			password,
 			email,
 			department,
 			lastName,
-			name,
-			recovery
+			name
 		});
 		if (Array.isArray(savedUser)) {
 			throw new BaseError();

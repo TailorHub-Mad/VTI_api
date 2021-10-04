@@ -7,8 +7,7 @@ export const newUserValidation = Joi.object().keys({
 	alias: Joi.string().required(),
 	name: Joi.string(),
 	lastName: Joi.string(),
-	department: mongoIdValidation.required(),
-	recovery: Joi.string()
+	department: mongoIdValidation.required()
 });
 
 export const loginUserValidation = Joi.object().keys({
