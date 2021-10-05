@@ -51,7 +51,7 @@ export const UpdateTag =
 				model,
 				validate,
 				{ _id: params.id_tag },
-				{ name }
+				{ name, parent: body.relatedTag }
 			)) as unknown as ITagBothDocument;
 
 			if (body.relatedTag) {
