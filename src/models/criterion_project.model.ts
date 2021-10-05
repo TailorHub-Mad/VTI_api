@@ -4,7 +4,7 @@ import { CriterionModel } from './criterion.model';
 
 const CriterionProjectSchema = new Schema<ICriterionProjectDocument, ICriterionProjectModel>(
 	{
-		relatedTags: [{ type: Types.ObjectId, ref: 'TagProjectNote' }]
+		relatedTags: [{ type: Types.ObjectId, ref: 'TagProject' }]
 	},
 	{
 		timestamps: true,
