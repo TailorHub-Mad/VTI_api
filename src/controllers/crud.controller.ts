@@ -161,12 +161,15 @@ export const GetByIdAggregate =
 	};
 
 export const GetByQueryAggregate =
-	(field?: string): ((req: Request, res: Response, next: NextFunction) => Promise<void>) =>
+	(
+		field?: string,
+		populates?: string[]
+	): ((req: Request, res: Response, next: NextFunction) => Promise<void>) =>
 	async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const { query } = req;
 			const pagination = getPagination(req.query);
-			const result = await getByQueryAggregate(query, pagination, field);
+			const result = await getByQueryAggregate(query, pagination, field, populates);
 			res.json(result);
 		} catch (err) {
 			next(err);
