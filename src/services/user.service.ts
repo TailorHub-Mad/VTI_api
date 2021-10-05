@@ -48,8 +48,8 @@ export const recovery = async (body: { password: string; recovery: string }): Pr
 	);
 };
 
-export const getFavorite = async (user: IReqUser): Promise<{ notes: INoteDocument[] }> => {
-	const [{ notes }] = await UserModel.aggregate([
+export const getFavorite = async (user: IReqUser): Promise<any> => {
+	const notes = await UserModel.aggregate([
 		{
 			$match: {
 				_id: Types.ObjectId(user.id)
@@ -165,10 +165,10 @@ export const getFavorite = async (user: IReqUser): Promise<{ notes: INoteDocumen
 			}
 		}
 	]);
-	return notes;
+	return { notes };
 };
-export const getSubscribers = async (user: IReqUser): Promise<any[]> => {
-	const [{ notes }] = await UserModel.aggregate([
+export const getSubscribers = async (user: IReqUser): Promise<any> => {
+	const notes = await UserModel.aggregate([
 		{
 			$match: {
 				_id: Types.ObjectId(user.id)
@@ -292,10 +292,10 @@ export const getSubscribers = async (user: IReqUser): Promise<any[]> => {
 			}
 		}
 	]);
-	return notes;
+	return { notes };
 };
-export const getNotRead = async (user: IReqUser): Promise<{ notes: INoteDocument[] }> => {
-	const [{ notes }] = await UserModel.aggregate([
+export const getNotRead = async (user: IReqUser): Promise<any> => {
+	const notes = await UserModel.aggregate([
 		{
 			$match: {
 				_id: Types.ObjectId(user.id)
@@ -408,5 +408,5 @@ export const getNotRead = async (user: IReqUser): Promise<{ notes: INoteDocument
 			}
 		}
 	]);
-	return notes;
+	return { notes };
 };
