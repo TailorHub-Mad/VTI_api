@@ -417,6 +417,14 @@ export const groupRepository = async <T, G extends string>(
 				}
 			},
 			{
+				$lookup: {
+					from: 'tagnotes',
+					localField: 'notes.tags',
+					foreignField: '_id',
+					as: 'notes.tags'
+				}
+			},
+			{
 				$addFields: {
 					'notes.projects': {
 						$filter: {
@@ -441,6 +449,130 @@ export const groupRepository = async <T, G extends string>(
 							date: '$notes.createdAt',
 							format: '%Y'
 						}
+					}
+				}
+			}
+		);
+	}
+
+	if (field === 'testSystems') {
+		const populates = ['notes', 'projects'];
+		pipeline.push({
+			$unwind: {
+				path: '$testSystems'
+			}
+		});
+		populates.forEach((populate) => {
+			pipeline.push({
+				$addFields: {
+					[`${field}.${populate}`]: {
+						$filter: {
+							input: `$${populate}`,
+							as: 'populate',
+							cond: {
+								$in: ['$$populate._id', `$${field}.${populate}`]
+							}
+						}
+					}
+				}
+			});
+		});
+	}
+
+	if (field === 'projects') {
+		pipeline.push(
+			{
+				$unwind: {
+					path: '$projects'
+				}
+			},
+			{
+				$lookup: {
+					from: 'sectors',
+					localField: 'projects.sector',
+					foreignField: '_id',
+					as: 'projects.sector'
+				}
+			},
+			{
+				$lookup: {
+					from: 'users',
+					localField: 'projects.focusPoint',
+					foreignField: '_id',
+					as: 'projects.focusPoint'
+				}
+			},
+			{
+				$lookup: {
+					from: 'tagprojects',
+					localField: 'projects.tags',
+					foreignField: '_id',
+					as: 'projects.tags'
+				}
+			}
+		);
+		const populates = ['notes', 'testSystems'];
+		populates.forEach((populate) => {
+			pipeline.push({
+				$addFields: {
+					[`${field}.${populate}`]: {
+						$filter: {
+							input: `$${populate}`,
+							as: 'populate',
+							cond: {
+								$in: ['$$populate._id', `$${field}.${populate}`]
+							}
+						}
+					}
+				}
+			});
+		});
+		pipeline.push(
+			{
+				$unwind: {
+					path: '$projects.notes',
+					preserveNullAndEmptyArrays: true
+				}
+			},
+			{
+				$lookup: {
+					from: 'tagnotes',
+					localField: 'projects.notes.tags',
+					foreignField: '_id',
+					as: 'projects.notes.tags'
+				}
+			},
+			{
+				$replaceRoot: {
+					newRoot: { $mergeObjects: ['$projects'] }
+				}
+			},
+			{
+				$group: {
+					_id: '$_id',
+					projects: {
+						$first: '$$ROOT'
+					},
+					notes: {
+						$push: '$$ROOT.notes'
+					}
+				}
+			},
+			{
+				$replaceRoot: {
+					newRoot: { $mergeObjects: ['$projects', { notes: '$notes' }] }
+				}
+			},
+			{
+				$sort: {
+					updatedAt: -1
+				}
+			},
+			{
+				$group: {
+					_id: null,
+					projects: {
+						$push: '$$ROOT'
 					}
 				}
 			}
@@ -485,16 +617,16 @@ export const groupRepository = async <T, G extends string>(
 	// 	}
 	// });
 
-	if (field === 'projects') {
-		pipeline.push({
-			$lookup: {
-				from: 'sectors',
-				localField: 'aux.sector',
-				foreignField: '_id',
-				as: 'aux.sector'
-			}
-		});
-	}
+	// if (field === 'projects') {
+	// 	pipeline.push({
+	// 		$lookup: {
+	// 			from: 'sectors',
+	// 			localField: 'aux.sector',
+	// 			foreignField: '_id',
+	// 			as: 'aux.sector'
+	// 		}
+	// 	});
+	// }
 	const properties = await ClientModel.aggregate(pipeline)
 		.sort({ [`aux.${group}`]: -1 })
 		.collation({
