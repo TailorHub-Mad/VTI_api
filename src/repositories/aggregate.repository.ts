@@ -342,24 +342,26 @@ export const aggregateCrud = async (
 			});
 		}
 	}
-	pipeline.push(
-		{
-			$unwind: {
-				path: `$${nameFild}`
-			}
-		},
-		{
-			$match: querys
-		},
-		{
-			$group: {
-				_id: null,
-				[nameFild as string]: {
-					$push: `$${nameFild}`
+	if (nameFild) {
+		pipeline.push(
+			{
+				$unwind: {
+					path: `$${nameFild}`
+				}
+			},
+			{
+				$match: querys
+			},
+			{
+				$group: {
+					_id: null,
+					[nameFild as string]: {
+						$push: `$${nameFild}`
+					}
 				}
 			}
-		}
-	);
+		);
+	}
 
 	return await ClientModel.aggregate(pipeline).collation({
 		locale: 'es',
