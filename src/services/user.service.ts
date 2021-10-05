@@ -165,7 +165,7 @@ export const getFavorite = async (user: IReqUser): Promise<any> => {
 			}
 		}
 	]);
-	return { notes };
+	return [{ notes }];
 };
 export const getSubscribers = async (user: IReqUser): Promise<any> => {
 	const notes = await UserModel.aggregate([
@@ -292,7 +292,7 @@ export const getSubscribers = async (user: IReqUser): Promise<any> => {
 			}
 		}
 	]);
-	return { notes };
+	return [{ notes }];
 };
 export const getNotRead = async (user: IReqUser): Promise<any> => {
 	const notes = await UserModel.aggregate([
@@ -408,5 +408,5 @@ export const getNotRead = async (user: IReqUser): Promise<any> => {
 			}
 		}
 	]);
-	return { notes };
+	return [{ notes }];
 };
