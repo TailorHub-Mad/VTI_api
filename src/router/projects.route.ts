@@ -18,7 +18,7 @@ router.get('/', GetAllAggregate('projects', ['testSystems', 'notes']));
 
 router.get('/group', OrderProject);
 
-router.get('/filter', GetByQueryAggregate('projects'));
+router.get('/filter', GetByQueryAggregate('projects', ['testSystems', 'notes']));
 
 router.post('/', CreateProject);
 
