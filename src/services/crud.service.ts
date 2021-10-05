@@ -91,7 +91,8 @@ export const getByIdAggregate = async (
 export const getByQueryAggregate = async (
 	query: QueryString.ParsedQs,
 	pagination: Pagination,
-	_extends?: string
+	_extends?: string,
+	populates?: string[]
 ): Promise<unknown> => {
 	const transformExtendsToArray = _extends?.split('.');
 	const nameField = transformExtendsToArray?.slice(-1)[0];
@@ -108,7 +109,8 @@ export const getByQueryAggregate = async (
 		{
 			_extends,
 			nameFild: nameField,
-			querys: transformQuery
+			querys: transformQuery,
+			populates
 		},
 		pagination
 	);
