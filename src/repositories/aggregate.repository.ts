@@ -90,11 +90,6 @@ export const aggregateCrud = async (
 		}
 	});
 
-	// console.log(querys)
-	pipeline.push({
-		$match: querys
-	});
-
 	if (order) {
 		pipeline.push({
 			$sort: order
@@ -253,6 +248,15 @@ export const aggregateCrud = async (
 			// 	}
 			// );
 		}
+		// console.log(querys)
+
+		// pipeline.push({
+		// 	$match: {
+		// 		$expr: {
+		// 			$eq: ['Oleaje', '$projects']
+		// 		}
+		// 	}
+		// });
 		if (nameFild === 'notes') {
 			pipeline.push(
 				{
@@ -338,6 +342,24 @@ export const aggregateCrud = async (
 			});
 		}
 	}
+	pipeline.push(
+		{
+			$unwind: {
+				path: `$${nameFild}`
+			}
+		},
+		{
+			$match: querys
+		},
+		{
+			$group: {
+				_id: null,
+				[nameFild as string]: {
+					$push: `$${nameFild}`
+				}
+			}
+		}
+	);
 
 	return await ClientModel.aggregate(pipeline).collation({
 		locale: 'es',
