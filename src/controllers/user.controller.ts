@@ -1,7 +1,13 @@
 import { NotFoundError } from '@errors/not_found.error';
 import { getPagination } from '@utils/controllers.utils';
 import { Request, Response, NextFunction } from 'express';
-import { recovery, resetPassword } from '../services/user.service';
+import {
+	getFavorite,
+	getNotRead,
+	getSubscribers,
+	recovery,
+	resetPassword
+} from '../services/user.service';
 import { IUserDocument } from '../interfaces/models.interface';
 import { UserModel } from '../models/user.model';
 import { read } from '../services/crud.service';
@@ -43,6 +49,41 @@ export const Recovery = async (req: Request, res: Response, next: NextFunction):
 	try {
 		await recovery(req.body);
 		res.sendStatus(202);
+	} catch (err) {
+		next(err);
+	}
+};
+
+export const GetFavorites = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		const notes = await getFavorite(req.user);
+		res.status(200).json(notes);
+	} catch (err) {
+		next(err);
+	}
+};
+
+export const GetSubscribers = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		const notes = await getSubscribers(req.user);
+		res.status(200).json(notes);
+	} catch (err) {
+		next(err);
+	}
+};
+
+export const GetNoRead = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	try {
+		const notes = await getNotRead(req.user);
+		res.status(200).json(notes);
 	} catch (err) {
 		next(err);
 	}
