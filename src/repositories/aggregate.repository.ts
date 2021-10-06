@@ -487,6 +487,11 @@ export const groupRepository = async <T, G extends string>(
 				}
 			},
 			{
+				$addFields: {
+					[`${field}.clientAlias`]: '$alias'
+				}
+			},
+			{
 				$lookup: {
 					from: 'sectors',
 					localField: 'projects.sector',
