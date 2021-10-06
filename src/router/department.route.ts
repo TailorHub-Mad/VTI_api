@@ -19,15 +19,11 @@ router.get(
 router.get(
 	'/filter',
 	FilterClient<IDepartmentDocument>(DepartmentModel, filterDepartmentvalidation, {
-		path: 'users',
-		select: 'alias -_id'
+		path: 'users'
 	})
 );
 
-router.get(
-	'/:id',
-	ReadById<IDepartmentDocument>(DepartmentModel, { path: 'users', select: 'alias _id' })
-);
+router.get('/:id', ReadById<IDepartmentDocument>(DepartmentModel, { path: 'users' }));
 
 router.post('/create', Create<IDepartmentDocument>(DepartmentModel, createDepartmentValidation));
 
