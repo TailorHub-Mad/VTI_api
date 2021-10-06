@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { updateRepository } from 'src/repositories/common.repository';
-import { createGroupValidation } from 'src/validations/criterion.validation';
+import { updateRepository } from '../repositories/common.repository';
+import { createGroupValidation } from '../validations/criterion.validation';
 import {
 	ICriterionNoteDocument,
 	ICriterionNoteModel,
