@@ -597,7 +597,7 @@ export const groupRepository = async <T, G extends string>(
 		},
 		{
 			$addFields: {
-				'aux.client': '$alias'
+				'aux.clientAlias': '$alias'
 			}
 		}
 	);
