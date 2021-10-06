@@ -353,6 +353,11 @@ export const aggregateCrud = async (
 				$match: querys
 			},
 			{
+				$sort: {
+					[`${nameFild}.updatedAt`]: -1
+				}
+			},
+			{
 				$group: {
 					_id: null,
 					[nameFild as string]: {
