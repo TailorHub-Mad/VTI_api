@@ -310,6 +310,141 @@ export const getSubscribers = async (user: IReqUser): Promise<any> => {
 	]);
 	return notes;
 };
+export const getActiveNote = async (user: IReqUser): Promise<any> => {
+	const notes = await UserModel.aggregate([
+		{
+			$match: {
+				_id: Types.ObjectId(user.id)
+			}
+		},
+		{
+			$unwind: { path: '$subscribed.notes' }
+		},
+		{
+			$lookup: {
+				from: 'clients',
+				let: {
+					note: '$subscribed.notes'
+				},
+				pipeline: [
+					{ $unwind: '$notes' },
+					{
+						$match: {
+							$expr: {
+								$eq: ['$notes.isClosed', false]
+							}
+						}
+					},
+					{
+						$unwind: {
+							path: '$projects',
+							preserveNullAndEmptyArrays: true
+						}
+					},
+					{
+						$lookup: {
+							from: 'sectors',
+							localField: 'projects.sector',
+							foreignField: '_id',
+							as: 'projects.sector'
+						}
+					},
+					{
+						$group: {
+							_id: '$_id',
+							client: {
+								$first: '$$ROOT'
+							},
+							projects: {
+								$push: '$projects'
+							}
+						}
+					},
+					{
+						$replaceRoot: {
+							newRoot: { $mergeObjects: ['$client', { projects: '$projects' }] }
+						}
+					},
+					{
+						$unwind: {
+							path: '$notes'
+						}
+					},
+					{
+						$lookup: {
+							from: 'tagnotes',
+							localField: 'notes.tags',
+							foreignField: '_id',
+							as: 'notes.tags'
+						}
+					},
+					{
+						$addFields: {
+							'notes.projects': {
+								$filter: {
+									input: '$projects',
+									as: 'project',
+									cond: {
+										$in: ['$notes._id', '$$project.notes']
+									}
+								}
+							},
+							'notes.testSystems': {
+								$filter: {
+									input: '$testSystems',
+									as: 'testSystem',
+									cond: {
+										$in: ['$notes._id', '$$testSystem.notes']
+									}
+								}
+							},
+							'notes.year': {
+								$dateToString: {
+									date: '$notes.createdAt',
+									format: '%Y'
+								}
+							}
+						}
+					},
+					{
+						$group: {
+							_id: null,
+							notes: {
+								$push: '$notes'
+							}
+						}
+					},
+					{
+						$replaceRoot: {
+							newRoot: { $mergeObjects: ['$notes'] }
+						}
+					}
+				],
+				as: 'notes'
+			}
+		},
+		{
+			$project: {
+				notes: 1,
+				_id: 0
+			}
+		},
+		{
+			$unwind: {
+				path: '$notes'
+			}
+		},
+		{
+			$group: {
+				_id: null,
+				notes: {
+					$push: '$notes'
+				}
+			}
+		}
+	]);
+	return notes;
+};
 export const getNotRead = async (user: IReqUser): Promise<any> => {
 	const notes = await UserModel.aggregate([
 		{

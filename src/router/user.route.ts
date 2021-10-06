@@ -1,6 +1,7 @@
 import { USER_PATH } from '@constants/routes.constants';
 import { Router } from 'express';
 import {
+	GetActiveNote,
 	GetFavorites,
 	GetNoRead,
 	getProfile,
@@ -26,6 +27,8 @@ router.get('/me', getProfile);
 router.get('/favorite', GetFavorites);
 
 router.get('/subscribed', GetSubscribers);
+
+router.get('/active', GetActiveNote);
 
 router.get('/noRead', GetNoRead);
 
