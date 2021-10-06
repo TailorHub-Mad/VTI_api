@@ -1,11 +1,10 @@
-import { model, Schema, Types } from 'mongoose';
+import { model, Schema } from 'mongoose';
 
 const CriterionSchema = new Schema(
 	{
-		name: { type: String, trim: true },
 		title: { type: String, trim: true },
 		type: { type: String, enum: ['note', 'project'] },
-		relatedTags: { type: Types.ObjectId, ref: 'TagNote' }
+		order: { type: Number }
 	},
 	{
 		timestamps: true,
@@ -14,6 +13,6 @@ const CriterionSchema = new Schema(
 	}
 );
 
-CriterionSchema.index({ name: 1, type: 1 }, { unique: true });
+CriterionSchema.index({ title: 1, type: 1 }, { unique: true });
 
 export const CriterionModel = model('Criterion', CriterionSchema);

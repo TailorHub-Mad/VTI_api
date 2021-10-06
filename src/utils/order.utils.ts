@@ -2,7 +2,7 @@ type orderString = 'asc' | 'des';
 type orderNumber = 1 | -1;
 
 export class OrderAggregate {
-	title?: orderNumber;
+	'notes.title'?: orderNumber;
 	'date.year'?: orderNumber;
 	'notes.tags.name'?: orderNumber;
 	constructor({
@@ -14,7 +14,7 @@ export class OrderAggregate {
 		year?: orderString;
 		tags?: orderString;
 	}) {
-		this.title = this.transform(title);
+		this['notes.title'] = this.transform(title);
 		this['date.year'] = this.transform(year);
 		this['notes.tags.name'] = this.transform(tags);
 	}

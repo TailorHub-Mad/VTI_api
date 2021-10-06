@@ -17,7 +17,8 @@ export const findWithPagination = async <Doc, M extends GenericModel<Doc> = Gene
 		.populate(options?.populate || '')
 		.limit(pagination.limit)
 		.skip(pagination.offset)
-		.select(options?.select || '');
+		.select(options?.select || '')
+		.sort({ order: -1, updatedAt: -1 });
 };
 
 export const findOneRepository = async <

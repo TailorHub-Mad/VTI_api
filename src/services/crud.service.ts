@@ -122,7 +122,6 @@ export const getByQueryAggregate = async (
 					$or: transformQueryToArray
 			  }
 			: {};
-	console.log(JSON.parse(JSON.stringify(transformQuery)).$or);
 	return await aggregateCrud(
 		{
 			_extends,

@@ -9,6 +9,7 @@ import { Create, Read, Update } from '../controllers/crud.controller';
 import { ICriterionNoteDocument, ICriterionProjectDocument } from '../interfaces/models.interface';
 import { CriterionNoteModel } from '../models/criterion_note.model';
 import { FilterClient } from '../controllers/client.controller';
+import { CreateGroup } from '../controllers/criterion.controller';
 
 const router = Router();
 
@@ -49,6 +50,10 @@ router.post(
 	'/project',
 	Create<ICriterionProjectDocument>(CriterionProjectModel, CriterionCreateValidation)
 );
+
+router.put('/notes/:group', CreateGroup(CriterionNoteModel, 'note'));
+
+router.put('/project/:group', CreateGroup(CriterionProjectModel, 'project'));
 
 router.put('/notes', Update<ICriterionNoteDocument>(CriterionNoteModel, CriterionUpdateValidation));
 
