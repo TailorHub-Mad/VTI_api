@@ -10,6 +10,7 @@ interface IDate {
 interface IDepartment {
 	name: string;
 	users: IUserDocument['_id'][];
+	ref: string;
 }
 
 interface IDocument {
@@ -50,6 +51,7 @@ export interface IUser {
 	};
 	password: string;
 	recovery: string[];
+	ref: string;
 }
 
 export interface IUserDocument extends IUser, Document {
@@ -73,6 +75,7 @@ export type ITestSystemModel = Model<ITestSystemDocument>;
 interface ISector {
 	title: string;
 	projects: IProjectsDocument['_id'][];
+	ref: string;
 }
 
 export interface ISectorDocument extends ISector, Document {}
@@ -89,6 +92,7 @@ export interface IProjects {
 	tags: [];
 	notes: [];
 	closed: IDate;
+	ref: string;
 }
 
 export interface IProjectsDocument extends IProjects, Document {
@@ -103,6 +107,7 @@ export interface IClient {
 	testSystems: ITestSystemDocument['_id'][];
 	projects: IProjectsDocument['_id'][];
 	notes: INoteDocument['_id'][];
+	ref: string;
 }
 
 export interface IClientDocument extends IClient, Document {}
@@ -179,6 +184,7 @@ export interface ICriterion {
 	title: string;
 	type: 'note' | 'project';
 	relatedTags: ITagNoteDocument['_id'] | ITagProjectDocument['_id'];
+	order: number;
 }
 
 export interface ICriterionNoteDocument extends ICriterion, Document {

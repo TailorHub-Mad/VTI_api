@@ -1,4 +1,4 @@
-import { model, Schema } from 'mongoose';
+import { HookNextFunction, model, Schema } from 'mongoose';
 import { IClientDocument, IClientModel } from '../interfaces/models.interface';
 import { noteSchema } from './note.model';
 import { projectSchema } from './project.model';
@@ -11,7 +11,8 @@ const clientSchema = new Schema<IClientDocument, IClientModel>(
 		testSystems: [testSystemSchema],
 		testSystem: [testSystemSchema],
 		projects: [projectSchema],
-		notes: [noteSchema]
+		notes: [noteSchema],
+		ref: { type: String }
 	},
 	{
 		timestamps: true,
@@ -25,4 +26,30 @@ clientSchema.index({
 	'projects.alias': 'text',
 	'notes.title': 'text'
 });
+
+clientSchema.pre('save', async function (next: HookNextFunction) {
+	try {
+		if (this.isNew) {
+			const [client] = await this.db
+				.model<IClientDocument>('Client')
+				.find()
+				.sort({ ref: -1 })
+				.collation({
+					locale: 'es',
+					numericOrdering: true
+				})
+				.limit(1);
+			console.log(client);
+			if (client.ref) {
+				this.ref = 'CL' + (+client.ref.slice(2) + 1).toString().padStart(4, '0');
+			} else {
+				this.ref = 'CL0001';
+			}
+		}
+		next();
+	} catch (err) {
+		next(err);
+	}
+});
+
 export const ClientModel = model('Client', clientSchema);

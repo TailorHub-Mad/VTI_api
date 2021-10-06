@@ -28,7 +28,8 @@ const userSchema = new Schema<IUserDocument, IUserModel>(
 			status: { type: String, enum: NOTIFICATION_STATUS, default: NOTIFICATION_STATUS[0] },
 			notification: { type: Types.ObjectId, ref: '' }
 		},
-		recovery: [{ type: String }]
+		recovery: [{ type: String }],
+		ref: { type: String }
 	},
 	{
 		timestamps: true,
@@ -36,15 +37,31 @@ const userSchema = new Schema<IUserDocument, IUserModel>(
 	}
 );
 
-userSchema.pre('save', function (next: HookNextFunction) {
-	if (this.isModified('password')) {
-		try {
+userSchema.pre('save', async function (next: HookNextFunction) {
+	try {
+		if (this.isModified('password')) {
 			this.password = encryptPassword(this.password);
-		} catch (err) {
-			return next(err);
 		}
+		if (this.isNew) {
+			const [client] = await this.db
+				.model<IUserDocument>('Sector')
+				.find()
+				.sort({ ref: -1 })
+				.collation({
+					locale: 'es',
+					numericOrdering: true
+				})
+				.limit(1);
+			if (client.ref) {
+				this.ref = 'US' + (+client.ref.slice(2) + 1).toString().padStart(4, '0');
+			} else {
+				this.ref = 'US0001';
+			}
+		}
+		next();
+	} catch (err) {
+		return next(err);
 	}
-	next();
 });
 
 userSchema.methods.validatePassword = function (password: string) {
