@@ -179,16 +179,17 @@ export const updateMessage = async (
 	body: Partial<IMessage>,
 	files?: Express.Multer.File[]
 ): Promise<void> => {
-	const validateBody = await updateMessageNoteValidation.validateAsync(body);
-	const validateIdNote = await mongoIdValidation.validateAsync(message_id);
 	if (files) {
-		validateBody.documents = (validateBody.documents || []).concat(
+		body.documents = (body.documents || []).concat(
 			files.map((file: Express.Multer.File) => ({
 				url: file.path,
 				name: file.fieldname
 			}))
 		);
 	}
+	console.log(body.documents);
+	const validateBody = await updateMessageNoteValidation.validateAsync(body);
+	const validateIdNote = await mongoIdValidation.validateAsync(message_id);
 
 	const updated = createSet(validateBody, 'notes.$.messages.$[message]');
 	await updateRepository<IClientDocument>(
