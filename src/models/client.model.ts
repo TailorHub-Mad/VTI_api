@@ -41,9 +41,9 @@ clientSchema.pre('save', async function (next: HookNextFunction) {
 				.limit(1);
 			console.log(client);
 			if (client.ref) {
-				this.ref = 'CL' + (+client.ref.slice(2) + 1).toString().padStart(4, '0');
+				this.ref = 'US' + (+client.ref.slice(2) + 1).toString().padStart(4, '0');
 			} else {
-				this.ref = 'CL0001';
+				this.ref = 'US0001';
 			}
 		}
 		next();

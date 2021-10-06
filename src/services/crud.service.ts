@@ -97,9 +97,22 @@ export const getByQueryAggregate = async (
 	const transformExtendsToArray = _extends?.split('.');
 	const nameField = transformExtendsToArray?.slice(-1)[0];
 	const transformQueryToArray = Object.entries(query).map(([key, value]) => {
+		if (Array.isArray(value)) {
+			return {
+				$and: value.map((v) => ({
+					[key]: key.includes('_id')
+						? Types.ObjectId(v as string)
+						: v === 'true'
+						? true
+						: { $regex: v, $options: 'i' }
+				}))
+			};
+		}
 		return {
 			[key]: key.includes('_id')
 				? Types.ObjectId(value as string)
+				: value === 'true'
+				? true
 				: { $regex: value, $options: 'i' }
 		};
 	});
@@ -109,6 +122,7 @@ export const getByQueryAggregate = async (
 					$or: transformQueryToArray
 			  }
 			: {};
+	console.log(JSON.parse(JSON.stringify(transformQuery)).$or);
 	return await aggregateCrud(
 		{
 			_extends,
