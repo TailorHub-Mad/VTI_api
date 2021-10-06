@@ -5,7 +5,7 @@ import { IPopulateGroup } from '../interfaces/aggregate.interface';
 import { Pagination } from '../interfaces/config.interface';
 import { IClientModel } from '../interfaces/models.interface';
 import { ClientModel } from '../models/client.model';
-// import QueryString from 'qs';
+import QueryString from 'qs';
 
 /**
  *
@@ -110,11 +110,6 @@ export const aggregateCrud = async (
 	}
 
 	if (_extends && nameFild) {
-		// pipeline.push({
-		// 	$addFields: {
-		// 		[nameFild]: `$${_extends}`
-		// 	}
-		// });
 		pipeline.push({
 			$addFields: {
 				[`${nameFild}.clientAlias`]: `$alias`,
@@ -234,42 +229,8 @@ export const aggregateCrud = async (
 					}
 				);
 			}
-			// pipeline.push({
-			// 	$group: {
-			// 		_id: null,
-			// 		[nameFild]: {
-			// 			$push: `$${nameFild}`
-			// 		}
-			// 	}
-			// });
-			// pipeline.push(
-			// 	{
-			// 		$group: {
-			// 			_id: '$_id',
-			// 			client: {
-			// 				$first: '$$ROOT'
-			// 			},
-			// 			[nameFild]: {
-			// 				$push: `$${nameFild}`
-			// 			}
-			// 		}
-			// 	},
-			// 	{
-			// 		$replaceRoot: {
-			// 			newRoot: { $mergeObjects: ['$client', { [nameFild]: `$${nameFild}` }] }
-			// 		}
-			// 	}
-			// );
 		}
-		// console.log(querys)
 
-		// pipeline.push({
-		// 	$match: {
-		// 		$expr: {
-		// 			$eq: ['Oleaje', '$projects']
-		// 		}
-		// 	}
-		// });
 		if (nameFild === 'notes') {
 			pipeline.push(
 				{
@@ -399,38 +360,40 @@ export const aggregateCrud = async (
 export const groupRepository = async <T, G extends string>(
 	group: G,
 	field: string,
-	// query?: QueryString.ParsedQs,
-	options?: { real?: boolean; populate?: IPopulateGroup }
+	options?: { real?: boolean; populate?: IPopulateGroup },
+	query?: QueryString.ParsedQs
 ): Promise<T[]> => {
 	const searchField = group.split('.');
 	searchField.splice(-1);
-
-	// const transformQueryToArray = Object.entries(query!).map(([key, value]) => {
-	// 	if (Array.isArray(value)) {
-	// 		return {
-	// 			$and: value.map((v) => ({
-	// 				[key]: key.includes('_id')
-	// 					? Types.ObjectId(v as string)
-	// 					: v === 'true'
-	// 					? true
-	// 					: { $regex: v, $options: 'i' }
-	// 			}))
-	// 		};
-	// 	}
-	// 	return {
-	// 		[key]: key.includes('_id')
-	// 			? Types.ObjectId(value as string)
-	// 			: value === 'true'
-	// 			? true
-	// 			: { $regex: value, $options: 'i' }
-	// 	};
-	// });
-	// const transformQuery =
-	// 	transformQueryToArray.length > 0
-	// 		? {
-	// 				$or: transformQueryToArray
-	// 		  }
-	// 		: {};
+	const transformQueryToArray = query
+		? Object.entries(query!).map(([key, value]) => {
+				if (Array.isArray(value)) {
+					return {
+						$and: value.map((v) => ({
+							[key]: key.includes('_id')
+								? Types.ObjectId(v as string)
+								: v === 'true'
+								? true
+								: { $regex: v, $options: 'i' }
+						}))
+					};
+				}
+				return {
+					[key]: key.includes('_id')
+						? Types.ObjectId(value as string)
+						: value === 'true'
+						? true
+						: { $regex: value, $options: 'i' }
+				};
+		  })
+		: [];
+	const transformQuery =
+		transformQueryToArray.length > 0
+			? {
+					$or: transformQueryToArray
+			  }
+			: {};
+	console.log(transformQuery);
 	const pipeline = [];
 
 	if (field === 'notes') {
@@ -646,9 +609,9 @@ export const groupRepository = async <T, G extends string>(
 		{
 			$unwind: `$${field}`
 		},
-		// {
-		// 	$match: transformQuery || {}
-		// },
+		{
+			$match: transformQuery || {}
+		},
 		{
 			$project: {
 				_id: 0,

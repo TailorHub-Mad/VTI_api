@@ -200,7 +200,10 @@ export const updateMessage = async (
 };
 
 export const groupNotes = async (query: QueryString.ParsedQs): Promise<INote[]> => {
-	const queryValid = await groupNotesValidation.validateAsync(query);
+	const group = { group: query.group, real: query.real };
+	delete query.group;
+	delete query.real;
+	const queryValid = await groupNotesValidation.validateAsync(group);
 	let populate: IPopulateGroup | undefined;
 	if (queryValid.group.includes('tags')) {
 		queryValid.group = 'notes.tags.name';
@@ -218,8 +221,8 @@ export const groupNotes = async (query: QueryString.ParsedQs): Promise<INote[]> 
 	const notes = await groupRepository<INote, typeof GROUP_NOTES[number]>(
 		queryValid.group,
 		'notes',
-		// {},
-		{ real: queryValid.real, populate }
+		{ real: queryValid.real, populate },
+		query
 	);
 	return notes;
 };
