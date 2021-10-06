@@ -284,7 +284,8 @@ export const aggregateCrud = async (
 									$in: ['$notes._id', '$$testSystem.notes']
 								}
 							}
-						}
+						},
+						'notes.isAnswered': {}
 					}
 				},
 				{
@@ -602,7 +603,13 @@ export const groupRepository = async <T, G extends string>(
 		},
 		{
 			$addFields: {
-				'aux.clientAlias': '$alias'
+				'aux.clientAlias': {
+					$cond: {
+						if: '$alias',
+						then: '$alias',
+						else: '$aux.clientAlias'
+					}
+				}
 			}
 		}
 	);
