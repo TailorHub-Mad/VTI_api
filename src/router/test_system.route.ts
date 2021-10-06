@@ -14,13 +14,13 @@ import {
 
 const router = Router();
 
-router.get('/', GetAllAggregate('testSystems', ['projects']));
+router.get('/', GetAllAggregate('testSystems', ['projects', 'notes']));
 
 router.get('/group', GroupTestSystem);
 
-router.get('/filter', GetByQueryAggregate('testSystems'));
+router.get('/filter', GetByQueryAggregate('testSystems', ['projects', 'notes']));
 
-router.get('/:id', GetByIdAggregate('testSystems', ['projects']));
+router.get('/:id', GetByIdAggregate('testSystems', ['projects', 'notes']));
 
 router.post('/', CreateTestSystem);
 

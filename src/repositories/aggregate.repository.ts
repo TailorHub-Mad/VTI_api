@@ -182,7 +182,7 @@ export const aggregateCrud = async (
 					}
 				});
 			});
-			if (populates.includes('notes')) {
+			if (populates.includes('notes') && nameFild === 'projects') {
 				pipeline.push(
 					{
 						$unwind: {
