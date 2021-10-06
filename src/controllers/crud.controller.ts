@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction, query } from 'express';
 import Joi from 'joi';
 import {
 	create,
@@ -16,6 +16,7 @@ import { BaseError } from '@errors/base.error';
 import { FilterQuery, isValidObjectId, PopulateOptions } from 'mongoose';
 import { OrderAggregate } from '@utils/order.utils';
 import { purgeObj } from '@utils/index';
+import { groupAggregate } from '@utils/aggregate.utils';
 
 // Creamos un controlador genérico usando una interface T que tendrá el valor del modelo que nosotros le pasemos.
 export const GetAll =
@@ -26,8 +27,18 @@ export const GetAll =
 	async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const pagination = getPagination(req.query);
-			const result = await getAll<Doc, M>(model, pagination, populate);
-			res.status(200).json(result);
+			let results = await getAll<Doc, M>(model, pagination, populate);
+			if (req.query.group) {
+				results = groupAggregate(
+					results.map((result) => ({ aux: result })),
+					{
+						group: req.query.group as string,
+						field: req.query.group as string,
+						real: true
+					}
+				);
+			}
+			res.status(200).json(results);
 		} catch (err) {
 			logger.error(`Error get all ${model.collection.name}`);
 			next(err);

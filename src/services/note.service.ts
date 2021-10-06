@@ -187,7 +187,6 @@ export const updateMessage = async (
 			}))
 		);
 	}
-	console.log(body.documents);
 	const validateBody = await updateMessageNoteValidation.validateAsync(body);
 	const validateIdNote = await mongoIdValidation.validateAsync(message_id);
 
@@ -219,6 +218,7 @@ export const groupNotes = async (query: QueryString.ParsedQs): Promise<INote[]> 
 	const notes = await groupRepository<INote, typeof GROUP_NOTES[number]>(
 		queryValid.group,
 		'notes',
+		// {},
 		{ real: queryValid.real, populate }
 	);
 	return notes;

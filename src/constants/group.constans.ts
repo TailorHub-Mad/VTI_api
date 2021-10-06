@@ -1,17 +1,25 @@
 // Option order by projects.
 
 export const GROUP_PROJECT = [
-	'client',
+	'clientAlias',
+	'alias',
 	'years',
 	'sector.0.title',
 	'date.year',
-	'projects.tags.name',
+	'tags.name',
 	'tags'
 ] as const;
 
 // Notes.
 
-export const GROUP_NOTES = ['title', 'year', 'sector', 'notes.tags.name', 'tags', 'alias'] as const;
+export const GROUP_NOTES = [
+	'title',
+	'year',
+	'sector',
+	'notes.tags.name',
+	'tags',
+	'clientAlias'
+] as const;
 
 // Test System.
 
@@ -20,7 +28,7 @@ export const GROUP_TEST_SYSTEM = [
 	'date.year',
 	'vtiCode',
 	'sector',
-	'client',
+	'clientAlias',
 	'ref'
 ] as const;
 

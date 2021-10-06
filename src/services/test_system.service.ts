@@ -56,6 +56,7 @@ export const groupTestSystem = async (query: QueryString.ParsedQs): Promise<ITes
 	const testSystems = await groupRepository<ITestSystem, typeof GROUP_TEST_SYSTEM[number]>(
 		queryValid.group,
 		'testSystems',
+		// {},
 		{ real: queryValid.real, populate }
 	);
 	return testSystems;

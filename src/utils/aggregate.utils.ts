@@ -90,14 +90,13 @@ export const groupAggregate = <T, G extends string>(
 	{ group, field, real }: { group: G; field: string; real?: boolean }
 ): T[] => {
 	return properties.reduce((projectsGroup, { aux }) => {
-		const valueGroup = group.split('.').filter((property) => property !== field);
+		const valueGroup = group.split('.'); // .filter((property) => property !== field);
 		let value = valueGroup.reduce((field, property) => {
 			if (field) {
 				return (field as unknown as { [key: string]: string })?.[property];
 			}
 			return aux[property] || (field as unknown as { [key: string]: string })?.[property];
 		}, '');
-		console.log(value);
 		let key = findKey(value, real);
 		addGroup(aux, projectsGroup, key);
 		if (aux?.tags?.relatedTags) {

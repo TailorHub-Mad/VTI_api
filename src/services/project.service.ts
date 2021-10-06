@@ -179,6 +179,7 @@ export const orderProject = async (query: QueryString.ParsedQs): Promise<IProjec
 	const projects = await groupRepository<IProjects, typeof GROUP_PROJECT[number]>(
 		queryValid.group,
 		'projects',
+		// {},
 		{ real: queryValid.real, populate }
 	);
 	return projects;

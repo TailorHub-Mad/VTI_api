@@ -11,10 +11,7 @@ import {
 
 const router = Router();
 
-router.get(
-	'/',
-	GetAll<IDepartmentDocument>(DepartmentModel, { path: 'users', select: 'alias _id' })
-);
+router.get('/', GetAll<IDepartmentDocument>(DepartmentModel, { path: 'users' }));
 
 router.get(
 	'/filter',

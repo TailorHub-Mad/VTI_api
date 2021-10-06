@@ -471,14 +471,6 @@ export const groupRepository = async <T, G extends string>(
 				}
 			},
 			{
-				$lookup: {
-					from: 'tagnotes',
-					localField: 'notes.tags',
-					foreignField: '_id',
-					as: 'notes.tags'
-				}
-			},
-			{
 				$addFields: {
 					'notes.projects': {
 						$filter: {
@@ -507,6 +499,16 @@ export const groupRepository = async <T, G extends string>(
 				}
 			}
 		);
+		if (!options?.populate) {
+			pipeline.push({
+				$lookup: {
+					from: 'tagnotes',
+					localField: 'notes.tags',
+					foreignField: '_id',
+					as: 'notes.tags'
+				}
+			});
+		}
 	}
 
 	if (field === 'testSystems') {
@@ -560,16 +562,18 @@ export const groupRepository = async <T, G extends string>(
 					foreignField: '_id',
 					as: 'projects.focusPoint'
 				}
-			},
-			{
+			}
+		);
+		if (!options?.populate) {
+			pipeline.push({
 				$lookup: {
 					from: 'tagprojects',
 					localField: 'projects.tags',
 					foreignField: '_id',
 					as: 'projects.tags'
 				}
-			}
-		);
+			});
+		}
 		const populates = ['notes', 'testSystems'];
 		populates.forEach((populate) => {
 			pipeline.push({
