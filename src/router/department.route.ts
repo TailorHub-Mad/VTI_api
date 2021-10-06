@@ -13,7 +13,7 @@ const router = Router();
 
 router.get(
 	'/',
-	GetAll<IDepartmentDocument>(DepartmentModel, { path: 'users', select: 'alias -_id' })
+	GetAll<IDepartmentDocument>(DepartmentModel, { path: 'users', select: 'alias _id' })
 );
 
 router.get(
@@ -26,7 +26,7 @@ router.get(
 
 router.get(
 	'/:id',
-	ReadById<IDepartmentDocument>(DepartmentModel, { path: 'users', select: 'alias' })
+	ReadById<IDepartmentDocument>(DepartmentModel, { path: 'users', select: 'alias _id' })
 );
 
 router.post('/create', Create<IDepartmentDocument>(DepartmentModel, createDepartmentValidation));

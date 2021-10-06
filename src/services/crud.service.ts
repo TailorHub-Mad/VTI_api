@@ -96,9 +96,25 @@ export const getByQueryAggregate = async (
 ): Promise<unknown> => {
 	const transformExtendsToArray = _extends?.split('.');
 	const nameField = transformExtendsToArray?.slice(-1)[0];
-
 	const transformQueryToArray = Object.entries(query).map(([key, value]) => {
 		if (Array.isArray(value)) {
+			if (key.match(/\.createdAt$/)) {
+				return {
+					$or: value.map((t) => {
+						const time = (t as string).split(';');
+						return {
+							$and: [
+								{
+									[key]: { $gte: new Date(time[0]) }
+								},
+								{
+									[key]: { $lte: new Date(time[1]) }
+								}
+							]
+						};
+					})
+				};
+			}
 			return {
 				$and: value.map((v) => ({
 					[key]: key.includes('_id')
@@ -107,6 +123,18 @@ export const getByQueryAggregate = async (
 						? true
 						: { $regex: v, $options: 'i' }
 				}))
+			};
+		} else if (key.match(/\.createdAt$/)) {
+			const time = (value as string).split(';');
+			return {
+				$and: [
+					{
+						[key]: { $gte: new Date(time[0]) }
+					},
+					{
+						[key]: { $lte: new Date(time[1]) }
+					}
+				]
 			};
 		}
 		return {
@@ -124,6 +152,7 @@ export const getByQueryAggregate = async (
 					$or: transformQueryToArray
 			  }
 			: {};
+
 	return await aggregateCrud(
 		{
 			_extends,
