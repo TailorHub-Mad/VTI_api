@@ -285,7 +285,15 @@ export const aggregateCrud = async (
 								}
 							}
 						},
-						'notes.isAnswered': {}
+						'notes.isAnswered': {
+							$cond: {
+								if: {
+									$size: ['$notes.messages']
+								},
+								then: true,
+								else: false
+							}
+						}
 					}
 				},
 				{
