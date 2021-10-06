@@ -96,6 +96,7 @@ export const getByQueryAggregate = async (
 ): Promise<unknown> => {
 	const transformExtendsToArray = _extends?.split('.');
 	const nameField = transformExtendsToArray?.slice(-1)[0];
+
 	const transformQueryToArray = Object.entries(query).map(([key, value]) => {
 		if (Array.isArray(value)) {
 			return {
@@ -109,11 +110,12 @@ export const getByQueryAggregate = async (
 			};
 		}
 		return {
-			[key]: key.includes('_id')
-				? Types.ObjectId(value as string)
-				: value === 'true'
-				? true
-				: { $regex: value, $options: 'i' }
+			[key]:
+				key.includes('_id') || key.includes('clientId')
+					? Types.ObjectId(value as string)
+					: value === 'true'
+					? true
+					: { $regex: value, $options: 'i' }
 		};
 	});
 	const transformQuery =

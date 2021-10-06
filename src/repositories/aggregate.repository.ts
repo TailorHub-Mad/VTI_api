@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { groupAggregate, populateAggregate } from '@utils/aggregate.utils';
-import { FilterQuery } from 'mongoose';
+import { FilterQuery, Types } from 'mongoose';
 import { IPopulateGroup } from '../interfaces/aggregate.interface';
 import { Pagination } from '../interfaces/config.interface';
 import { IClientModel } from '../interfaces/models.interface';
 import { ClientModel } from '../models/client.model';
+// import QueryString from 'qs';
 
 /**
  *
@@ -116,7 +117,8 @@ export const aggregateCrud = async (
 		// });
 		pipeline.push({
 			$addFields: {
-				[`${nameFild}.clientAlias`]: `$alias`
+				[`${nameFild}.clientAlias`]: `$alias`,
+				[`${nameFild}.clientId`]: `$_id`
 			}
 		});
 
@@ -386,11 +388,38 @@ export const aggregateCrud = async (
 export const groupRepository = async <T, G extends string>(
 	group: G,
 	field: string,
+	// query?: QueryString.ParsedQs,
 	options?: { real?: boolean; populate?: IPopulateGroup }
 ): Promise<T[]> => {
 	const searchField = group.split('.');
 	searchField.splice(-1);
 
+	// const transformQueryToArray = Object.entries(query!).map(([key, value]) => {
+	// 	if (Array.isArray(value)) {
+	// 		return {
+	// 			$and: value.map((v) => ({
+	// 				[key]: key.includes('_id')
+	// 					? Types.ObjectId(v as string)
+	// 					: v === 'true'
+	// 					? true
+	// 					: { $regex: v, $options: 'i' }
+	// 			}))
+	// 		};
+	// 	}
+	// 	return {
+	// 		[key]: key.includes('_id')
+	// 			? Types.ObjectId(value as string)
+	// 			: value === 'true'
+	// 			? true
+	// 			: { $regex: value, $options: 'i' }
+	// 	};
+	// });
+	// const transformQuery =
+	// 	transformQueryToArray.length > 0
+	// 		? {
+	// 				$or: transformQueryToArray
+	// 		  }
+	// 		: {};
 	const pipeline = [];
 
 	if (field === 'notes') {
@@ -602,6 +631,9 @@ export const groupRepository = async <T, G extends string>(
 		{
 			$unwind: `$${field}`
 		},
+		// {
+		// 	$match: transformQuery || {}
+		// },
 		{
 			$project: {
 				_id: 0,
