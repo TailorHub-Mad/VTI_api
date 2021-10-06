@@ -151,6 +151,17 @@ export const aggregateCrud = async (
 						foreignField: '_id',
 						as: 'projects.tags'
 					}
+				},
+				{
+					$addFields: {
+						'projects.isActive': {
+							$cond: {
+								if: '$projects.closed',
+								then: false,
+								else: true
+							}
+						}
+					}
 				}
 			);
 		}
