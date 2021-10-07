@@ -11,6 +11,7 @@ export const createNoteValidation = Joi.object().keys({
 	tags: Joi.array().items(mongoIdValidation),
 	documents: Joi.array().items(
 		Joi.object({
+			_id: mongoIdValidation,
 			url: Joi.string().required(),
 			name: Joi.string().required()
 		})
@@ -26,6 +27,7 @@ export const updateNoteValidationAdmin = Joi.object().keys({
 	tags: Joi.array().items(mongoIdValidation),
 	documents: Joi.array().items(
 		Joi.object({
+			_id: mongoIdValidation,
 			url: Joi.string().required(),
 			name: Joi.string().required()
 		})
@@ -37,6 +39,7 @@ export const createMessageNoteValidation = Joi.object().keys({
 	link: Joi.string(),
 	documents: Joi.array().items(
 		Joi.object({
+			_id: mongoIdValidation,
 			url: Joi.string().required(),
 			name: Joi.string().required()
 		})
@@ -51,6 +54,7 @@ export const updateMessageNoteValidation = Joi.object().keys({
 	documents: Joi.array().items(
 		Joi.object({
 			url: Joi.string().required(),
+			_id: mongoIdValidation,
 			name: Joi.string().required()
 		})
 	)
