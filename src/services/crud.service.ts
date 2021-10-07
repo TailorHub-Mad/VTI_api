@@ -4,12 +4,14 @@ import { Pagination } from '../interfaces/config.interface';
 import {
 	createRepository,
 	deleteRepository,
+	findOneRepository,
 	findWithPagination,
 	updateRepository
 } from '../repositories/common.repository';
 import Joi from 'joi';
-import { GenericModel } from '../interfaces/models.interface';
+import { GenericModel, IReqUser, IUserDocument } from '../interfaces/models.interface';
 import QueryString from 'qs';
+import { UserModel } from '../models/user.model';
 
 export const getAll = async <Doc, M extends GenericModel<Doc>>(
 	model: M,
@@ -92,64 +94,92 @@ export const getByQueryAggregate = async (
 	query: QueryString.ParsedQs,
 	pagination: Pagination,
 	_extends?: string,
-	populates?: string[]
+	populates?: string[],
+	reqUser?: IReqUser
 ): Promise<unknown> => {
 	const transformExtendsToArray = _extends?.split('.');
 	const nameField = transformExtendsToArray?.slice(-1)[0];
-	const transformQueryToArray = Object.entries(query).map(([key, value]) => {
-		if (Array.isArray(value)) {
-			if (key.match(/\.createdAt$/)) {
+	const aux = [];
+	const union = query.union ? '$and' : '$or';
+	delete query.union;
+	if ((query.subscribed || query.favorites || query.noRead) && reqUser) {
+		const user = await findOneRepository<IUserDocument>(UserModel, { _id: reqUser.id });
+		if (user) {
+			if (query.subscribed) {
+				delete query.subscribed;
+				aux.push({
+					$or: user.subscribed.notes.map((note) => ({ 'notes._id': Types.ObjectId(note) }))
+				});
+			}
+			if (query.favorites) {
+				delete query.favorites;
+				aux.push({
+					$or: user.favorites.notes.map((note) => ({ 'notes._id': Types.ObjectId(note) }))
+				});
+			}
+			if (query.noRead) {
+				delete query.noRead;
+				aux.push({ 'notes.readBy': Types.ObjectId(user._id) });
+			}
+		}
+	}
+	const transformQueryToArray = [
+		...Object.entries(query).map(([key, value]) => {
+			if (Array.isArray(value)) {
+				if (key.match(/\.createdAt$/)) {
+					return {
+						$or: value.map((t) => {
+							const time = (t as string).split(';');
+							return {
+								$and: [
+									{
+										[key]: { $gte: new Date(time[0]) }
+									},
+									{
+										[key]: { $lte: new Date(time[1]) }
+									}
+								]
+							};
+						})
+					};
+				}
 				return {
-					$or: value.map((t) => {
-						const time = (t as string).split(';');
-						return {
-							$and: [
-								{
-									[key]: { $gte: new Date(time[0]) }
-								},
-								{
-									[key]: { $lte: new Date(time[1]) }
-								}
-							]
-						};
-					})
+					$and: value.map((v) => ({
+						[key]: key.includes('_id')
+							? Types.ObjectId(v as string)
+							: v === 'true'
+							? true
+							: { $regex: v, $options: 'i' }
+					}))
+				};
+			} else if (key.match(/\.createdAt$/)) {
+				const time = (value as string).split(';');
+				return {
+					$and: [
+						{
+							[key]: { $gte: new Date(time[0]) }
+						},
+						{
+							[key]: { $lte: new Date(time[1]) }
+						}
+					]
 				};
 			}
 			return {
-				$and: value.map((v) => ({
-					[key]: key.includes('_id')
-						? Types.ObjectId(v as string)
-						: v === 'true'
+				[key]:
+					key.includes('_id') || key.includes('clientId')
+						? Types.ObjectId(value as string)
+						: value === 'true'
 						? true
-						: { $regex: v, $options: 'i' }
-				}))
+						: { $regex: value, $options: 'i' }
 			};
-		} else if (key.match(/\.createdAt$/)) {
-			const time = (value as string).split(';');
-			return {
-				$and: [
-					{
-						[key]: { $gte: new Date(time[0]) }
-					},
-					{
-						[key]: { $lte: new Date(time[1]) }
-					}
-				]
-			};
-		}
-		return {
-			[key]:
-				key.includes('_id') || key.includes('clientId')
-					? Types.ObjectId(value as string)
-					: value === 'true'
-					? true
-					: { $regex: value, $options: 'i' }
-		};
-	});
+		}),
+		...aux
+	];
 	const transformQuery =
 		transformQueryToArray.length > 0
 			? {
-					$or: transformQueryToArray
+					[union]: transformQueryToArray
 			  }
 			: {};
 
