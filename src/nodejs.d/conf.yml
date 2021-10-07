@@ -1,0 +1,12 @@
+init_config:
+
+instances:
+
+##Log section
+logs:
+
+  - type: file
+    path: "<FILE_NAME_PATH>.log"
+    service: nodejs
+    source: nodejs
+    sourcecategory: sourcecode

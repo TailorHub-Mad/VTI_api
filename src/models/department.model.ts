@@ -25,7 +25,7 @@ departmentSchema.pre('save', async function (next: HookNextFunction) {
 					numericOrdering: true
 				})
 				.limit(1);
-			if (client.ref) {
+			if (client?.ref) {
 				this.ref = 'DE' + (+client.ref.slice(2) + 1).toString().padStart(4, '0');
 			} else {
 				this.ref = 'DE0001';
