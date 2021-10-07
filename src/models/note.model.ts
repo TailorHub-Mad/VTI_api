@@ -10,7 +10,14 @@ export const noteSchema = new Schema<INoteDocument, INoteModel>(
 		documents: [{ url: { type: String }, name: { type: String } }],
 		tags: [{ type: Types.ObjectId, ref: 'Tag' }],
 		messages: [messageSchema],
-		updateLimitDate: { type: Date, default: () => new Date() }, // TODO: crear función generadora de fechas por limite de timepo
+		updateLimitDate: {
+			type: Date,
+			default: () => {
+				const date = new Date();
+				date.setSeconds(date.getSeconds() + 30);
+				return date;
+			}
+		}, // TODO: crear función generadora de fechas por limite de timepo
 		updateTime: { type: Date, default: () => new Date() },
 		owner: { type: Types.ObjectId, ref: 'User' }, // ad required: true
 		readBy: [{ type: Types.ObjectId, ref: 'User' }],

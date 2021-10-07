@@ -7,6 +7,14 @@ export const messageSchema = new Schema<IMessageDocument, IMessageModel>(
 		approved: { type: Boolean, default: false },
 		formalized: { type: Boolean, default: false },
 		link: { type: String },
+		updateLimitDate: {
+			type: Date,
+			default: () => {
+				const date = new Date();
+				date.setSeconds(date.getSeconds() + 30);
+				return date;
+			}
+		},
 		documents: [{ url: { type: String }, name: { type: String } }],
 		message: { type: String },
 		createdAt: { type: Date },
