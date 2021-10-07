@@ -18,7 +18,8 @@ export const GROUP_NOTES = [
 	'sector',
 	'notes.tags.name',
 	'tags',
-	'clientAlias'
+	'clientAlias',
+	'alias'
 ] as const;
 
 // Test System.
