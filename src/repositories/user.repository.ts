@@ -1,7 +1,7 @@
 import { Types } from 'mongoose';
 import { UserModel } from '../models/user.model';
 import QueryString from 'qs';
-import { IUserDocument } from 'src/interfaces/models.interface';
+import { IUserDocument } from '../interfaces/models.interface';
 
 export const userFilterAggregate = async (
 	query: QueryString.ParsedQs
