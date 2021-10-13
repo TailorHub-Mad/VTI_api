@@ -102,20 +102,30 @@ export const getByQueryAggregate = async (
 	const aux = [];
 	const union = query.union ? '$and' : '$or';
 	delete query.union;
+	console.log(query);
 	if ((query.subscribed || query.favorites || query.noRead) && reqUser) {
 		const user = await findOneRepository<IUserDocument>(UserModel, { _id: reqUser.id });
+		console.log(user);
 		if (user) {
 			if (query.subscribed) {
 				delete query.subscribed;
-				aux.push({
-					$or: user.subscribed.notes.map((note) => ({ 'notes._id': Types.ObjectId(note) }))
-				});
+				if (user.subscribed.notes.length > 0) {
+					aux.push({
+						$or: user.subscribed.notes.map((note) => ({ 'notes._id': Types.ObjectId(note) }))
+					});
+				} else {
+					return [];
+				}
 			}
 			if (query.favorites) {
 				delete query.favorites;
-				aux.push({
-					$or: user.favorites.notes.map((note) => ({ 'notes._id': Types.ObjectId(note) }))
-				});
+				if (user.favorites.notes.length > 0) {
+					aux.push({
+						$or: user.favorites.notes.map((note) => ({ 'notes._id': Types.ObjectId(note) }))
+					});
+				} else {
+					return [];
+				}
 			}
 			if (query.noRead) {
 				delete query.noRead;
@@ -176,6 +186,7 @@ export const getByQueryAggregate = async (
 		}),
 		...aux
 	];
+	console.log(JSON.stringify(transformQueryToArray));
 	const transformQuery =
 		transformQueryToArray.length > 0
 			? {
