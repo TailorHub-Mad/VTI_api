@@ -21,7 +21,7 @@ export const formatFilter = <Doc>(
 						[key]: { $in: value }
 				  }
 				: {
-						$and: value.map((v) => ({
+						$or: value.map((v) => ({
 							[key]: key.includes('department')
 								? Types.ObjectId(v as string)
 								: { $regex: v, $options: 'i' }
