@@ -91,23 +91,23 @@ export const aggregateCrud = async (
 		}
 	});
 
-	if (order) {
-		pipeline.push({
-			$sort: order
-		});
-	}
-	if (pagination) {
-		if (pagination.offset > 0) {
-			pipeline.push({
-				$skip: pagination.offset
-			});
-		}
-		if (pagination.limit > 0) {
-			pipeline.push({
-				$limit: pagination.limit
-			});
-		}
-	}
+	// if (order) {
+	// 	pipeline.push({
+	// 		$sort: order
+	// 	});
+	// }
+	// if (pagination) {
+	// 	if (pagination.offset > 0) {
+	// 		pipeline.push({
+	// 			$skip: pagination.offset
+	// 		});
+	// 	}
+	// 	if (pagination.limit > 0) {
+	// 		pipeline.push({
+	// 			$limit: pagination.limit
+	// 		});
+	// 	}
+	// }
 
 	if (_extends && nameFild) {
 		pipeline.push({
@@ -339,16 +339,28 @@ export const aggregateCrud = async (
 				$sort: order || {
 					[`${nameFild}.updatedAt`]: -1
 				}
-			},
-			{
-				$group: {
-					_id: null,
-					[nameFild as string]: {
-						$push: `$${nameFild}`
-					}
-				}
 			}
 		);
+		if (pagination) {
+			if (pagination.offset > 0) {
+				pipeline.push({
+					$skip: pagination.offset
+				});
+			}
+			if (pagination.limit > 0) {
+				pipeline.push({
+					$limit: pagination.limit
+				});
+			}
+		}
+		pipeline.push({
+			$group: {
+				_id: null,
+				[nameFild as string]: {
+					$push: `$${nameFild}`
+				}
+			}
+		});
 	}
 
 	return await ClientModel.aggregate(pipeline).collation({

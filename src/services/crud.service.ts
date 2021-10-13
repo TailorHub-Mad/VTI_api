@@ -12,6 +12,8 @@ import Joi from 'joi';
 import { GenericModel, IReqUser, IUserDocument } from '../interfaces/models.interface';
 import QueryString from 'qs';
 import { UserModel } from '../models/user.model';
+import { purgeObj } from '@utils/index';
+import { OrderAggregate } from '@utils/order.utils';
 
 export const getAll = async <Doc, M extends GenericModel<Doc>>(
 	model: M,
@@ -102,6 +104,11 @@ export const getByQueryAggregate = async (
 	const aux = [];
 	const union = query.union ? '$and' : '$or';
 	delete query.union;
+
+	const order = purgeObj(
+		Object.assign({}, new OrderAggregate(query as { [key: string]: 'asc' | 'desc' }))
+	);
+
 	if ((query.subscribed || query.favorites || query.noRead) && reqUser) {
 		const user = await findOneRepository<IUserDocument>(UserModel, { _id: reqUser.id });
 		if (user) {
@@ -132,56 +139,61 @@ export const getByQueryAggregate = async (
 		}
 	}
 	const transformQueryToArray = [
-		...Object.entries(query).map(([key, value]) => {
-			if (Array.isArray(value)) {
-				if (key.match(/\.createdAt$/)) {
+		...Object.entries(query)
+			.map(([key, value]) => {
+				if (key?.includes('_') && !key?.includes('_id')) {
+					return undefined;
+				}
+				if (Array.isArray(value)) {
+					if (key.match(/\.createdAt$/)) {
+						return {
+							$or: value.map((t) => {
+								const time = (t as string).split(';');
+								return {
+									$and: [
+										{
+											[key]: { $gte: new Date(time[0]) }
+										},
+										{
+											[key]: { $lte: new Date(time[1]) }
+										}
+									]
+								};
+							})
+						};
+					}
 					return {
-						$or: value.map((t) => {
-							const time = (t as string).split(';');
-							return {
-								$and: [
-									{
-										[key]: { $gte: new Date(time[0]) }
-									},
-									{
-										[key]: { $lte: new Date(time[1]) }
-									}
-								]
-							};
-						})
+						$and: value.map((v) => ({
+							[key]: key.includes('_id')
+								? Types.ObjectId(v as string)
+								: v === 'true'
+								? true
+								: { $regex: v, $options: 'i' }
+						}))
+					};
+				} else if (key.match(/\.createdAt$/)) {
+					const time = (value as string).split(';');
+					return {
+						$and: [
+							{
+								[key]: { $gte: new Date(time[0]) }
+							},
+							{
+								[key]: { $lte: new Date(time[1]) }
+							}
+						]
 					};
 				}
 				return {
-					$and: value.map((v) => ({
-						[key]: key.includes('_id')
-							? Types.ObjectId(v as string)
-							: v === 'true'
+					[key]:
+						key.includes('_id') || key.includes('clientId')
+							? Types.ObjectId(value as string)
+							: value === 'true'
 							? true
-							: { $regex: v, $options: 'i' }
-					}))
+							: { $regex: value, $options: 'i' }
 				};
-			} else if (key.match(/\.createdAt$/)) {
-				const time = (value as string).split(';');
-				return {
-					$and: [
-						{
-							[key]: { $gte: new Date(time[0]) }
-						},
-						{
-							[key]: { $lte: new Date(time[1]) }
-						}
-					]
-				};
-			}
-			return {
-				[key]:
-					key.includes('_id') || key.includes('clientId')
-						? Types.ObjectId(value as string)
-						: value === 'true'
-						? true
-						: { $regex: value, $options: 'i' }
-			};
-		}),
+			})
+			.filter((match) => match),
 		...aux
 	];
 	const transformQuery =
@@ -198,6 +210,7 @@ export const getByQueryAggregate = async (
 			querys: transformQuery,
 			populates
 		},
-		pagination
+		pagination,
+		order
 	);
 };

@@ -185,6 +185,8 @@ export const GetByQueryAggregate =
 		try {
 			const { query } = req;
 			const pagination = getPagination(req.query);
+			delete req.query.limit;
+			delete req.query.offset;
 			const result = await getByQueryAggregate(query, pagination, field, populates, req.user);
 			res.json(result);
 		} catch (err) {
