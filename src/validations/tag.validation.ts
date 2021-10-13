@@ -11,17 +11,17 @@ export const updateTagValidation = Joi.object().keys({
 });
 
 export const filterTagNoteValidation = Joi.object().keys({
-	name: Joi.string(),
-	'parent.name': Joi.string(),
-	'notes.title': Joi.string(),
-	'relatedTags.name': Joi.string(),
-	ref: Joi.string()
+	name: [Joi.string(), Joi.array()],
+	'parent.name': [Joi.string(), Joi.array()],
+	'notes.title': [Joi.string(), Joi.array()],
+	'relatedTags.name': [Joi.string(), Joi.array()],
+	ref: [Joi.string(), Joi.array()]
 });
 
 export const filterTagProjectValidation = Joi.object().keys({
-	name: Joi.string(),
-	'parent.name': Joi.string(),
-	'projects.alias': Joi.string(),
-	'relatedTags.name': Joi.string(),
-	ref: Joi.string()
+	name: [Joi.string(), Joi.array()],
+	'parent.name': [Joi.string(), Joi.array()],
+	'projects.alias': [Joi.string(), Joi.array()],
+	'relatedTags.name': [Joi.string(), Joi.array()],
+	ref: [Joi.string(), Joi.array()]
 });
