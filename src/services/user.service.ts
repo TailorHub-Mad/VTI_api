@@ -3,10 +3,12 @@ import { encryptPassword } from '@utils/model.utils';
 import { randomBytes } from 'crypto';
 import { Types } from 'mongoose';
 import { sendMail } from '../config/nodemailer.config';
-import { INoteDocument, IReqUser, IUserDocument } from '../interfaces/models.interface';
+import { IReqUser, IUserDocument } from '../interfaces/models.interface';
 import { UserModel } from '../models/user.model';
 import { updateRepository } from '../repositories/common.repository';
 import { recoveryValidation, resetPasswordValidation } from '../validations/user.validation';
+import QueryString from 'qs';
+import { userFilterAggregate } from '../repositories/user.repository';
 
 export const resetPassword = async (
 	body: { email: string },
@@ -46,6 +48,11 @@ export const recovery = async (body: { password: string; recovery: string }): Pr
 			password: encryptPassword(validateRecovery.password)
 		}
 	);
+};
+
+export const filterUser = async (query: QueryString.ParsedQs): Promise<IUserDocument[]> => {
+	const users = await userFilterAggregate(query);
+	return users;
 };
 
 export const getFavorite = async (user: IReqUser): Promise<any> => {

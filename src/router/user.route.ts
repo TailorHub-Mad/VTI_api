@@ -1,6 +1,7 @@
 import { USER_PATH } from '@constants/routes.constants';
 import { Router } from 'express';
 import {
+	FilterUser,
 	GetActiveNote,
 	GetFavorites,
 	GetNoRead,
@@ -38,13 +39,7 @@ router.delete('/:id', DeleteCrud<IUserDocument>(UserModel));
 
 router.get('/', GetAll<IUserDocument>(UserModel, { path: 'department', select: 'name _id' }));
 
-router.get(
-	'/filter',
-	FilterClient<IUserDocument>(UserModel, filterUserValidation, {
-		path: 'department',
-		select: 'name _id'
-	})
-);
+router.get('/filter', FilterUser);
 
 router.post('/resetPassword', ResetPassword);
 

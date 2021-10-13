@@ -2,6 +2,7 @@ import { NotFoundError } from '@errors/not_found.error';
 import { getPagination } from '@utils/controllers.utils';
 import { Request, Response, NextFunction } from 'express';
 import {
+	filterUser,
 	getActiveNote,
 	getFavorite,
 	getNotRead,
@@ -98,6 +99,19 @@ export const GetNoRead = async (req: Request, res: Response, next: NextFunction)
 	try {
 		const notes = await getNotRead(req.user);
 		res.status(200).json(notes);
+	} catch (err) {
+		next(err);
+	}
+};
+
+export const FilterUser = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		const users = await filterUser(req.query);
+		res.status(200).json(users);
 	} catch (err) {
 		next(err);
 	}
