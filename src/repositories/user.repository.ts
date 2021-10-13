@@ -195,6 +195,11 @@ export const userFilterAggregate = async (
 		},
 		{
 			$match: transformQuery
+		},
+		{
+			$projects: {
+				password: 0
+			}
 		}
 	];
 	const user = await UserModel.aggregate(pipeline);
