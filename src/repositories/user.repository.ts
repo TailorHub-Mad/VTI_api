@@ -197,7 +197,7 @@ export const userFilterAggregate = async (
 			$match: transformQuery
 		},
 		{
-			$projects: {
+			$project: {
 				password: 0
 			}
 		}
