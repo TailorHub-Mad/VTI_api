@@ -117,9 +117,9 @@ export const aggregateCrud = async (
 			}
 		});
 
-		pipeline.push({
-			$sort: order || { [`${nameFild}.updatedAt`]: -1 }
-		});
+		// pipeline.push({
+		// 	$sort: order || { [`${nameFild}.updatedAt`]: -1 }
+		// });
 
 		if (nameFild === 'projects') {
 			pipeline.push(
@@ -336,7 +336,7 @@ export const aggregateCrud = async (
 				$match: querys
 			},
 			{
-				$sort: {
+				$sort: order || {
 					[`${nameFild}.updatedAt`]: -1
 				}
 			},

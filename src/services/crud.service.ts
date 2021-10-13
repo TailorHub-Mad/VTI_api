@@ -104,7 +104,6 @@ export const getByQueryAggregate = async (
 	delete query.union;
 	if ((query.subscribed || query.favorites || query.noRead) && reqUser) {
 		const user = await findOneRepository<IUserDocument>(UserModel, { _id: reqUser.id });
-		console.log(user);
 		if (user) {
 			if (query.subscribed) {
 				delete query.subscribed;

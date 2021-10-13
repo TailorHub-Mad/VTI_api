@@ -145,7 +145,7 @@ export const GetAllAggregate =
 				pagination,
 				field,
 				purgeObj(
-					Object.assign({}, new OrderAggregate(req.query as { [key: string]: 'asc' | 'des' }))
+					Object.assign({}, new OrderAggregate(req.query as { [key: string]: 'asc' | 'desc' }))
 				),
 				populates
 			);
