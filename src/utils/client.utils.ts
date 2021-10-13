@@ -22,9 +22,10 @@ export const formatFilter = <Doc>(
 				  }
 				: {
 						$or: value.map((v) => ({
-							[key]: key.includes('department')
-								? Types.ObjectId(v as string)
-								: { $regex: v, $options: 'i' }
+							[key]:
+								key.includes('department') || key.includes('_id')
+									? Types.ObjectId(v as string)
+									: { $regex: v, $options: 'i' }
 						}))
 				  }
 			: key === 'focusPoint' || key === 'projectsComments'
@@ -32,9 +33,10 @@ export const formatFilter = <Doc>(
 					[key]: { $in: [value] }
 			  }
 			: {
-					[key]: key.includes('department')
-						? Types.ObjectId(value as string)
-						: { $regex: value, $options: 'i' }
+					[key]:
+						key.includes('department') || key.includes('_id')
+							? Types.ObjectId(value as string)
+							: { $regex: value, $options: 'i' }
 			  };
 		filter[union]?.push(push);
 	});

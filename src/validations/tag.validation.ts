@@ -12,6 +12,7 @@ export const updateTagValidation = Joi.object().keys({
 
 export const filterTagNoteValidation = Joi.object().keys({
 	name: [Joi.string(), Joi.array()],
+	_id: [Joi.string(), Joi.array()],
 	'parent.name': [Joi.string(), Joi.array()],
 	'notes.title': [Joi.string(), Joi.array()],
 	'relatedTags.name': [Joi.string(), Joi.array()],
@@ -21,6 +22,7 @@ export const filterTagNoteValidation = Joi.object().keys({
 
 export const filterTagProjectValidation = Joi.object().keys({
 	name: [Joi.string(), Joi.array()],
+	_id: [Joi.string(), Joi.array()],
 	'parent.name': [Joi.string(), Joi.array()],
 	'projects.alias': [Joi.string(), Joi.array()],
 	'relatedTags.name': [Joi.string(), Joi.array()],
