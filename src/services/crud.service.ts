@@ -102,7 +102,6 @@ export const getByQueryAggregate = async (
 	const aux = [];
 	const union = query.union ? '$and' : '$or';
 	delete query.union;
-	console.log(query);
 	if ((query.subscribed || query.favorites || query.noRead) && reqUser) {
 		const user = await findOneRepository<IUserDocument>(UserModel, { _id: reqUser.id });
 		console.log(user);
@@ -186,7 +185,6 @@ export const getByQueryAggregate = async (
 		}),
 		...aux
 	];
-	console.log(JSON.stringify(transformQueryToArray));
 	const transformQuery =
 		transformQueryToArray.length > 0
 			? {

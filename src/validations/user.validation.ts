@@ -42,5 +42,8 @@ export const filterUserValidation = Joi.object().keys({
 	lastName: Joi.string(),
 	ref: Joi.string(),
 	'department.name': Joi.string(),
-	'department._id': Joi.string()
+	'department._id': Joi.string(),
+	focusPoint: Joi.string(),
+	projectsComments: Joi.string(),
+	union: Joi.string()
 });
