@@ -16,9 +16,9 @@ import { UserModel } from '../models/user.model';
 export const getAll = async <Doc, M extends GenericModel<Doc>>(
 	model: M,
 	pagination: Pagination,
-	populate?: PopulateOptions
+	options?: { populate?: PopulateOptions; order?: { [key: string]: 1 | -1 } }
 ): Promise<Doc[] | []> => {
-	return await findWithPagination(model, {}, pagination, { populate });
+	return await findWithPagination(model, {}, pagination, options);
 };
 
 export const read = async <Doc, M extends GenericModel<Doc> = GenericModel<Doc>>(

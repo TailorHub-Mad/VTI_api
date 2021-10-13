@@ -27,7 +27,12 @@ export const GetAll =
 	async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const pagination = getPagination(req.query);
-			let results = await getAll<Doc, M>(model, pagination, populate);
+			let results = await getAll<Doc, M>(model, pagination, {
+				populate,
+				order: purgeObj(
+					Object.assign({}, new OrderAggregate(req.query as { [key: string]: 'asc' | 'desc' }))
+				)
+			});
 			if (req.query.group) {
 				results = groupAggregate(
 					results.map((result) => ({ aux: result })),

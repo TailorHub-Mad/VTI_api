@@ -10,6 +10,7 @@ export const findWithPagination = async <Doc, M extends GenericModel<Doc> = Gene
 	options?: {
 		select?: string;
 		populate?: PopulateOptions;
+		order?: { [key: string]: 1 | -1 };
 	}
 ): Promise<Doc[]> => {
 	return await model
@@ -18,7 +19,7 @@ export const findWithPagination = async <Doc, M extends GenericModel<Doc> = Gene
 		.limit(pagination.limit)
 		.skip(pagination.offset)
 		.select(options?.select || '')
-		.sort({ order: -1, updatedAt: -1 });
+		.sort(options?.order || { order: -1, updatedAt: -1 });
 };
 
 export const findOneRepository = async <
