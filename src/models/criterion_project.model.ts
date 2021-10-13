@@ -26,7 +26,7 @@ CriterionProjectSchema.pre('save', async function (next: HookNextFunction) {
 				.find({ type: 'project' })
 				.sort({ order: -1 })
 				.limit(1);
-			if ((criterion as unknown as { order: number }).order) {
+			if ((criterion as unknown as { order: number })?.order >= 0) {
 				this.order = criterion.order + 1;
 			} else {
 				this.order = 0;
