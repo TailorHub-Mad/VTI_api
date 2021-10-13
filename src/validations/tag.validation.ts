@@ -15,7 +15,8 @@ export const filterTagNoteValidation = Joi.object().keys({
 	'parent.name': [Joi.string(), Joi.array()],
 	'notes.title': [Joi.string(), Joi.array()],
 	'relatedTags.name': [Joi.string(), Joi.array()],
-	ref: [Joi.string(), Joi.array()]
+	ref: [Joi.string(), Joi.array()],
+	union: Joi.string()
 });
 
 export const filterTagProjectValidation = Joi.object().keys({
@@ -23,5 +24,6 @@ export const filterTagProjectValidation = Joi.object().keys({
 	'parent.name': [Joi.string(), Joi.array()],
 	'projects.alias': [Joi.string(), Joi.array()],
 	'relatedTags.name': [Joi.string(), Joi.array()],
-	ref: [Joi.string(), Joi.array()]
+	ref: [Joi.string(), Joi.array()],
+	union: Joi.string()
 });
