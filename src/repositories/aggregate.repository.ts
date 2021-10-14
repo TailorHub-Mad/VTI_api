@@ -405,7 +405,6 @@ export const groupRepository = async <T, G extends string>(
 					$or: transformQueryToArray
 			  }
 			: {};
-	console.log(transformQuery);
 	const pipeline = [];
 
 	if (field === 'notes') {

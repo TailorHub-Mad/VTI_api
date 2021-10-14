@@ -5,6 +5,7 @@ export const PROJECTS_PATH = '/projects';
 export const CLIENTS_PATH = '/clients';
 export const USER_PATH = '/user';
 export const TAG_PATH = '/tag';
+export const SUBSCRIBED_PATH = '/subscribed';
 export const EXCEPTION_PATH = [
 	'/api/user/login',
 	'/api/user/signup',

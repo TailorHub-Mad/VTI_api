@@ -6,7 +6,7 @@ export const createTestSystemValidation = Joi.object().keys({
 	vtiCode: Joi.string().required(),
 	alias: Joi.string().required(),
 	date: Joi.object().keys({
-		year: Joi.string()
+		year: Joi.string().length(4)
 	}),
 	client: mongoIdValidation.required()
 });
@@ -15,7 +15,7 @@ export const updateTestSystemValidation = Joi.object().keys({
 	vtiCode: Joi.string(),
 	alias: Joi.string(),
 	date: Joi.object().keys({
-		year: Joi.string()
+		year: Joi.string().length(4)
 	})
 });
 

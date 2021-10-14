@@ -23,7 +23,11 @@ export const updateUserValidation = Joi.object().keys({
 		notes: Joi.array().items(mongoIdValidation),
 		projects: Joi.array().items(mongoIdValidation)
 	}),
-	department: mongoIdValidation.required()
+	subscribed: Joi.object({
+		notes: Joi.array().items(mongoIdValidation),
+		projects: Joi.array().items(mongoIdValidation)
+	}),
+	department: mongoIdValidation
 });
 
 export const recoveryValidation = Joi.object().keys({
