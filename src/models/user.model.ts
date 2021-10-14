@@ -22,7 +22,9 @@ const userSchema = new Schema<IUserDocument, IUserModel>(
 		subscribed: {
 			notes: [{ type: Types.ObjectId }],
 			projects: [{ type: Types.ObjectId }],
-			testSystems: [{ type: Types.ObjectId }]
+			testSystems: [{ type: Types.ObjectId }],
+			noteTags: [{ type: Types.ObjectId, ref: 'TagNote' }],
+			projectTags: [{ type: Types.ObjectId, ref: 'TagProject' }]
 		},
 		notifications: {
 			status: { type: String, enum: NOTIFICATION_STATUS, default: NOTIFICATION_STATUS[0] },
@@ -44,7 +46,7 @@ userSchema.pre('save', async function (next: HookNextFunction) {
 		}
 		if (this.isNew) {
 			const [client] = await this.db
-				.model<IUserDocument>('Sector')
+				.model<IUserDocument>('User')
 				.find()
 				.sort({ ref: -1 })
 				.collation({
@@ -53,6 +55,7 @@ userSchema.pre('save', async function (next: HookNextFunction) {
 				})
 				.limit(1);
 			if (client?.ref) {
+				console.log(client.ref);
 				this.ref = 'US' + (+client.ref.slice(2) + 1).toString().padStart(4, '0');
 			} else {
 				this.ref = 'US0001';

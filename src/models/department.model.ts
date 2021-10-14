@@ -17,7 +17,7 @@ departmentSchema.pre('save', async function (next: HookNextFunction) {
 	try {
 		if (this.isNew) {
 			const [client] = await this.db
-				.model<IDepartmentDocument>('Sector')
+				.model<IDepartmentDocument>('Department')
 				.find()
 				.sort({ ref: -1 })
 				.collation({
