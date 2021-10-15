@@ -4,7 +4,7 @@ import {
 	SUBSCRIBED_TESTSYSTEM
 } from '@constants/subscribed.constanst';
 import { Request, Response, NextFunction } from 'express';
-import { UserModel } from 'src/models/user.model';
+import { UserModel } from '../models/user.model';
 
 export const GetAllSubscribed = async (
 	req: Request,
