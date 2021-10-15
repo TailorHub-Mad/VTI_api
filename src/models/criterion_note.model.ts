@@ -2,15 +2,21 @@ import { HookNextFunction, Schema, Types } from 'mongoose';
 import { ICriterionNoteDocument, ICriterionNoteModel } from '../interfaces/models.interface';
 import { CriterionModel } from './criterion.model';
 
+const groupSchema = new Schema(
+	{
+		name: { type: String, trim: true, unique: true },
+		relatedTags: [{ type: Types.ObjectId, ref: 'TagNote' }]
+	},
+	{
+		timestamps: true,
+		versionKey: false
+	}
+);
+
 const CriterionNoteSchema = new Schema<ICriterionNoteDocument, ICriterionNoteModel>(
 	{
 		title: { type: String, trim: true, unique: true },
-		group: [
-			{
-				name: { type: String, trim: true, unique: true },
-				relatedTags: [{ type: Types.ObjectId, ref: 'TagNote' }]
-			}
-		]
+		group: [groupSchema]
 	},
 	{
 		timestamps: true,

@@ -15,7 +15,7 @@ const router = Router();
 
 router.get(
 	'/notes',
-	Read<ICriterionNoteDocument>(CriterionNoteModel, { type: 'note' }, { path: 'relatedTags parent' })
+	Read<ICriterionNoteDocument>(CriterionNoteModel, { type: 'note' }, { path: 'group.relatedTags' })
 );
 
 router.get(
@@ -23,21 +23,21 @@ router.get(
 	Read<ICriterionProjectDocument>(
 		CriterionProjectModel,
 		{ type: 'project' },
-		{ path: 'relatedTags parent' }
+		{ path: 'group.relatedTags parent' }
 	)
 );
 
 router.get(
 	'/notes/filter',
 	FilterClient<ICriterionNoteDocument>(CriterionNoteModel, filterCriterionValidation, {
-		path: 'relatedTags parent'
+		path: 'group.relatedTags parent'
 	})
 );
 
 router.get(
 	'/project/filter',
 	FilterClient<ICriterionProjectDocument>(CriterionProjectModel, filterCriterionValidation, {
-		path: 'relatedTags parent'
+		path: 'group.relatedTags parent'
 	})
 );
 
