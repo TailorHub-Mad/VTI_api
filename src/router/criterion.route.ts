@@ -55,10 +55,13 @@ router.put('/notes/:group', CreateGroup(CriterionNoteModel, 'note'));
 
 router.put('/project/:group', CreateGroup(CriterionProjectModel, 'project'));
 
-router.put('/notes', Update<ICriterionNoteDocument>(CriterionNoteModel, CriterionUpdateValidation));
+router.put(
+	'/notes/:id',
+	Update<ICriterionNoteDocument>(CriterionNoteModel, CriterionUpdateValidation)
+);
 
 router.put(
-	'/project',
+	'/project/:id',
 	Update<ICriterionProjectDocument>(CriterionProjectModel, CriterionUpdateValidation)
 );
 
