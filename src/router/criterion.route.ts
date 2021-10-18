@@ -6,10 +6,17 @@ import {
 	filterCriterionValidation
 } from '../validations/criterion.validation';
 import { Create, Read, Update } from '../controllers/crud.controller';
-import { ICriterionNoteDocument, ICriterionProjectDocument } from '../interfaces/models.interface';
+import {
+	ICriterionNoteDocument,
+	ICriterionProjectDocument,
+	ITagNoteDocument,
+	ITagProjectDocument
+} from '../interfaces/models.interface';
 import { CriterionNoteModel } from '../models/criterion_note.model';
 import { FilterClient } from '../controllers/client.controller';
-import { CreateGroup } from '../controllers/criterion.controller';
+import { CreateGroup, GetTagsNotUse } from '../controllers/criterion.controller';
+import { TagNoteModel } from '../models/tag_notes.model';
+import { TagProjectModel } from '../models/tag_project.model';
 
 const router = Router();
 
@@ -26,6 +33,9 @@ router.get(
 		{ path: 'group.relatedTags parent' }
 	)
 );
+
+router.get('/notes/tags', GetTagsNotUse<ITagNoteDocument>(TagNoteModel, 'note'));
+router.get('/project/tags', GetTagsNotUse<ITagProjectDocument>(TagProjectModel, 'project'));
 
 router.get(
 	'/notes/filter',
