@@ -56,12 +56,12 @@ router.put('/notes/:group', CreateGroup(CriterionNoteModel, 'note'));
 router.put('/project/:group', CreateGroup(CriterionProjectModel, 'project'));
 
 router.put(
-	'/notes/:id',
+	'/notes/update/:id',
 	Update<ICriterionNoteDocument>(CriterionNoteModel, CriterionUpdateValidation)
 );
 
 router.put(
-	'/project/:id',
+	'/project/update/:id',
 	Update<ICriterionProjectDocument>(CriterionProjectModel, CriterionUpdateValidation)
 );
 

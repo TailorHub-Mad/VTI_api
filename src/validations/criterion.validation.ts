@@ -9,7 +9,8 @@ export const filterCriterionValidation = Joi.object().keys({
 
 export const createGroupValidation = Joi.object().keys({
 	relatedTags: Joi.array().items(mongoIdValidation),
-	name: Joi.string().required()
+	name: Joi.string().required(),
+	_id: Joi.string()
 });
 
 export const CriterionCreateValidation = Joi.object().keys({
