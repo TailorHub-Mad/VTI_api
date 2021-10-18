@@ -23,5 +23,6 @@ export const CriterionCreateValidation = Joi.object().keys({
 export const CriterionUpdateValidation = Joi.object().keys({
 	title: Joi.string(),
 	group: Joi.array().items(createGroupValidation),
+	type: Joi.string(),
 	order: Joi.number()
 });
