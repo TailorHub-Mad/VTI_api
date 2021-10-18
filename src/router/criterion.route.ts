@@ -5,7 +5,7 @@ import {
 	CriterionUpdateValidation,
 	filterCriterionValidation
 } from '../validations/criterion.validation';
-import { Create, Read, Update } from '../controllers/crud.controller';
+import { Create, DeleteCrud, Read, Update } from '../controllers/crud.controller';
 import {
 	ICriterionNoteDocument,
 	ICriterionProjectDocument,
@@ -74,5 +74,9 @@ router.put(
 	'/project/update/:id',
 	Update<ICriterionProjectDocument>(CriterionProjectModel, CriterionUpdateValidation)
 );
+
+router.delete('/projects/:id', DeleteCrud<ICriterionProjectDocument>(CriterionProjectModel));
+
+router.delete('/notes/:id', DeleteCrud<ICriterionNoteDocument>(CriterionNoteModel));
 
 export const CriterionRouter = { router, path: '/criterion' };
