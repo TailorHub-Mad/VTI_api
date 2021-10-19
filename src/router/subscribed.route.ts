@@ -11,9 +11,9 @@ const router = Router();
 
 router.get('/', GetAllSubscribed);
 
-router.get('/project', GetNotesSubscribed);
+router.get('/notes', GetNotesSubscribed);
 
-router.get('/notes', GetProjectsSubscribed);
+router.get('/project', GetProjectsSubscribed);
 
 router.get('/testSystems', GetTestSystemsSubscribed);
 
