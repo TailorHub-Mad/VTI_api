@@ -9,3 +9,7 @@ export const mongoIdValidation = Joi.string().external((value) => {
 		throw new BaseError(`value "invalid" at path "_id": ${value}`, 400);
 	}
 });
+
+export const notificationValidation = Joi.object().keys({
+	description: Joi.string().required()
+});

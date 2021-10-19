@@ -48,6 +48,7 @@ export interface IUser {
 	notifications: {
 		status: TNotificationStatus;
 		notification: INotificationDocument['_id'];
+		pin: boolean;
 	}[];
 	password: string;
 	recovery: string[];

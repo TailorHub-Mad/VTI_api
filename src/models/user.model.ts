@@ -29,7 +29,8 @@ const userSchema = new Schema<IUserDocument, IUserModel>(
 		notifications: [
 			{
 				status: { type: String, enum: NOTIFICATION_STATUS, default: NOTIFICATION_STATUS[0] },
-				notification: { type: Types.ObjectId, ref: 'Notification' }
+				notification: { type: Types.ObjectId, ref: 'Notification' },
+				pin: { type: Boolean, default: false }
 			}
 		],
 		recovery: [{ type: String }],

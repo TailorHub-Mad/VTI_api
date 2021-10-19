@@ -9,6 +9,8 @@ import {
 	IReqUser,
 	IUserDocument
 } from '../interfaces/models.interface';
+import { ADMIN_NOTIFICATION } from '@constants/notification.constants';
+import { mongoIdValidation, notificationValidation } from '../validations/common.validation';
 
 export const createNotification = async (
 	reqUser: IReqUser,
@@ -42,8 +44,15 @@ export const extendNotification = async (
 };
 
 export const getAllNotification = async (
-	user: IReqUser
+	user: IReqUser,
+	query: { type: string[] }
 ): Promise<{ [key: string]: INotification }> => {
+	const filter = Array.isArray(query?.type)
+		? query?.type?.reduce((query, type) => {
+				query.push({ type });
+				return query;
+		  }, [] as { type: string }[])
+		: query?.type;
 	const [{ notifications }] = (await UserModel.aggregate([
 		{
 			$match: {
@@ -60,7 +69,8 @@ export const getAllNotification = async (
 				from: 'notifications',
 				let: {
 					notificationId: '$notifications.notification',
-					unRead: '$notifications.status'
+					unRead: '$notifications.status',
+					pin: '$notifications.pin'
 				},
 				pipeline: [
 					{
@@ -69,6 +79,9 @@ export const getAllNotification = async (
 								$eq: ['$_id', '$$notificationId']
 							}
 						}
+					},
+					{
+						$match: Array.isArray(filter) ? { $or: filter } : filter ? { type: filter } : {}
 					},
 					{
 						$addFields: {
@@ -86,7 +99,8 @@ export const getAllNotification = async (
 									then: false,
 									else: true
 								}
-							}
+							},
+							pin: '$$pin'
 						}
 					},
 					{
@@ -133,4 +147,30 @@ export const updateReadNotification = async (user: IReqUser): Promise<void> => {
 		},
 		{ 'notification.$.status': 'read' }
 	);
+};
+
+export const createNotificationAdmin = async (body: { description: string }): Promise<void> => {
+	const validBody = await notificationValidation.validateAsync(body);
+	const newNotification = new NotificationModel({
+		description: validBody.description,
+		owner: 'Administrador',
+		type: ADMIN_NOTIFICATION
+	});
+	const notification = await newNotification.save();
+	await UserModel.updateMany(
+		{},
+		{ $addToSet: { notifications: { status: 'no read', notification: notification._id } } }
+	);
+};
+
+export const updateNotificationPin = async (id: string, user: IReqUser): Promise<void> => {
+	const validId = await mongoIdValidation.validateAsync(id);
+	const _user = await UserModel.findOne({ _id: user.id });
+	if (_user) {
+		const indexNotification = _user.notifications.findIndex(
+			(notification) => notification.notification.toString() === validId
+		);
+		_user.notifications[indexNotification].pin = !_user.notifications[indexNotification].pin;
+		await _user.save();
+	}
 };
