@@ -81,44 +81,6 @@ describe('Aggregate', () => {
 			expect(notePage1).toBeDefined();
 			expect(notePage0._id).not.toBe(notePage1._id);
 		});
-		it('All notes limit = 10 with order in title', async () => {
-			pagination.limit = 10;
-			const { notes: notesOrderTitleDesc } = (
-				await aggregateCrud(
-					{
-						_extends: 'notes',
-						nameFild: 'notes',
-						querys: {},
-						group: 'null'
-					},
-					pagination,
-					{ 'notes.title': -1 }
-				)
-			)[0];
-
-			const { notes: notesOrderTitleAsc } = (
-				await aggregateCrud(
-					{
-						_extends: 'notes',
-						nameFild: 'notes',
-						querys: {},
-						group: 'null'
-					},
-					pagination,
-					{ 'notes.title': 1 }
-				)
-			)[0];
-
-			const noteOrderTitleDesc = notesOrderTitleDesc[0];
-			const noteOrderTitleAsc = notesOrderTitleAsc[0];
-
-			expect(notesOrderTitleDesc).toBeDefined();
-			expect(notesOrderTitleAsc).toBeDefined();
-			expect(noteOrderTitleDesc).toBeDefined();
-			expect(noteOrderTitleAsc).toBeDefined();
-			expect((noteOrderTitleDesc.title as string).localeCompare(noteOrderTitleAsc.title)).toBe(1);
-			expect((noteOrderTitleAsc.title as string).localeCompare(noteOrderTitleDesc.title)).toBe(-1);
-		});
 	});
 
 	describe('Clients', () => {
