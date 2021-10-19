@@ -1,4 +1,11 @@
+import {
+	ANSWER_NOTE,
+	CREATED_NOTE,
+	NOTES_NOTIFICATION,
+	UPDATE_MESSAGE
+} from '@constants/notification.constants';
 import { Request, Response, NextFunction } from 'express';
+import { createNotification, extendNotification } from '../services/notification.service';
 import {
 	createMessage,
 	createNote,
@@ -18,7 +25,19 @@ export const CreateNote = async (
 ): Promise<void> => {
 	try {
 		const { body, files, user } = req;
-		await createNote(body, files as Express.Multer.File[] | undefined);
+		const noteId = await createNote(body, files as Express.Multer.File[] | undefined);
+		const notification = await createNotification(user, {
+			description: `Se ha creado un nuevo ${NOTES_NOTIFICATION.label}`,
+			urls: [
+				{
+					label: NOTES_NOTIFICATION.label,
+					model: NOTES_NOTIFICATION.model,
+					id: noteId
+				}
+			],
+			type: CREATED_NOTE
+		});
+		await extendNotification({ field: NOTES_NOTIFICATION.model, id: noteId }, notification);
 		logger.notice(`El usuario ${user.email} ha creado un apunte con título ${body.title}`);
 		res.sendStatus(201);
 	} catch (err) {
@@ -35,6 +54,18 @@ export const CreateMessage = async (
 		const { body, params, user, files } = req;
 		const { id } = params;
 		await createMessage(id, body, user, files as Express.Multer.File[] | undefined);
+		const notification = await createNotification(user, {
+			description: `Se ha creado un nuevo ${NOTES_NOTIFICATION.label}`,
+			urls: [
+				{
+					label: NOTES_NOTIFICATION.label,
+					model: NOTES_NOTIFICATION.model,
+					id: id
+				}
+			],
+			type: ANSWER_NOTE
+		});
+		await extendNotification({ field: NOTES_NOTIFICATION.model, id }, notification);
 		logger.notice(
 			`El usuario ${user.email} ha creado el mensaje con title ${body.message} en el apunte con la id ${id}`
 		);
@@ -53,6 +84,7 @@ export const UpdateNote = async (
 		const { body, params, files, user } = req;
 		const { id } = params;
 		await updateNote(id, body, files as Express.Multer.File[] | undefined);
+
 		logger.notice(`El usuario ${user.email} ha modificado un apunte con título ${body.title}`);
 		res.sendStatus(200);
 	} catch (err) {
@@ -69,6 +101,18 @@ export const UpdateMessage = async (
 		const { body, params, user, files } = req;
 		const { id } = params;
 		await updateMessage(id, body, files as Express.Multer.File[] | undefined);
+		const notification = await createNotification(user, {
+			description: `Se ha modificado un mensaje en el ${NOTES_NOTIFICATION.label}`,
+			urls: [
+				{
+					label: NOTES_NOTIFICATION.label,
+					model: NOTES_NOTIFICATION.model,
+					id: id
+				}
+			],
+			type: UPDATE_MESSAGE
+		});
+		await extendNotification({ field: NOTES_NOTIFICATION.model, id }, notification);
 		logger.notice(
 			`El usuario ${user.email} ha modificado un mensaje con título ${body.message} en el apunte con la id ${id}`
 		);

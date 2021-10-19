@@ -36,9 +36,12 @@ router.get(
 	})
 );
 
-router.post('/notes', CreateTag<ITagNoteDocument>(TagNoteModel, createTagValidation));
+router.post('/notes', CreateTag<ITagNoteDocument>(TagNoteModel, createTagValidation, 'note'));
 
-router.post('/projects', CreateTag<ITagProjectDocument>(TagProjectModel, createTagValidation));
+router.post(
+	'/projects',
+	CreateTag<ITagProjectDocument>(TagProjectModel, createTagValidation, 'project')
+);
 
 router.put('/notes/:id_tag', UpdateTag<ITagNoteDocument>(TagNoteModel, updateTagValidation));
 

@@ -1,4 +1,7 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { NEW_TEST_SYSTEM, TESTSYTEMS_NOTIFICATION } from '@constants/notification.constants';
 import { Request, Response, NextFunction } from 'express';
+import { createNotification, extendNotification } from '../services/notification.service';
 import {
 	createTestSystem,
 	updateTestSystem,
@@ -30,7 +33,23 @@ export const UpdateTestSystem = async (
 ): Promise<void> => {
 	try {
 		const { body, params, user } = req;
-		await updateTestSystem(params.id_testSystem as string, body);
+		const testSystemId = await updateTestSystem(params.id_testSystem as string, body);
+		const notification = await createNotification(user, {
+			description: `Se ha creado un nuevo mensaje en el ${TESTSYTEMS_NOTIFICATION.label}`,
+			urls: [
+				{
+					label: TESTSYTEMS_NOTIFICATION.label,
+					model: TESTSYTEMS_NOTIFICATION.model,
+					id: testSystemId!
+				}
+			],
+			type: NEW_TEST_SYSTEM
+		});
+		await extendNotification(
+			{ field: TESTSYTEMS_NOTIFICATION.model, id: testSystemId! },
+			notification
+		);
+
 		logger.notice(
 			`El usuario ${user.email} ha modificado un sistema de ensayo con el alias ${params.id_testSystem}`
 		);

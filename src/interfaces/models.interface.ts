@@ -47,8 +47,8 @@ export interface IUser {
 	};
 	notifications: {
 		status: TNotificationStatus;
-		notification: 'id';
-	};
+		notification: INotificationDocument['_id'];
+	}[];
 	password: string;
 	recovery: string[];
 	ref: string;
@@ -200,6 +200,23 @@ export interface ICriterionProjectDocument extends ICriterion, Document {
 export type ICriterionNoteModel = Model<ICriterionNoteDocument>;
 
 export type ICriterionProjectModel = Model<ICriterionProjectDocument>;
+
+export interface INotification {
+	description: string;
+	owner: string;
+	urls: {
+		label: string;
+		model: string;
+		id: string;
+	}[];
+	deleteTime: boolean;
+	type: string;
+	pin: boolean;
+}
+
+export interface INotificationDocument extends INotification, Document {}
+
+export type INotificationModel = Model<INotificationDocument>;
 export interface IReqUser {
 	id: string;
 	email: string;

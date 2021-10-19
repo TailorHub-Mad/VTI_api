@@ -6,11 +6,19 @@ import { updateRepository } from '../repositories/common.repository';
 import { mongoIdValidation } from '../validations/common.validation';
 import { GenericModel, ITag, ITagBothDocument } from '../interfaces/models.interface';
 import { create, read, update } from '../services/crud.service';
+import { createNotification, extendNotification } from '../services/notification.service';
+import {
+	NEW_TAG_NOTE,
+	NEW_TAG_PROJECT,
+	TAG_NOTE_NOTIFICATION,
+	TAG_PROJECT_NOTIFICATION
+} from '@constants/notification.constants';
 
 export const CreateTag =
 	<Doc, M extends GenericModel<Doc> = GenericModel<Doc>>(
 		model: M,
-		validate: Joi.ObjectSchema<Partial<ITag>>
+		validate: Joi.ObjectSchema<Partial<ITag>>,
+		type: 'note' | 'project'
 	): ((req: Request, res: Response, next: NextFunction) => Promise<void>) =>
 	async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
@@ -31,6 +39,20 @@ export const CreateTag =
 					relatedTag.save();
 				}
 			}
+			const tagNotification = type === 'note' ? TAG_NOTE_NOTIFICATION : TAG_PROJECT_NOTIFICATION;
+			const typeNotification = type === 'note' ? NEW_TAG_NOTE : NEW_TAG_PROJECT;
+			const notification = await createNotification(req.user, {
+				description: `Se ha creado un nuevo ${tagNotification.label}`,
+				urls: [
+					{
+						label: tagNotification.label,
+						model: tagNotification.model,
+						id: tag._id
+					}
+				],
+				type: typeNotification
+			});
+			await extendNotification({ field: tagNotification.model, id: tag._id }, notification);
 			res.sendStatus(201);
 		} catch (err) {
 			next(err);

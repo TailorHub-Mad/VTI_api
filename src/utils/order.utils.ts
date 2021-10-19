@@ -18,6 +18,7 @@ export class OrderAggregate {
 	'testSystems.vtiCode'?: orderNumber;
 	'testSystems.clientAlias'?: orderNumber;
 	'testSystems.date.year'?: orderNumber;
+	'lastName'?: orderNumber;
 	'ref'?: orderNumber;
 	'title'?: orderNumber;
 	'alias'?: orderNumber;
@@ -39,6 +40,9 @@ export class OrderAggregate {
 		testSystems_vtiCode,
 		testSystems_clientAlias,
 		testSystems_date,
+		user_alias,
+		user_name,
+		user_lastName,
 		ref,
 		alias,
 		name
@@ -59,6 +63,9 @@ export class OrderAggregate {
 		testSystems_vtiCode?: orderString;
 		testSystems_clientAlias?: orderString;
 		testSystems_date?: orderString;
+		user_alias?: orderString;
+		user_name?: orderString;
+		user_lastName?: orderString;
 		ref?: orderString;
 		alias?: orderString;
 		name?: orderString;
@@ -72,13 +79,15 @@ export class OrderAggregate {
 		this['projects.focusPoint.0.name'] = this.transform(projects_focusPoint);
 		this.ref = this.transform(sector_ref) || this.transform(ref) || this.transform(department_ref);
 		this.title = this.transform(sector_title);
-		this.name = this.transform(department_name) || this.transform(name);
 		this['testSystems.ref'] = this.transform(testSystems_ref);
 		this['testSystems.alias'] = this.transform(testSystems_alias);
 		this['testSystems.vtiCode'] = this.transform(testSystems_vtiCode);
 		this['testSystems.clientAlias'] = this.transform(testSystems_clientAlias);
 		this['testSystems.date.year'] = this.transform(testSystems_date);
-		this.alias = this.transform(alias);
+		this.alias = this.transform(alias) || this.transform(user_alias);
+		this.name =
+			this.transform(department_name) || this.transform(name) || this.transform(user_name);
+		this.lastName = this.transform(user_lastName);
 	}
 
 	private transform(direction?: orderString): orderNumber | undefined {

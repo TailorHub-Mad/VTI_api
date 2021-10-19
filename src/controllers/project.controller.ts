@@ -1,4 +1,7 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { NEW_PROJECT, PROJECTS_NOTIFICATION } from '@constants/notification.constants';
 import { Request, Response, NextFunction } from 'express';
+import { createNotification, extendNotification } from '../services/notification.service';
 import {
 	createProject,
 	deleteProject,
@@ -13,7 +16,19 @@ export const CreateProject = async (
 ): Promise<void> => {
 	try {
 		const { body, user } = req;
-		await createProject(body);
+		const id = await createProject(body);
+		const notification = await createNotification(user, {
+			description: `Se ha creado un nuevo mensaje en el ${PROJECTS_NOTIFICATION.label}`,
+			urls: [
+				{
+					label: PROJECTS_NOTIFICATION.label,
+					model: PROJECTS_NOTIFICATION.model,
+					id: id!
+				}
+			],
+			type: NEW_PROJECT
+		});
+		await extendNotification({ field: PROJECTS_NOTIFICATION.model, id: id! }, notification);
 		logger.notice(`El usuario ${user.email} ha creado un proyecto con el alias ${body.alias}`);
 		res.sendStatus(201);
 	} catch (err) {

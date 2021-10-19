@@ -18,7 +18,7 @@ import { groupRepository } from '../repositories/aggregate.repository';
 import { GROUP_TEST_SYSTEM } from '@constants/group.constans';
 import { createRef } from '@utils/model.utils';
 
-export const createTestSystem = async (body: Partial<IClient>): Promise<void> => {
+export const createTestSystem = async (body: Partial<IClient>): Promise<string | undefined> => {
 	const bodyValidation = await createTestSystemValidation.validateAsync(body);
 	const clientId = { ...bodyValidation }.client;
 
@@ -30,7 +30,11 @@ export const createTestSystem = async (body: Partial<IClient>): Promise<void> =>
 
 	const newRef = await createRef('testSystems');
 	bodyValidation.ref = newRef;
-	await createModelsInClientRepository('testSystems', clientId, bodyValidation);
+	const client = await createModelsInClientRepository('testSystems', clientId, bodyValidation);
+	const testSystem = client?.testSystems.find(
+		(testSystem) => testSystem.alias === bodyValidation.alias
+	);
+	return testSystem?.id;
 };
 
 export const updateTestSystem = async (

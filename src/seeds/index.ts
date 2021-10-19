@@ -6,8 +6,8 @@ import script from './script';
 (async () => {
 	await dbLoader.open();
 	try {
-		// await testSeed();
-		await script();
+		await testSeed();
+		// await script();
 	} catch (err) {
 		logger.error(err.message);
 	} finally {

@@ -39,7 +39,7 @@ import { deleteModelInClientRepository } from '../repositories/client.repository
 export const createNote = async (
 	body: Partial<INote>,
 	files?: Express.Multer.File[]
-): Promise<void> => {
+): Promise<string> => {
 	if (!Array.isArray(body.testSystems)) {
 		body.testSystems = [body.testSystems];
 	}
@@ -98,6 +98,7 @@ export const createNote = async (
 		return testSystem;
 	});
 	await newClient.save();
+	return note._id;
 };
 
 export const createMessage = async (

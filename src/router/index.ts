@@ -10,3 +10,4 @@ export { CriterionRouter } from './criterion.route';
 export { SectorRouter } from './sector.route';
 export { DepartmentRouter } from './department.route';
 export { SubscribedRouter } from './subscribed.route';
+export { NotificationRouter } from './notification.route';

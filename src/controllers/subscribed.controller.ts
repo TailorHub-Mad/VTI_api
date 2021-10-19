@@ -1,6 +1,7 @@
 import {
 	SUBSCRIBED_NOTE,
 	SUBSCRIBED_PROJECT,
+	SUBSCRIBED_PROJECT_POPULATE,
 	SUBSCRIBED_TESTSYSTEM
 } from '@constants/subscribed.constanst';
 import { Request, Response, NextFunction } from 'express';
@@ -17,6 +18,42 @@ export const GetAllSubscribed = async (
 			...SUBSCRIBED_TESTSYSTEM,
 			...SUBSCRIBED_NOTE
 		]);
+		res.status(200).json(users);
+	} catch (err) {
+		next(err);
+	}
+};
+export const GetNotesSubscribed = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		const users = await UserModel.aggregate([...SUBSCRIBED_NOTE]);
+		res.status(200).json(users);
+	} catch (err) {
+		next(err);
+	}
+};
+export const GetProjectsSubscribed = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		const users = await UserModel.aggregate([...SUBSCRIBED_PROJECT_POPULATE]);
+		res.status(200).json(users);
+	} catch (err) {
+		next(err);
+	}
+};
+export const GetTestSystemsSubscribed = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		const users = await UserModel.aggregate([...SUBSCRIBED_TESTSYSTEM]);
 		res.status(200).json(users);
 	} catch (err) {
 		next(err);

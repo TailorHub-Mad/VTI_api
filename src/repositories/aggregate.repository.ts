@@ -361,6 +361,12 @@ export const aggregateCrud = async (
 				}
 			}
 		});
+	} else {
+		pipeline.push({
+			$sort: order || {
+				[`${nameFild}.updatedAt`]: -1
+			}
+		});
 	}
 
 	return await ClientModel.aggregate(pipeline).collation({

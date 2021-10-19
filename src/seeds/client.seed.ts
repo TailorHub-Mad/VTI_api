@@ -146,7 +146,7 @@ export default async (): Promise<void> => {
 		testSystems: new Array(numberOfTestSystem).fill(undefined).map((_, index) => testSystem[index])
 	});
 
-	const clientsArray = new Array(100)
+	const clientsArray = new Array(2)
 		.fill(undefined)
 		.map((_, index) => {
 			const clients = createClientBase(index);

@@ -26,10 +26,12 @@ const userSchema = new Schema<IUserDocument, IUserModel>(
 			noteTags: [{ type: Types.ObjectId, ref: 'TagNote' }],
 			projectTags: [{ type: Types.ObjectId, ref: 'TagProject' }]
 		},
-		notifications: {
-			status: { type: String, enum: NOTIFICATION_STATUS, default: NOTIFICATION_STATUS[0] },
-			notification: { type: Types.ObjectId, ref: '' }
-		},
+		notifications: [
+			{
+				status: { type: String, enum: NOTIFICATION_STATUS, default: NOTIFICATION_STATUS[0] },
+				notification: { type: Types.ObjectId, ref: 'Notification' }
+			}
+		],
 		recovery: [{ type: String }],
 		ref: { type: String }
 	},

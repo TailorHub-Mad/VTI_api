@@ -22,7 +22,7 @@ import { UserModel } from '../models/user.model';
 import { addToSetTags, createRef, updateTags } from '@utils/model.utils';
 import { TagProjectModel } from '../models/tag_project.model';
 
-export const createProject = async (body: Partial<IProjects>): Promise<void> => {
+export const createProject = async (body: Partial<IProjects>): Promise<string | undefined> => {
 	const projectValidation = await createProjectValidation.validateAsync(body);
 
 	if (await checkAlias(projectValidation.alias, { id_client: projectValidation.client })) {
@@ -64,15 +64,17 @@ export const createProject = async (body: Partial<IProjects>): Promise<void> => 
 			{ field: 'projects', property: 'alias', model: TagProjectModel },
 			projectValidation.tags
 		);
-	}
 
-	await updateRepository<ISectorDocument>(
-		SectorModel,
-		{
-			_id: projectValidation.sector
-		},
-		{ $addToSet: { projects: projectValidation.alias } }
-	);
+		await updateRepository<ISectorDocument>(
+			SectorModel,
+			{
+				_id: projectValidation.sector
+			},
+			{ $addToSet: { projects: projectValidation.alias } }
+		);
+
+		return project._id;
+	}
 };
 
 export const updateProject = async (
