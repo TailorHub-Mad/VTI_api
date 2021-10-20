@@ -1,14 +1,7 @@
-import { createSet } from '@utils/model.utils';
 import { Types } from 'mongoose';
 import { NotificationModel } from '../models/notification.model';
 import { UserModel } from '../models/user.model';
-import { updateRepository } from '../repositories/common.repository';
-import {
-	INotification,
-	INotificationDocument,
-	IReqUser,
-	IUserDocument
-} from '../interfaces/models.interface';
+import { INotification, INotificationDocument, IReqUser } from '../interfaces/models.interface';
 import { ADMIN_NOTIFICATION } from '@constants/notification.constants';
 import { mongoIdValidation, notificationValidation } from '../validations/common.validation';
 

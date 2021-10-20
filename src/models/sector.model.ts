@@ -26,9 +26,9 @@ sectorSchema.pre('save', async function (next: HookNextFunction) {
 				})
 				.limit(1);
 			if (client?.ref) {
-				this.ref = 'ST' + (+client.ref.slice(2) + 1).toString().padStart(4, '0');
+				this.ref = 'SCT' + (+client.ref.slice(2) + 1).toString().padStart(4, '0');
 			} else {
-				this.ref = 'ST0001';
+				this.ref = 'SCT0001';
 			}
 		}
 		next();

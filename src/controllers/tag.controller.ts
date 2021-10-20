@@ -52,7 +52,7 @@ export const CreateTag =
 				],
 				type: typeNotification
 			});
-			await extendNotification({ field: tagNotification.model, id: tag._id }, notification);
+			await extendNotification({ field: tagNotification.model, id: tag._id }, notification, true);
 			res.sendStatus(201);
 		} catch (err) {
 			next(err);

@@ -40,9 +40,9 @@ clientSchema.pre('save', async function (next: HookNextFunction) {
 				})
 				.limit(1);
 			if (client?.ref) {
-				this.ref = 'US' + (+client.ref.slice(2) + 1).toString().padStart(4, '0');
+				this.ref = 'CL' + (+client.ref.slice(2) + 1).toString().padStart(4, '0');
 			} else {
-				this.ref = 'US0001';
+				this.ref = 'CL0001';
 			}
 		}
 		next();

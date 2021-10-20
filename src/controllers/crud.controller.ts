@@ -17,6 +17,8 @@ import { FilterQuery, isValidObjectId, PopulateOptions } from 'mongoose';
 import { OrderAggregate } from '@utils/order.utils';
 import { purgeObj } from '@utils/index';
 import { groupAggregate } from '@utils/aggregate.utils';
+import { UserModel } from 'src/models/user.model';
+import { sendMail } from 'src/config/nodemailer.config';
 
 // Creamos un controlador genérico usando una interface T que tendrá el valor del modelo que nosotros le pasemos.
 export const GetAll =
@@ -125,12 +127,22 @@ export const Update =
 
 export const DeleteCrud =
 	<Doc, M extends GenericModel<Doc> = GenericModel<Doc>>(
-		model: M
+		model: M,
+		sendEmail?: boolean
 	): ((req: Request, res: Response, next: NextFunction) => Promise<void>) =>
 	async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const { id } = req.params;
 			if (!id || !isValidObjectId(id)) throw new BaseError('Not ID', 400);
+			if (sendEmail) {
+				const user = await UserModel.findOne({ _id: id });
+				if (user)
+					await sendMail({
+						to: user.email,
+						subject: 'Eliminación de cuenta en VTI',
+						html: 'Se ha eliminado tus accesos en VTI'
+					});
+			}
 			await deleteCrud<Doc, M>(model, { _id: id });
 			res.json(200).send();
 		} catch (err) {
