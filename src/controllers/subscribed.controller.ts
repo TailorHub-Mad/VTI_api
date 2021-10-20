@@ -55,7 +55,9 @@ export const GetProjectsSubscribed = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
-		const users = await UserModel.aggregate([...SUBSCRIBED_PROJECT_POPULATE]);
+		const users = await UserModel.aggregate([
+			...SUBSCRIBED_PROJECT_POPULATE(req.query.alias as string)
+		]);
 		res.status(200).json(users);
 	} catch (err) {
 		next(err);
@@ -67,7 +69,9 @@ export const GetTestSystemsSubscribed = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
-		const users = await UserModel.aggregate([...SUBSCRIBED_TESTSYSTEM_POPULATE]);
+		const users = await UserModel.aggregate([
+			...SUBSCRIBED_TESTSYSTEM_POPULATE(req.query.alias as string)
+		]);
 		res.status(200).json(users);
 	} catch (err) {
 		next(err);

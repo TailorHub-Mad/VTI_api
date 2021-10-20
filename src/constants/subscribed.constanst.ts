@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-export const SUBSCRIBED_PROJECT_POPULATE = [
+export const SUBSCRIBED_PROJECT_POPULATE = (query: string) => [
 	{
 		$unwind: {
 			path: '$subscribed.projects',
@@ -22,6 +22,9 @@ export const SUBSCRIBED_PROJECT_POPULATE = [
 							$eq: ['$projects._id', '$$projectId']
 						}
 					}
+				},
+				{
+					$match: query ? { 'projects.alias': { $regex: `${query}`, $options: 'i' } } : {}
 				},
 				{
 					$addFields: {
@@ -166,7 +169,7 @@ export const SUBSCRIBED_PROJECT = [
 		}
 	}
 ];
-export const SUBSCRIBED_TESTSYSTEM_POPULATE = [
+export const SUBSCRIBED_TESTSYSTEM_POPULATE = (query: string) => [
 	{
 		$unwind: {
 			path: '$subscribed.testSystems',
@@ -189,6 +192,9 @@ export const SUBSCRIBED_TESTSYSTEM_POPULATE = [
 							$eq: ['$testSystems._id', '$$projectId']
 						}
 					}
+				},
+				{
+					$match: query ? { 'testSystems.alias': { $regex: `${query}`, $options: 'i' } } : {}
 				},
 				{
 					$addFields: {
