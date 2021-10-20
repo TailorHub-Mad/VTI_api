@@ -45,7 +45,7 @@ export const extendNotification = async (
 
 export const getAllNotification = async (
 	user: IReqUser,
-	query: { type: string[] }
+	query: { type: string[]; pin: string }
 ): Promise<{ [key: string]: INotification }> => {
 	const filter = Array.isArray(query?.type)
 		? query?.type?.reduce((query, type) => {
@@ -53,6 +53,11 @@ export const getAllNotification = async (
 				return query;
 		  }, [] as { type: string }[])
 		: query?.type;
+	// if (query.pin === 'true') {
+	// 	if (filter) {
+	// 		filter.push({ pin: true });
+	// 	}
+	// }
 	const [notifications] =
 		(await UserModel.aggregate([
 			{

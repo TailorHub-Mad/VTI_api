@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { UserModel } from 'src/models/user.model';
+import { UserModel } from '../models/user.model';
 import {
 	createNotificationAdmin,
 	getAllNotification,
@@ -13,7 +13,10 @@ export const GetAllNotification = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
-		const notifications = await getAllNotification(req.user, req.query as { type: string[] });
+		const notifications = await getAllNotification(
+			req.user,
+			req.query as { type: string[]; pin: string }
+		);
 		updateReadNotification(req.user);
 		res.status(200).json(notifications);
 	} catch (err) {
@@ -28,7 +31,7 @@ export const CreateNotification = async (
 ): Promise<void> => {
 	try {
 		await createNotificationAdmin(req.body);
-		res.sendStatus(200);
+		res.sendStatus(201);
 	} catch (err) {
 		next(err);
 	}
@@ -37,7 +40,7 @@ export const CreateNotification = async (
 export const UpdatePin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	try {
 		await updateNotificationPin(req.params.id, req.user);
-		res.sendStatus(201);
+		res.sendStatus(200);
 	} catch (err) {
 		next(err);
 	}
