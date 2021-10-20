@@ -18,7 +18,10 @@ export const GetAllSubscribed = async (
 		let users = await UserModel.aggregate([
 			...SUBSCRIBED_PROJECT,
 			...SUBSCRIBED_TESTSYSTEM,
-			...SUBSCRIBED_NOTE
+			...SUBSCRIBED_NOTE,
+			{
+				$match: req.query.alias ? { alias: { $regex: `^${req.query.alias}`, $options: 'i' } } : {}
+			}
 		]);
 		users = users.filter((user) => {
 			return (
@@ -38,7 +41,9 @@ export const GetNotesSubscribed = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
-		const users = await UserModel.aggregate([...SUBSCRIBED_NOTE_POPULATE]);
+		const users = await UserModel.aggregate([
+			...SUBSCRIBED_NOTE_POPULATE(req.query.title as string)
+		]);
 		res.status(200).json(users);
 	} catch (err) {
 		next(err);

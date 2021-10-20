@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 export const SUBSCRIBED_PROJECT_POPULATE = [
 	{
 		$unwind: {
@@ -88,15 +89,6 @@ export const SUBSCRIBED_PROJECT_POPULATE = [
 	{
 		$project: {
 			projects: 0
-		}
-	},
-	{
-		$match: {
-			$expr: {
-				$not: {
-					$eq: [{ $size: '$subscribed.projects' }, 0]
-				}
-			}
 		}
 	}
 ];
@@ -254,15 +246,6 @@ export const SUBSCRIBED_TESTSYSTEM_POPULATE = [
 		$project: {
 			testSystems: 0
 		}
-	},
-	{
-		$match: {
-			$expr: {
-				$not: {
-					$eq: [{ $size: '$subscribed.testSystems' }, 0]
-				}
-			}
-		}
 	}
 ];
 export const SUBSCRIBED_TESTSYSTEM = [
@@ -339,7 +322,7 @@ export const SUBSCRIBED_TESTSYSTEM = [
 		}
 	}
 ];
-export const SUBSCRIBED_NOTE_POPULATE = [
+export const SUBSCRIBED_NOTE_POPULATE = (query: string) => [
 	{
 		$unwind: {
 			path: '$subscribed.notes',
@@ -362,6 +345,9 @@ export const SUBSCRIBED_NOTE_POPULATE = [
 							$eq: ['$notes._id', '$$projectId']
 						}
 					}
+				},
+				{
+					$match: query ? { 'notes.title': { $regex: `${query}`, $options: 'i' } } : {}
 				},
 				{
 					$lookup: {
@@ -444,15 +430,6 @@ export const SUBSCRIBED_NOTE_POPULATE = [
 	{
 		$project: {
 			notes: 0
-		}
-	},
-	{
-		$match: {
-			$expr: {
-				$not: {
-					$eq: [{ $size: '$subscribed.notes' }, 0]
-				}
-			}
 		}
 	}
 ];
