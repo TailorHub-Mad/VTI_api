@@ -17,8 +17,8 @@ import { FilterQuery, isValidObjectId, PopulateOptions } from 'mongoose';
 import { OrderAggregate } from '@utils/order.utils';
 import { purgeObj } from '@utils/index';
 import { groupAggregate } from '@utils/aggregate.utils';
-import { UserModel } from 'src/models/user.model';
-import { sendMail } from 'src/config/nodemailer.config';
+import { UserModel } from '../models/user.model';
+import { sendMail } from '../config/nodemailer.config';
 
 // Creamos un controlador genérico usando una interface T que tendrá el valor del modelo que nosotros le pasemos.
 export const GetAll =
