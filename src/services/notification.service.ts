@@ -47,7 +47,7 @@ export const getAllNotification = async (
 	user: IReqUser,
 	query: { type: string[]; pin: string }
 ): Promise<{ [key: string]: INotification }> => {
-	const filter: unknown[] = Array.isArray(query?.type)
+	let filter: unknown[] = Array.isArray(query?.type)
 		? query?.type?.reduce((query, type) => {
 				query.push({ type });
 				return query;
@@ -56,6 +56,8 @@ export const getAllNotification = async (
 	if (query.pin === 'true') {
 		if (filter) {
 			filter.push({ $expr: { $eq: ['$$pin', true] } });
+		} else {
+			filter = [{ $expr: { $eq: ['$$pin', true] } }];
 		}
 	}
 	const [notifications] =
@@ -164,15 +166,16 @@ export const getAllNotification = async (
 };
 
 export const updateReadNotification = async (user: IReqUser): Promise<void> => {
-	const update = createSet({ status: 'read' }, 'notifications.$[status]');
-	// console.log(update);
-	await updateRepository<IUserDocument>(
-		UserModel,
-		{
-			$and: [{ _id: user.id }, { 'notifications.status': 'no read' }]
-		},
-		{ 'notification.$.status': 'read' }
-	);
+	const userFind = await UserModel.findOne({ _id: user.id });
+	if (userFind) {
+		userFind.notifications = userFind.notifications.map((notification) => {
+			if (notification.status === 'no read') {
+				notification.status = 'read';
+			}
+			return notification;
+		});
+		await userFind.save();
+	}
 };
 
 export const createNotificationAdmin = async (body: { description: string }): Promise<void> => {
