@@ -26,7 +26,9 @@ export const updateUserValidation = Joi.object().keys({
 	subscribed: Joi.object({
 		notes: Joi.array().items(mongoIdValidation),
 		projects: Joi.array().items(mongoIdValidation),
-		testSystems: Joi.array().items(mongoIdValidation)
+		testSystems: Joi.array().items(mongoIdValidation),
+		noteTags: Joi.array().items(mongoIdValidation),
+		projectTags: Joi.array().items(mongoIdValidation)
 	}),
 	department: mongoIdValidation
 });
