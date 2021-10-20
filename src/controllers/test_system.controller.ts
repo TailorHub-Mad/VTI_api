@@ -16,7 +16,23 @@ export const CreateTestSystem = async (
 ): Promise<void> => {
 	try {
 		const { body, user } = req;
-		await createTestSystem(body);
+		const testSystemId = await createTestSystem(body);
+		const notification = await createNotification(user, {
+			description: `Se ha creado un nuevo mensaje en el ${TESTSYTEMS_NOTIFICATION.label}`,
+			urls: [
+				{
+					label: TESTSYTEMS_NOTIFICATION.label,
+					model: TESTSYTEMS_NOTIFICATION.model,
+					id: testSystemId!
+				}
+			],
+			type: NEW_TEST_SYSTEM
+		});
+		await extendNotification(
+			{ field: TESTSYTEMS_NOTIFICATION.model, id: testSystemId! },
+			notification,
+			true
+		);
 		logger.notice(
 			`El usuario ${user.email} ha creado un sistema de ensayo con el alias ${body.alias}`
 		);
@@ -33,22 +49,7 @@ export const UpdateTestSystem = async (
 ): Promise<void> => {
 	try {
 		const { body, params, user } = req;
-		const testSystemId = await updateTestSystem(params.id_testSystem as string, body);
-		const notification = await createNotification(user, {
-			description: `Se ha creado un nuevo mensaje en el ${TESTSYTEMS_NOTIFICATION.label}`,
-			urls: [
-				{
-					label: TESTSYTEMS_NOTIFICATION.label,
-					model: TESTSYTEMS_NOTIFICATION.model,
-					id: testSystemId!
-				}
-			],
-			type: NEW_TEST_SYSTEM
-		});
-		await extendNotification(
-			{ field: TESTSYTEMS_NOTIFICATION.model, id: testSystemId! },
-			notification
-		);
+		await updateTestSystem(params.id_testSystem as string, body);
 
 		logger.notice(
 			`El usuario ${user.email} ha modificado un sistema de ensayo con el alias ${params.id_testSystem}`

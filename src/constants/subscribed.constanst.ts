@@ -52,11 +52,6 @@ export const SUBSCRIBED_PROJECT_POPULATE = [
 							$mergeObjects: ['$projects']
 						}
 					}
-				},
-				{
-					$project: {
-						alias: 1
-					}
 				}
 			],
 			as: 'subscribed.projects'
@@ -212,11 +207,6 @@ export const SUBSCRIBED_TESTSYSTEM_POPULATE = [
 						newRoot: {
 							$mergeObjects: ['$testSystems']
 						}
-					}
-				},
-				{
-					$project: {
-						alias: 1
 					}
 				}
 			],
@@ -399,11 +389,6 @@ export const SUBSCRIBED_NOTE_POPULATE = [
 						newRoot: {
 							$mergeObjects: ['$notes']
 						}
-					}
-				},
-				{
-					$project: {
-						title: 1
 					}
 				}
 			],
