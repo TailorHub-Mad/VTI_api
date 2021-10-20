@@ -53,75 +53,96 @@ export const getAllNotification = async (
 				return query;
 		  }, [] as { type: string }[])
 		: query?.type;
-	const [{ notifications }] = (await UserModel.aggregate([
-		{
-			$match: {
-				_id: Types.ObjectId(user.id)
-			}
-		},
-		{
-			$unwind: {
-				path: '$notifications'
-			}
-		},
-		{
-			$lookup: {
-				from: 'notifications',
-				let: {
-					notificationId: '$notifications.notification',
-					unRead: '$notifications.status',
-					pin: '$notifications.pin'
-				},
-				pipeline: [
-					{
-						$match: {
-							$expr: {
-								$eq: ['$_id', '$$notificationId']
+	const [notifications] =
+		(await UserModel.aggregate([
+			{
+				$match: {
+					_id: Types.ObjectId(user.id)
+				}
+			},
+			{
+				$unwind: {
+					path: '$notifications'
+				}
+			},
+			{
+				$lookup: {
+					from: 'notifications',
+					let: {
+						notificationId: '$notifications.notification',
+						unRead: '$notifications.status',
+						pin: '$notifications.pin'
+					},
+					pipeline: [
+						{
+							$match: {
+								$expr: {
+									$eq: ['$_id', '$$notificationId']
+								}
+							}
+						},
+						// {
+						// 	$match: {
+						// 		$expr: {
+						// 			$not: {
+						// 				$eq: ['$$unRead', 'disabled']
+						// 			}
+						// 		}
+						// 	}
+						// },
+						{
+							$match: Array.isArray(filter) ? { $or: filter } : filter ? { type: filter } : {}
+						},
+						{
+							$addFields: {
+								date: {
+									$dateToString: {
+										date: '$createdAt',
+										format: '%d/%m/%Y'
+									}
+								},
+								unRead: {
+									$cond: {
+										if: {
+											$eq: ['$$unRead', 'no read']
+										},
+										then: false,
+										else: true
+									}
+								},
+								pin: '$$pin'
+							}
+						},
+						{
+							$sort: {
+								createdAt: -1
+							}
+						},
+						{
+							$group: {
+								_id: '$date',
+								notifications: {
+									$push: '$$ROOT'
+								}
 							}
 						}
-					},
-					{
-						$match: Array.isArray(filter) ? { $or: filter } : filter ? { type: filter } : {}
-					},
-					{
-						$addFields: {
-							date: {
-								$dateToString: {
-									date: '$createdAt',
-									format: '%d/%m/%Y'
-								}
-							},
-							unRead: {
-								$cond: {
-									if: {
-										$eq: ['$$unRead', 'no read']
-									},
-									then: false,
-									else: true
-								}
-							},
-							pin: '$$pin'
-						}
-					},
-					{
-						$sort: {
-							createdAt: -1
-						}
-					},
-					{
-						$group: {
-							_id: '$date',
-							notifications: {
-								$push: '$$ROOT'
-							}
+					],
+					as: 'notifications'
+				}
+			},
+			{
+				$group: {
+					_id: '$_id',
+					notifications: {
+						$push: {
+							$arrayElemAt: ['$notifications', 0]
 						}
 					}
-				],
-				as: 'notifications'
+				}
 			}
-		}
-	])) || [{}];
-	const transformNotifiactions = notifications.reduce(
+		])) || {};
+
+	const transformNotifiactions = notifications?.notifications.reduce(
 		(
 			transform: { [key: string]: INotification },
 			notification: {
@@ -139,7 +160,7 @@ export const getAllNotification = async (
 
 export const updateReadNotification = async (user: IReqUser): Promise<void> => {
 	const update = createSet({ status: 'read' }, 'notifications.$[status]');
-	console.log(update);
+	// console.log(update);
 	await updateRepository<IUserDocument>(
 		UserModel,
 		{

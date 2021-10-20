@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import { UserModel } from 'src/models/user.model';
 import {
 	createNotificationAdmin,
 	getAllNotification,
@@ -37,6 +38,27 @@ export const UpdatePin = async (req: Request, res: Response, next: NextFunction)
 	try {
 		await updateNotificationPin(req.params.id, req.user);
 		res.sendStatus(201);
+	} catch (err) {
+		next(err);
+	}
+};
+
+export const DeleteNotification = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		const user = await UserModel.findOne({ _id: req.user.id });
+		if (user) {
+			const notificationIndex = user.notifications.findIndex(
+				(notification) => notification.notification.toString() === req.params.id
+			);
+			user.notifications[notificationIndex].status =
+				user.notifications[notificationIndex].status === 'disabled' ? 'read' : 'disabled';
+			user.save();
+		}
+		res.sendStatus(200);
 	} catch (err) {
 		next(err);
 	}

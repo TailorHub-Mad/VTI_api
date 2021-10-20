@@ -23,7 +23,7 @@ export interface IDepartmentDocument extends IDepartment, Document {}
 
 export type IDepartmentModel = Model<IDepartmentDocument>;
 
-export const NOTIFICATION_STATUS = ['no read', 'read'] as const;
+export const NOTIFICATION_STATUS = ['no read', 'read', 'disabled'] as const;
 
 export type TNotificationStatus = typeof NOTIFICATION_STATUS[number];
 
