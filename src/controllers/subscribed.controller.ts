@@ -7,6 +7,7 @@ import {
 	SUBSCRIBED_TESTSYSTEM_POPULATE
 } from '@constants/subscribed.constanst';
 import { Request, Response, NextFunction } from 'express';
+import { Types } from 'mongoose';
 import { UserModel } from '../models/user.model';
 
 export const GetAllSubscribed = async (
@@ -42,7 +43,10 @@ export const GetNotesSubscribed = async (
 ): Promise<void> => {
 	try {
 		const users = await UserModel.aggregate([
-			...SUBSCRIBED_NOTE_POPULATE(req.query.title as string)
+			...SUBSCRIBED_NOTE_POPULATE(req.query.title as string),
+			{
+				$match: req.user.role === 'admin' ? {} : { _id: Types.ObjectId(req.user.id) }
+			}
 		]);
 		res.status(200).json(users);
 	} catch (err) {
@@ -56,7 +60,10 @@ export const GetProjectsSubscribed = async (
 ): Promise<void> => {
 	try {
 		const users = await UserModel.aggregate([
-			...SUBSCRIBED_PROJECT_POPULATE(req.query.alias as string)
+			...SUBSCRIBED_PROJECT_POPULATE(req.query.alias as string),
+			{
+				$match: req.user.role === 'admin' ? {} : { _id: Types.ObjectId(req.user.id) }
+			}
 		]);
 		res.status(200).json(users);
 	} catch (err) {
@@ -70,7 +77,10 @@ export const GetTestSystemsSubscribed = async (
 ): Promise<void> => {
 	try {
 		const users = await UserModel.aggregate([
-			...SUBSCRIBED_TESTSYSTEM_POPULATE(req.query.alias as string)
+			...SUBSCRIBED_TESTSYSTEM_POPULATE(req.query.alias as string),
+			{
+				$match: req.user.role === 'admin' ? {} : { _id: Types.ObjectId(req.user.id) }
+			}
 		]);
 		res.status(200).json(users);
 	} catch (err) {
