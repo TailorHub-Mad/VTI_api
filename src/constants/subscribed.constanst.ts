@@ -89,6 +89,15 @@ export const SUBSCRIBED_PROJECT_POPULATE = [
 		$project: {
 			projects: 0
 		}
+	},
+	{
+		$match: {
+			$expr: {
+				$not: {
+					$eq: [{ $size: '$subscribed.projects' }, 0]
+				}
+			}
+		}
 	}
 ];
 export const SUBSCRIBED_PROJECT = [
@@ -244,6 +253,15 @@ export const SUBSCRIBED_TESTSYSTEM_POPULATE = [
 	{
 		$project: {
 			testSystems: 0
+		}
+	},
+	{
+		$match: {
+			$expr: {
+				$not: {
+					$eq: [{ $size: '$subscribed.testSystems' }, 0]
+				}
+			}
 		}
 	}
 ];
@@ -426,6 +444,15 @@ export const SUBSCRIBED_NOTE_POPULATE = [
 	{
 		$project: {
 			notes: 0
+		}
+	},
+	{
+		$match: {
+			$expr: {
+				$not: {
+					$eq: [{ $size: '$subscribed.notes' }, 0]
+				}
+			}
 		}
 	}
 ];

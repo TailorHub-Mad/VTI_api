@@ -15,11 +15,18 @@ export const GetAllSubscribed = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
-		const users = await UserModel.aggregate([
+		let users = await UserModel.aggregate([
 			...SUBSCRIBED_PROJECT,
 			...SUBSCRIBED_TESTSYSTEM,
 			...SUBSCRIBED_NOTE
 		]);
+		users = users.filter((user) => {
+			return (
+				user.subscribed.notes.length > 0 ||
+				user.subscribed.projects.length > 0 ||
+				user.subscribed.testSystems.length > 0
+			);
+		});
 		res.status(200).json(users);
 	} catch (err) {
 		next(err);
