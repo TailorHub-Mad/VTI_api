@@ -1,8 +1,10 @@
 import {
 	SUBSCRIBED_NOTE,
+	SUBSCRIBED_NOTE_POPULATE,
 	SUBSCRIBED_PROJECT,
 	SUBSCRIBED_PROJECT_POPULATE,
-	SUBSCRIBED_TESTSYSTEM
+	SUBSCRIBED_TESTSYSTEM,
+	SUBSCRIBED_TESTSYSTEM_POPULATE
 } from '@constants/subscribed.constanst';
 import { Request, Response, NextFunction } from 'express';
 import { UserModel } from '../models/user.model';
@@ -29,7 +31,7 @@ export const GetNotesSubscribed = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
-		const users = await UserModel.aggregate([...SUBSCRIBED_NOTE]);
+		const users = await UserModel.aggregate([...SUBSCRIBED_NOTE_POPULATE]);
 		res.status(200).json(users);
 	} catch (err) {
 		next(err);
@@ -53,7 +55,7 @@ export const GetTestSystemsSubscribed = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
-		const users = await UserModel.aggregate([...SUBSCRIBED_TESTSYSTEM]);
+		const users = await UserModel.aggregate([...SUBSCRIBED_TESTSYSTEM_POPULATE]);
 		res.status(200).json(users);
 	} catch (err) {
 		next(err);
