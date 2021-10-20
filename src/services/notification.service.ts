@@ -47,17 +47,17 @@ export const getAllNotification = async (
 	user: IReqUser,
 	query: { type: string[]; pin: string }
 ): Promise<{ [key: string]: INotification }> => {
-	const filter = Array.isArray(query?.type)
+	const filter: unknown[] = Array.isArray(query?.type)
 		? query?.type?.reduce((query, type) => {
 				query.push({ type });
 				return query;
 		  }, [] as { type: string }[])
 		: query?.type;
-	// if (query.pin === 'true') {
-	// 	if (filter) {
-	// 		filter.push({ pin: true });
-	// 	}
-	// }
+	if (query.pin === 'true') {
+		if (filter) {
+			filter.push({ $expr: { $eq: ['$$pin', true] } });
+		}
+	}
 	const [notifications] =
 		(await UserModel.aggregate([
 			{
@@ -86,15 +86,15 @@ export const getAllNotification = async (
 								}
 							}
 						},
-						// {
-						// 	$match: {
-						// 		$expr: {
-						// 			$not: {
-						// 				$eq: ['$$unRead', 'disabled']
-						// 			}
-						// 		}
-						// 	}
-						// },
+						{
+							$match: {
+								$expr: {
+									$not: {
+										$eq: ['$$unRead', 'disabled']
+									}
+								}
+							}
+						},
 						{
 							$match: Array.isArray(filter) ? { $or: filter } : filter ? { type: filter } : {}
 						},
