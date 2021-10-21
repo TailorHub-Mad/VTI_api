@@ -106,7 +106,7 @@ export const createMessage = async (
 	body: Partial<INote>,
 	user: IReqUser,
 	files?: Express.Multer.File[]
-): Promise<void> => {
+): Promise<string> => {
 	const validateBody = await createMessageNoteValidation.validateAsync(body);
 	const validateIdNote = await mongoIdValidation.validateAsync(note);
 	validateBody.owner = user.id;
@@ -138,6 +138,7 @@ export const createMessage = async (
 	logger.notice(
 		`El usuario ${user.email} ha creado el mensaje con title ${validateBody.message} en el apunte ${_note?.title}`
 	);
+	return _note.title;
 };
 
 export const updateNote = async (
@@ -179,7 +180,7 @@ export const updateMessage = async (
 	message_id: string,
 	body: Partial<IMessage>,
 	files?: Express.Multer.File[]
-): Promise<void> => {
+): Promise<string | void> => {
 	if (files) {
 		body.documents = (body.documents || []).concat(
 			files.map((file: Express.Multer.File) => ({
@@ -192,12 +193,20 @@ export const updateMessage = async (
 	const validateIdNote = await mongoIdValidation.validateAsync(message_id);
 
 	const updated = createSet(validateBody, 'notes.$.messages.$[message]');
-	await updateRepository<IClientDocument>(
+	const client = await updateRepository<IClientDocument>(
 		ClientModel,
 		{ 'notes.messages._id': validateIdNote },
 		{ $set: updated },
 		{ arrayFilters: [{ 'message._id': validateIdNote }] }
 	);
+	if (client) {
+		const _note = client.notes.find((note) =>
+			note.messages.find((message: { _id: string }) => message._id.toString() === message_id)
+		);
+		if (_note) {
+			return _note.title;
+		}
+	}
 };
 
 export const groupNotes = async (query: QueryString.ParsedQs): Promise<INote[]> => {

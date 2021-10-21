@@ -42,10 +42,10 @@ export const CreateTag =
 			const tagNotification = type === 'note' ? TAG_NOTE_NOTIFICATION : TAG_PROJECT_NOTIFICATION;
 			const typeNotification = type === 'note' ? NEW_TAG_NOTE : NEW_TAG_PROJECT;
 			const notification = await createNotification(req.user, {
-				description: `Se ha creado un nuevo ${tagNotification.label}`,
+				description: `Se ha creado un nuevo tag ${tagNotification.label}`,
 				urls: [
 					{
-						label: tagNotification.label,
+						label: body.name || tagNotification.label,
 						model: tagNotification.model,
 						id: tag._id
 					}

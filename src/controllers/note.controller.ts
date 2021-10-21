@@ -30,7 +30,7 @@ export const CreateNote = async (
 			description: `Se ha creado un nuevo ${NOTES_NOTIFICATION.label}`,
 			urls: [
 				{
-					label: NOTES_NOTIFICATION.label,
+					label: body.title || NOTES_NOTIFICATION.label,
 					model: NOTES_NOTIFICATION.model,
 					id: noteId
 				}
@@ -53,12 +53,17 @@ export const CreateMessage = async (
 	try {
 		const { body, params, user, files } = req;
 		const { id } = params;
-		await createMessage(id, body, user, files as Express.Multer.File[] | undefined);
+		const titleNote = await createMessage(
+			id,
+			body,
+			user,
+			files as Express.Multer.File[] | undefined
+		);
 		const notification = await createNotification(user, {
-			description: `Se ha creado un nuevo ${NOTES_NOTIFICATION.label}`,
+			description: `Se ha creado un nuevo mensaje en el apunte ${NOTES_NOTIFICATION.label}`,
 			urls: [
 				{
-					label: NOTES_NOTIFICATION.label,
+					label: titleNote || NOTES_NOTIFICATION.label,
 					model: NOTES_NOTIFICATION.model,
 					id: id
 				}
@@ -100,12 +105,12 @@ export const UpdateMessage = async (
 	try {
 		const { body, params, user, files } = req;
 		const { id } = params;
-		await updateMessage(id, body, files as Express.Multer.File[] | undefined);
+		const titleMessage = await updateMessage(id, body, files as Express.Multer.File[] | undefined);
 		const notification = await createNotification(user, {
 			description: `Se ha modificado un mensaje en el ${NOTES_NOTIFICATION.label}`,
 			urls: [
 				{
-					label: NOTES_NOTIFICATION.label,
+					label: titleMessage || NOTES_NOTIFICATION.label,
 					model: NOTES_NOTIFICATION.model,
 					id: id
 				}

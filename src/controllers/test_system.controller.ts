@@ -18,10 +18,10 @@ export const CreateTestSystem = async (
 		const { body, user } = req;
 		const testSystemId = await createTestSystem(body);
 		const notification = await createNotification(user, {
-			description: `Se ha creado un nuevo mensaje en el ${TESTSYTEMS_NOTIFICATION.label}`,
+			description: `Se ha creado un nuevo sitema de ensayo ${TESTSYTEMS_NOTIFICATION.label}`,
 			urls: [
 				{
-					label: TESTSYTEMS_NOTIFICATION.label,
+					label: body.alias || TESTSYTEMS_NOTIFICATION.label,
 					model: TESTSYTEMS_NOTIFICATION.model,
 					id: testSystemId!
 				}

@@ -21,7 +21,7 @@ export const CreateProject = async (
 			description: `Se ha creado un nuevo mensaje en el ${PROJECTS_NOTIFICATION.label}`,
 			urls: [
 				{
-					label: PROJECTS_NOTIFICATION.label,
+					label: body.alias || PROJECTS_NOTIFICATION.label,
 					model: PROJECTS_NOTIFICATION.model,
 					id: id!
 				}
