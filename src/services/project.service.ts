@@ -168,7 +168,23 @@ export const updateProject = async (
 export const deleteProject = async (id_project: string): Promise<void> => {
 	const projectIdValidation = await mongoIdValidation.validateAsync(id_project);
 
-	await deleteModelInClientRepository('projects', projectIdValidation);
+	const client = await deleteModelInClientRepository('projects', projectIdValidation);
+	if (client) {
+		const project = client.projects.find(
+			(project) => project._id.toString() === projectIdValidation.toString()
+		);
+		await UserModel.updateMany(
+			{},
+			{ $pull: { projectsComments: project.alias, focusPoint: project.alias } }
+		);
+		await updateRepository<ISectorDocument>(
+			SectorModel,
+			{
+				_id: project.sector
+			},
+			{ $pull: { projects: project.alias } }
+		);
+	}
 };
 
 export const orderProject = async (query: QueryString.ParsedQs): Promise<IProjects[]> => {
@@ -186,104 +202,3 @@ export const orderProject = async (query: QueryString.ParsedQs): Promise<IProjec
 	);
 	return projects;
 };
-
-/**
- *
- {
-	 Mongoose: clients.aggregate(
-		 [
-			 { $unwind: '$notes' },
-			 {
-				 $lookup: {
-					 from: 'tagnotes',
-					 localField: 'notes.tags',
-					 foreignField: '_id',
-					 as: 'notes.tags'
-				 }
-			 },
-			 { $group: { _id: '$_id', old: { $first: '$$ROOT' }, notes: { $push: '$notes' } } },
-			 { $replaceRoot: { newRoot: { $mergeObjects: ['$old', { notes: '$notes' }] } } },
-			 { $unwind: '$notes' },
-			 { $project: { _id: 0, aux: '$notes', alias: '$alias' } },
-			 { $addFields: { 'aux.client': '$alias' } },
-			 { $unwind: '$aux.tags' },
-			 { $sort: { 'aux.notes.tags.name': 1 } }
-		 ],
-		 { collation: { locale: 'es', numericOrdering: true } }
-	 );
- }
- *---
- {
-	 Mongoose: clients.aggregate(
-		 [
-			 { $unwind: '$notes' },
-			 {
-				 $lookup: {
-					 from: 'tagsnotes',
-					 localField: 'notes.tags',
-					 foreignField: '_id',
-					 as: 'notes.tags'
-				 }
-			 },
-			 { $group: { _id: '$_id', old: { $first: '$$ROOT' }, notes: { $push: '$notes' } } },
-			 { $replaceRoot: { newRoot: { $mergeObjects: ['$old', { notes: '$notes' }] } } },
-			 { $unwind: '$notes' },
-			 { $project: { _id: 0, aux: '$notes', alias: '$alias' } },
-			 { $addFields: { 'aux.client': '$alias' } },
-			 { $unwind: '$aux.tags' },
-			 { $sort: { 'aux.notes.tags.name': 1 } }
-		 ],
-		 { collation: { locale: 'es', numericOrdering: true } }
-	 );
- }
-
-
- * ---
- {
-	Mongoose: clients.aggregate(
-		[
-			{ $unwind: '$notes' },
-			{
-				$lookup: {
-					from: 'tagnotes',
-					localField: 'notes.tags',
-					foreignField: '_id',
-					as: 'notes.tags'
-				}
-			},
-			{ $group: { _id: '$_id', old: { $first: '$$ROOT' }, notes: { $push: '$notes' } } },
-			{ $replaceRoot: { newRoot: { $mergeObjects: ['$old', { notes: '$notes' }] } } },
-			{ $unwind: '$notes' },
-			{ $project: { _id: 0, aux: '$notes', alias: '$alias' } },
-			{ $addFields: { 'aux.client': '$alias' } },
-			{ $unwind: '$aux.tags' },
-			{ $sort: { 'aux.notes.tags.name': 1 } }
-		],
-		{ collation: { locale: 'es', numericOrdering: true } }
-	);
-	}
-
---
-		// ...populateAggregate(field, {
-		// 	searchModel: 'tagnotes',
-		// 	searchField: searchField.join('.')
-		// }),
-		{
-			$unwind: `$${field}`
-		},
-		{
-			$project: {
-				_id: 0,
-				aux: `$${field}`,
-				alias: '$alias'
-			}
-		},
-		{
-			$addFields: {
-				'aux.client': '$alias'
-			}
-		} // ,
-		// {
-		// 	$unwind: `$aux.tags`
-
- */

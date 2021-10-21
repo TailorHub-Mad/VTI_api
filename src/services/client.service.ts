@@ -4,6 +4,8 @@ import { findWithPagination } from '../repositories/common.repository';
 import { GenericModel, IClientDocument } from '../interfaces/models.interface';
 import Joi from 'joi';
 import { PopulateOptions } from 'mongoose';
+import { purgeObj } from '@utils/index';
+import { OrderAggregate } from '@utils/order.utils';
 
 export const filterClient = async <Doc, M extends GenericModel<Doc>>(
 	model: M,
@@ -14,7 +16,10 @@ export const filterClient = async <Doc, M extends GenericModel<Doc>>(
 ): Promise<Doc[]> => {
 	const validateFilter = await validate.validateAsync(filter);
 	const clients = await findWithPagination<Doc>(model, formatFilter(validateFilter), pagiantion, {
-		populate
+		populate,
+		order: purgeObj(
+			Object.assign({}, new OrderAggregate(filter as { [key: string]: 'asc' | 'desc' }))
+		)
 	});
 	return clients;
 };

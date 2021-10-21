@@ -44,6 +44,7 @@ export class OrderAggregate {
 		user_name,
 		user_lastName,
 		user_ref,
+		vticode_name,
 		ref,
 		alias,
 		name
@@ -68,6 +69,7 @@ export class OrderAggregate {
 		user_name?: orderString;
 		user_lastName?: orderString;
 		user_ref?: orderString;
+		vticode_name?: orderString;
 		ref?: orderString;
 		alias?: orderString;
 		name?: orderString;
@@ -92,7 +94,10 @@ export class OrderAggregate {
 		this['testSystems.date.year'] = this.transform(testSystems_date);
 		this.alias = this.transform(alias) || this.transform(user_alias);
 		this.name =
-			this.transform(department_name) || this.transform(name) || this.transform(user_name);
+			this.transform(department_name) ||
+			this.transform(name) ||
+			this.transform(user_name) ||
+			this.transform(vticode_name);
 		this.lastName = this.transform(user_lastName);
 	}
 

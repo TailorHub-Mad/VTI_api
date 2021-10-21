@@ -1,6 +1,8 @@
 import {
 	ANSWER_NOTE,
+	CLOSED_MESSAGE,
 	CREATED_NOTE,
+	MANTENIMIENTO_NOTIFICATION,
 	NOTES_NOTIFICATION,
 	UPDATE_MESSAGE
 } from '@constants/notification.constants';
@@ -25,19 +27,24 @@ export const CreateNote = async (
 ): Promise<void> => {
 	try {
 		const { body, files, user } = req;
-		const noteId = await createNote(body, files as Express.Multer.File[] | undefined);
+		const info = await createNote(body, files as Express.Multer.File[] | undefined);
+		console.log(info);
 		const notification = await createNotification(user, {
 			description: `Se ha creado un nuevo ${NOTES_NOTIFICATION.label}`,
 			urls: [
 				{
-					label: body.title || NOTES_NOTIFICATION.label,
+					label: body?.title || NOTES_NOTIFICATION.label,
 					model: NOTES_NOTIFICATION.model,
-					id: noteId
+					id: `${body?.project}?note=${info.noteId}`
 				}
 			],
-			type: CREATED_NOTE
+			type: info.isClosed ? MANTENIMIENTO_NOTIFICATION : CREATED_NOTE
 		});
-		await extendNotification({ field: NOTES_NOTIFICATION.model, id: noteId }, notification, true);
+		await extendNotification(
+			{ field: NOTES_NOTIFICATION.model, id: info.noteId },
+			notification,
+			true
+		);
 		logger.notice(`El usuario ${user.email} ha creado un apunte con título ${body.title}`);
 		res.sendStatus(201);
 	} catch (err) {
@@ -63,9 +70,9 @@ export const CreateMessage = async (
 			description: `Se ha creado un nuevo mensaje en el apunte ${NOTES_NOTIFICATION.label}`,
 			urls: [
 				{
-					label: titleNote || NOTES_NOTIFICATION.label,
+					label: titleNote?.title || NOTES_NOTIFICATION.label,
 					model: NOTES_NOTIFICATION.model,
-					id: id
+					id: `${titleNote?.project}?note=${id}`
 				}
 			],
 			type: ANSWER_NOTE
@@ -105,14 +112,50 @@ export const UpdateMessage = async (
 	try {
 		const { body, params, user, files } = req;
 		const { id } = params;
-		const titleMessage = await updateMessage(id, body, files as Express.Multer.File[] | undefined);
+		const info = await updateMessage(id, body, files as Express.Multer.File[] | undefined);
+		if (
+			body.formalized !== undefined &&
+			!info?.formalizedMessage &&
+			info?.formalizedMessage?.toString() !== body?.formalized?.toString()
+		) {
+			const notification = await createNotification(user, {
+				description: `Se ha formalizado el mensaje en el apunte ${NOTES_NOTIFICATION.label}`,
+				urls: [
+					{
+						label: info?.titleNote || NOTES_NOTIFICATION.label,
+						model: NOTES_NOTIFICATION.model,
+						id: `${info?.idProject}?note=${info?.idNote}`
+					}
+				],
+				type: CLOSED_MESSAGE
+			});
+			await extendNotification({ field: NOTES_NOTIFICATION.model, id }, notification);
+		}
+		if (
+			body.approved !== undefined &&
+			!info?.approvedMessage &&
+			info?.approvedMessage?.toString() !== body?.approved?.toString()
+		) {
+			const notification = await createNotification(user, {
+				description: `Se ha cerrado el mensaje en el apunte ${NOTES_NOTIFICATION.label}`,
+				urls: [
+					{
+						label: info?.titleNote || NOTES_NOTIFICATION.label,
+						model: NOTES_NOTIFICATION.model,
+						id: `${info?.idProject}?note=${info?.idNote}`
+					}
+				],
+				type: CLOSED_MESSAGE
+			});
+			await extendNotification({ field: NOTES_NOTIFICATION.model, id }, notification);
+		}
 		const notification = await createNotification(user, {
-			description: `Se ha modificado un mensaje en el ${NOTES_NOTIFICATION.label}`,
+			description: `Se ha modificado un mensaje en el apunte ${NOTES_NOTIFICATION.label}`,
 			urls: [
 				{
-					label: titleMessage || NOTES_NOTIFICATION.label,
+					label: info?.titleNote || NOTES_NOTIFICATION.label,
 					model: NOTES_NOTIFICATION.model,
-					id: id
+					id: `${info?.idProject}?note=${info?.idNote}`
 				}
 			],
 			type: UPDATE_MESSAGE

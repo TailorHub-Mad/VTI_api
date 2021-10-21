@@ -39,7 +39,7 @@ import { deleteModelInClientRepository } from '../repositories/client.repository
 export const createNote = async (
 	body: Partial<INote>,
 	files?: Express.Multer.File[]
-): Promise<string> => {
+): Promise<{ noteId: string; isClosed: boolean }> => {
 	if (!Array.isArray(body.testSystems)) {
 		body.testSystems = [body.testSystems];
 	}
@@ -83,10 +83,11 @@ export const createNote = async (
 		},
 		validateBody.tags
 	);
-
+	let isClosed = false;
 	newClient.projects = newClient.projects.map((project) => {
 		if (project._id.equals(projectId)) {
 			project.notes.push(note._id);
+			isClosed = project.closed?.year;
 		}
 		return project;
 	});
@@ -98,7 +99,7 @@ export const createNote = async (
 		return testSystem;
 	});
 	await newClient.save();
-	return note._id;
+	return { noteId: note._id, isClosed };
 };
 
 export const createMessage = async (
@@ -106,7 +107,7 @@ export const createMessage = async (
 	body: Partial<INote>,
 	user: IReqUser,
 	files?: Express.Multer.File[]
-): Promise<string> => {
+): Promise<{ title: string; project: string; noteId: string }> => {
 	const validateBody = await createMessageNoteValidation.validateAsync(body);
 	const validateIdNote = await mongoIdValidation.validateAsync(note);
 	validateBody.owner = user.id;
@@ -138,7 +139,7 @@ export const createMessage = async (
 	logger.notice(
 		`El usuario ${user.email} ha creado el mensaje con title ${validateBody.message} en el apunte ${_note?.title}`
 	);
-	return _note.title;
+	return { title: _note.title, noteId: _note._id, project: project._id };
 };
 
 export const updateNote = async (
@@ -180,7 +181,13 @@ export const updateMessage = async (
 	message_id: string,
 	body: Partial<IMessage>,
 	files?: Express.Multer.File[]
-): Promise<string | void> => {
+): Promise<{
+	titleNote: string;
+	idNote: string;
+	idProject: string;
+	formalizedMessage?: string;
+	approvedMessage?: string;
+} | void> => {
 	if (files) {
 		body.documents = (body.documents || []).concat(
 			files.map((file: Express.Multer.File) => ({
@@ -197,14 +204,26 @@ export const updateMessage = async (
 		ClientModel,
 		{ 'notes.messages._id': validateIdNote },
 		{ $set: updated },
-		{ arrayFilters: [{ 'message._id': validateIdNote }] }
+		{ arrayFilters: [{ 'message._id': validateIdNote }], new: false }
 	);
 	if (client) {
 		const _note = client.notes.find((note) =>
 			note.messages.find((message: { _id: string }) => message._id.toString() === message_id)
 		);
 		if (_note) {
-			return _note.title;
+			const message: { formalized?: string; approved?: string } = _note.messages.find(
+				(message: { _id: string }) => message._id.toString() === message_id
+			);
+			const project = client?.projects.find(({ notes }) =>
+				notes.includes(new Types.ObjectId(_note._id))
+			);
+			return {
+				titleNote: _note.title,
+				idNote: _note._id,
+				idProject: project?._id,
+				formalizedMessage: message?.formalized,
+				approvedMessage: message?.approved
+			};
 		}
 	}
 };

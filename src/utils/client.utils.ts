@@ -40,6 +40,5 @@ export const formatFilter = <Doc>(
 			  };
 		filter[union]?.push(push);
 	});
-	console.log(JSON.stringify(filter));
 	return filter;
 };

@@ -9,7 +9,7 @@ export const PROJECTS_NOTIFICATION = {
 };
 
 export const TESTSYTEMS_NOTIFICATION = {
-	label: '*sistema de ensayo*',
+	label: '*sistema*',
 	model: 'testSystems'
 };
 
