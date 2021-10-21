@@ -6,6 +6,8 @@ import {
 	SUBSCRIBED_TESTSYSTEM,
 	SUBSCRIBED_TESTSYSTEM_POPULATE
 } from '@constants/subscribed.constanst';
+import { purgeObj } from '@utils/index';
+import { OrderAggregate } from '@utils/order.utils';
 import { Request, Response, NextFunction } from 'express';
 import { Types } from 'mongoose';
 import { UserModel } from '../models/user.model';
@@ -17,6 +19,9 @@ export const GetAllSubscribed = async (
 ): Promise<void> => {
 	try {
 		const query = Object.entries(req.query).reduce((query, [key, value]) => {
+			if (value === 'desc' || value === 'asc' || value === 'des') {
+				return query;
+			}
 			query.push({ [key]: { $regex: `${value}`, $options: 'i' } });
 			return query;
 		}, [] as { [key: string]: { $regex: string; $options: string } }[]);
@@ -25,7 +30,12 @@ export const GetAllSubscribed = async (
 			...SUBSCRIBED_TESTSYSTEM,
 			...SUBSCRIBED_NOTE,
 			{
-				$match: query ? { $or: query } : {}
+				$match: query.length > 0 ? { $or: query } : {}
+			},
+			{
+				$sort: purgeObj(
+					Object.assign({}, new OrderAggregate(req.query as { [key: string]: 'asc' | 'desc' }))
+				) || { createdAt: -1 }
 			}
 		]);
 		users = users.filter((user) => {
