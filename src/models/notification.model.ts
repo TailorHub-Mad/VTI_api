@@ -8,7 +8,7 @@ const notificationSchema = new Schema<INotificationDocument, INotificationModel>
 		urls: [
 			{
 				label: { type: String },
-				model: { type: String, enum: ['projects', 'testSytems', 'notes'] },
+				model: { type: String, enum: ['projects', 'testSystems', 'notes'] },
 				id: { type: Types.ObjectId }
 			}
 		],
