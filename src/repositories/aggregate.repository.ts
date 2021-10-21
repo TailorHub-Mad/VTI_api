@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { groupAggregate, populateAggregate } from '@utils/aggregate.utils';
 import { FilterQuery, Types } from 'mongoose';

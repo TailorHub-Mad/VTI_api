@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction, query } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import Joi from 'joi';
 import {
 	create,

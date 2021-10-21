@@ -14,8 +14,7 @@ import { Login, SignUp } from '../controllers/auth.controller';
 import { DeleteCrud, GetAll, Update } from '../controllers/crud.controller';
 import { IUserDocument } from '../interfaces/models.interface';
 import { UserModel } from '../models/user.model';
-import { filterUserValidation, updateUserValidation } from '../validations/user.validation';
-import { FilterClient } from '../controllers/client.controller';
+import { updateUserValidation } from '../validations/user.validation';
 
 const router = Router();
 

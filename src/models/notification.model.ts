@@ -1,4 +1,4 @@
-import { model, Schema, Types } from 'mongoose';
+import { model, Schema } from 'mongoose';
 import { INotificationDocument, INotificationModel } from '../interfaces/models.interface';
 
 const notificationSchema = new Schema<INotificationDocument, INotificationModel>(

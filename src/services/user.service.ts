@@ -58,7 +58,7 @@ export const filterUser = async (query: QueryString.ParsedQs): Promise<IUserDocu
 	return users;
 };
 
-export const getFavorite = async (user: IReqUser): Promise<any> => {
+export const getFavorite = async (user: IReqUser): Promise<unknown> => {
 	const notes = await UserModel.aggregate([
 		{
 			$match: {
@@ -185,7 +185,7 @@ export const getFavorite = async (user: IReqUser): Promise<any> => {
 	]);
 	return notes;
 };
-export const getSubscribers = async (user: IReqUser): Promise<any> => {
+export const getSubscribers = async (user: IReqUser): Promise<unknown> => {
 	const notes = await UserModel.aggregate([
 		{
 			$match: {
@@ -320,7 +320,7 @@ export const getSubscribers = async (user: IReqUser): Promise<any> => {
 	]);
 	return notes;
 };
-export const getActiveNote = async (user: IReqUser): Promise<any> => {
+export const getActiveNote = async (user: IReqUser): Promise<unknown> => {
 	const notes = await UserModel.aggregate([
 		{
 			$match: {

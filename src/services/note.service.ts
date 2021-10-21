@@ -38,6 +38,7 @@ import { deleteModelInClientRepository } from '../repositories/client.repository
 
 export const createNote = async (
 	body: Partial<INote>,
+	user: IReqUser,
 	files?: Express.Multer.File[]
 ): Promise<{ noteId: string; isClosed: boolean }> => {
 	if (!Array.isArray(body.testSystems)) {
@@ -88,6 +89,13 @@ export const createNote = async (
 		if (project._id.equals(projectId)) {
 			project.notes.push(note._id);
 			isClosed = project.closed?.year;
+			if (project) {
+				updateRepository<IUserDocument>(
+					UserModel,
+					{ _id: user.id },
+					{ $addToSet: { projectsComments: project.alias } }
+				);
+			}
 		}
 		return project;
 	});
