@@ -30,7 +30,9 @@ export const extendNotification = async (
 	forAdmin?: boolean
 ): Promise<void> => {
 	if (!notification) return;
-	const query = forAdmin ? { isAdmin: true } : { [`subscribed.${model.field}`]: model.id };
+	const query = forAdmin
+		? { isAdmin: true }
+		: { $or: [{ [`subscribed.${model.field}`]: model.id }, { isAdmin: true }] };
 	await UserModel.updateMany(query, {
 		$addToSet: { notifications: { status: 'no read', notification: notification._id } }
 	});
@@ -142,18 +144,22 @@ export const getAllNotification = async (
 			}
 		])) || {};
 
-	const transformNotifiactions = notifications?.notifications.reduce(
+	const transformNotifiactions = notifications?.notifications.reverse().reduce(
 		(
-			transform: { [key: string]: INotification },
+			transform: { [key: string]: INotification[] },
 			notification: {
 				_id: string;
-				notifications: INotification;
+				notifications: INotification[];
 			}
 		) => {
-			transform[notification._id] = notification.notifications;
+			if (transform[notification._id]) {
+				transform[notification._id].push(notification.notifications[0]);
+			} else {
+				transform[notification._id] = notification.notifications;
+			}
 			return transform;
 		},
-		{} as { [key: string]: INotification }
+		{} as { [key: string]: INotification[] }
 	);
 	return transformNotifiactions;
 };

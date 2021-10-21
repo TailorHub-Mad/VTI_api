@@ -37,7 +37,7 @@ export const CreateNote = async (
 			],
 			type: CREATED_NOTE
 		});
-		await extendNotification({ field: NOTES_NOTIFICATION.model, id: noteId }, notification);
+		await extendNotification({ field: NOTES_NOTIFICATION.model, id: noteId }, notification, true);
 		logger.notice(`El usuario ${user.email} ha creado un apunte con título ${body.title}`);
 		res.sendStatus(201);
 	} catch (err) {

@@ -218,6 +218,15 @@ export interface INotification {
 export interface INotificationDocument extends INotification, Document {}
 
 export type INotificationModel = Model<INotificationDocument>;
+
+export interface IVtiCode {
+	name: string;
+	testSystems: ITestSystemDocument['_id'];
+}
+
+export interface IVtiCodeDocument extends IVtiCode, Document {}
+
+export type IVtiCodeModel = Model<IVtiCodeDocument>;
 export interface IReqUser {
 	id: string;
 	email: string;
