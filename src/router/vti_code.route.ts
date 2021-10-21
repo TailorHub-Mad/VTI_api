@@ -1,5 +1,5 @@
 import express from 'express';
-import { FilterClient } from 'src/controllers/client.controller';
+import { FilterClient } from '../controllers/client.controller';
 import { Create, GetAll } from '../controllers/crud.controller';
 import { IVtiCodeDocument } from '../interfaces/models.interface';
 import { VtiCodeModel } from '../models/vti_code.model';
