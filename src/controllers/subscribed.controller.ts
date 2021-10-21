@@ -16,12 +16,16 @@ export const GetAllSubscribed = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
+		const query = Object.entries(req.query).reduce((query, [key, value]) => {
+			query.push({ [key]: { $regex: `${value}`, $options: 'i' } });
+			return query;
+		}, [] as { [key: string]: { $regex: string; $options: string } }[]);
 		let users = await UserModel.aggregate([
 			...SUBSCRIBED_PROJECT,
 			...SUBSCRIBED_TESTSYSTEM,
 			...SUBSCRIBED_NOTE,
 			{
-				$match: req.query.alias ? { alias: { $regex: `^${req.query.alias}`, $options: 'i' } } : {}
+				$match: query ? { $or: query } : {}
 			}
 		]);
 		users = users.filter((user) => {
