@@ -116,11 +116,6 @@ export const getAllNotification = async (
 							}
 						},
 						{
-							$sort: {
-								createdAt: -1
-							}
-						},
-						{
 							$group: {
 								_id: '$date',
 								notifications: {
@@ -133,29 +128,46 @@ export const getAllNotification = async (
 				}
 			},
 			{
+				$unwind: {
+					path: '$notifications'
+				}
+			},
+			{
+				$addFields: {
+					'notifications.notifications': {
+						$arrayElemAt: ['$notifications.notifications', 0]
+					}
+				}
+			},
+			{
+				$sort: {
+					'notifications.notifications.createdAt': -1
+				}
+			},
+			{
 				$group: {
 					_id: '$_id',
 					notifications: {
-						$push: {
-							$arrayElemAt: ['$notifications', 0]
-						}
+						$push: '$notifications'
 					}
 				}
 			}
-		])) || {};
-
-	const transformNotifiactions = notifications?.notifications.reverse().reduce(
+		]).collation({
+			locale: 'es',
+			numericOrdering: true
+		})) || {};
+	const transformNotifiactions = notifications?.notifications.reduce(
 		(
 			transform: { [key: string]: INotification[] },
 			notification: {
 				_id: string;
-				notifications: INotification[];
+				notifications: INotification;
 			}
 		) => {
 			if (transform[notification._id]) {
-				transform[notification._id].push(notification.notifications[0]);
+				transform[notification._id].push(notification.notifications);
 			} else {
-				transform[notification._id] = notification.notifications;
+				transform[notification._id] = [notification.notifications];
 			}
 			return transform;
 		},
