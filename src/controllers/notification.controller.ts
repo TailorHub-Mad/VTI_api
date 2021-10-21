@@ -15,7 +15,7 @@ export const GetAllNotification = async (
 	try {
 		const notifications = await getAllNotification(
 			req.user,
-			req.query as { type: string[]; pin: string }
+			req.query as { type: string[]; pin: string; date: string }
 		);
 		updateReadNotification(req.user);
 		res.status(200).json(notifications);

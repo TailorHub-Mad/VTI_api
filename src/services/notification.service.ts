@@ -40,7 +40,7 @@ export const extendNotification = async (
 
 export const getAllNotification = async (
 	user: IReqUser,
-	query: { type: string[]; pin: string }
+	query: { type: string[]; pin: string; date: string }
 ): Promise<{ [key: string]: INotification }> => {
 	let filter: unknown[] = Array.isArray(query?.type)
 		? query?.type?.reduce((query, type) => {
@@ -131,6 +131,13 @@ export const getAllNotification = async (
 				$unwind: {
 					path: '$notifications'
 				}
+			},
+			{
+				$match: query.date
+					? {
+							'notifications._id': query.date
+					  }
+					: {}
 			},
 			{
 				$addFields: {
