@@ -43,6 +43,7 @@ export class OrderAggregate {
 		user_alias,
 		user_name,
 		user_lastName,
+		user_ref,
 		ref,
 		alias,
 		name
@@ -66,6 +67,7 @@ export class OrderAggregate {
 		user_alias?: orderString;
 		user_name?: orderString;
 		user_lastName?: orderString;
+		user_ref?: orderString;
 		ref?: orderString;
 		alias?: orderString;
 		name?: orderString;
@@ -77,7 +79,11 @@ export class OrderAggregate {
 		this['projects.alias'] = this.transform(projects_alias);
 		this['projects.sector.title'] = this.transform(projects_sector);
 		this['projects.focusPoint.0.name'] = this.transform(projects_focusPoint);
-		this.ref = this.transform(sector_ref) || this.transform(ref) || this.transform(department_ref);
+		this.ref =
+			this.transform(sector_ref) ||
+			this.transform(ref) ||
+			this.transform(department_ref) ||
+			this.transform(user_ref);
 		this.title = this.transform(sector_title);
 		this['testSystems.ref'] = this.transform(testSystems_ref);
 		this['testSystems.alias'] = this.transform(testSystems_alias);

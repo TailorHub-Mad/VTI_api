@@ -6,7 +6,7 @@ import {
 	SUBSCRIBED_TESTSYSTEM,
 	SUBSCRIBED_TESTSYSTEM_POPULATE
 } from '@constants/subscribed.constanst';
-import { purgeObj } from '@utils/index';
+import { getPagination, purgeObj } from '@utils/index';
 import { OrderAggregate } from '@utils/order.utils';
 import { Request, Response, NextFunction } from 'express';
 import { Types } from 'mongoose';
@@ -18,6 +18,9 @@ export const GetAllSubscribed = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
+		const pagination = getPagination(req.query);
+		delete req.query.offset;
+		delete req.query.limit;
 		const query = Object.entries(req.query).reduce((query, [key, value]) => {
 			if (value === 'desc' || value === 'asc' || value === 'des') {
 				return query;
@@ -25,7 +28,7 @@ export const GetAllSubscribed = async (
 			query.push({ [key]: { $regex: `${value}`, $options: 'i' } });
 			return query;
 		}, [] as { [key: string]: { $regex: string; $options: string } }[]);
-		let users = await UserModel.aggregate([
+		const users = await UserModel.aggregate([
 			...SUBSCRIBED_PROJECT,
 			...SUBSCRIBED_TESTSYSTEM,
 			...SUBSCRIBED_NOTE,
@@ -33,18 +36,41 @@ export const GetAllSubscribed = async (
 				$match: query.length > 0 ? { $or: query } : {}
 			},
 			{
+				$match: {
+					$expr: {
+						$or: [
+							{
+								$not: {
+									$eq: [{ $size: '$subscribed.notes' }, 0]
+								}
+							},
+							{
+								$not: {
+									$eq: [{ $size: '$subscribed.projects' }, 0]
+								}
+							},
+							{
+								$not: {
+									$eq: [{ $size: '$subscribed.testSystems' }, 0]
+								}
+							}
+						]
+					}
+				}
+			},
+			{
 				$sort: purgeObj(
 					Object.assign({}, new OrderAggregate(req.query as { [key: string]: 'asc' | 'desc' }))
 				) || { createdAt: -1 }
+			},
+			{
+				$limit: pagination.limit || 100
+			},
+			{
+				$skip: pagination.offset || 0
 			}
 		]);
-		users = users.filter((user) => {
-			return (
-				user.subscribed.notes.length > 0 ||
-				user.subscribed.projects.length > 0 ||
-				user.subscribed.testSystems.length > 0
-			);
-		});
+
 		res.status(200).json(users);
 	} catch (err) {
 		next(err);
@@ -56,10 +82,19 @@ export const GetNotesSubscribed = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
+		const pagination = getPagination(req.query);
+		delete req.query.offset;
+		delete req.query.limit;
 		const users = await UserModel.aggregate([
 			...SUBSCRIBED_NOTE_POPULATE(req.query.title as string),
 			{
 				$match: req.user.role === 'admin' ? {} : { _id: Types.ObjectId(req.user.id) }
+			},
+			{
+				$limit: pagination.limit || 100
+			},
+			{
+				$skip: pagination.offset || 0
 			}
 		]);
 		res.status(200).json(users);
@@ -73,10 +108,19 @@ export const GetProjectsSubscribed = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
+		const pagination = getPagination(req.query);
+		delete req.query.offset;
+		delete req.query.limit;
 		const users = await UserModel.aggregate([
 			...SUBSCRIBED_PROJECT_POPULATE(req.query.alias as string),
 			{
 				$match: req.user.role === 'admin' ? {} : { _id: Types.ObjectId(req.user.id) }
+			},
+			{
+				$limit: pagination.limit || 100
+			},
+			{
+				$skip: pagination.offset || 0
 			}
 		]);
 		res.status(200).json(users);
@@ -90,10 +134,19 @@ export const GetTestSystemsSubscribed = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
+		const pagination = getPagination(req.query);
+		delete req.query.offset;
+		delete req.query.limit;
 		const users = await UserModel.aggregate([
 			...SUBSCRIBED_TESTSYSTEM_POPULATE(req.query.alias as string),
 			{
 				$match: req.user.role === 'admin' ? {} : { _id: Types.ObjectId(req.user.id) }
+			},
+			{
+				$limit: pagination.limit || 100
+			},
+			{
+				$skip: pagination.offset || 0
 			}
 		]);
 		res.status(200).json(users);
