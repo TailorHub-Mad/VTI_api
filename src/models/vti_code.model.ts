@@ -26,7 +26,7 @@ vtiCodeSchema.pre('save', async function (next: HookNextFunction) {
 				})
 				.limit(1);
 			if (client?.ref) {
-				this.ref = 'VTI' + (+client.ref.slice(2) + 1).toString().padStart(4, '0');
+				this.ref = 'VTI' + (+client.ref.slice(3) + 1).toString().padStart(4, '0');
 			} else {
 				this.ref = 'VTI0001';
 			}
