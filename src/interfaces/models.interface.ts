@@ -222,6 +222,7 @@ export type INotificationModel = Model<INotificationDocument>;
 export interface IVtiCode {
 	name: string;
 	testSystems: ITestSystemDocument['_id'];
+	ref: string;
 }
 
 export interface IVtiCodeDocument extends IVtiCode, Document {}
