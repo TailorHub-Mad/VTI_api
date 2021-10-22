@@ -85,6 +85,30 @@ export const aggregateCrud = async (
 			}
 		});
 	}
+	if (nameFild === 'testSystems') {
+		pipeline.push(
+			{
+				$lookup: {
+					from: 'vticodes',
+					localField: 'testSystems.vtiCode',
+					foreignField: '_id',
+					as: 'testSystems.vtiCode'
+				}
+			},
+			{
+				$addFields: {
+					'testSystems.vtiCode': {
+						$arrayElemAt: ['$testSystems.vtiCode', 0]
+					}
+				}
+			},
+			{
+				$addFields: {
+					'testSystems.vtiCode': '$testSystems.vtiCode.name'
+				}
+			}
+		);
+	}
 
 	pipeline.push({
 		$addFields: {
@@ -494,11 +518,33 @@ export const groupRepository = async <T, G extends string>(
 
 	if (field === 'testSystems') {
 		const populates = ['notes', 'projects'];
-		pipeline.push({
-			$unwind: {
-				path: '$testSystems'
+		pipeline.push(
+			{
+				$unwind: {
+					path: '$testSystems'
+				}
+			},
+			{
+				$lookup: {
+					from: 'vticodes',
+					localField: 'testSystems.vtiCode',
+					foreignField: '_id',
+					as: 'testSystems.vtiCode'
+				}
+			},
+			{
+				$addFields: {
+					'testSystems.vtiCode': {
+						$arrayElemAt: ['$testSystems.vtiCode', 0]
+					}
+				}
+			},
+			{
+				$addFields: {
+					'testSystems.vtiCode': '$testSystems.vtiCode.name'
+				}
 			}
-		});
+		);
 		populates.forEach((populate) => {
 			pipeline.push({
 				$addFields: {

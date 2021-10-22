@@ -210,6 +210,26 @@ export const SUBSCRIBED_TESTSYSTEM_POPULATE = (query: string) => [
 					}
 				},
 				{
+					$lookup: {
+						from: 'vticodes',
+						localField: 'testSystems.vtiCode',
+						foreignField: '_id',
+						as: 'testSystems.vtiCode'
+					}
+				},
+				{
+					$addFields: {
+						'testSystems.vtiCode': {
+							$arrayElemAt: ['$testSystems.vtiCode', 0]
+						}
+					}
+				},
+				{
+					$addFields: {
+						'testSystems.vtiCode': '$testSystems.vtiCode.name'
+					}
+				},
+				{
 					$replaceRoot: {
 						newRoot: {
 							$mergeObjects: ['$testSystems']
@@ -276,6 +296,26 @@ export const SUBSCRIBED_TESTSYSTEM = [
 						$expr: {
 							$eq: ['$testSystems._id', '$$projectId']
 						}
+					}
+				},
+				{
+					$lookup: {
+						from: 'vticodes',
+						localField: 'testSystems.vtiCode',
+						foreignField: '_id',
+						as: 'testSystems.vtiCode'
+					}
+				},
+				{
+					$addFields: {
+						'testSystems.vtiCode': {
+							$arrayElemAt: ['$testSystems.vtiCode', 0]
+						}
+					}
+				},
+				{
+					$addFields: {
+						'testSystems.vtiCode': '$testSystems.vtiCode.name'
 					}
 				},
 				{
