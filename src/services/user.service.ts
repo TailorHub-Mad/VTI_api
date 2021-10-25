@@ -14,9 +14,9 @@ export const resetPassword = async (
 	body: { email: string },
 	isRecovery: boolean
 ): Promise<void> => {
-	if (!/(@vtisl.com)$/.test(body.email)) {
-		throw new BaseError('Not email valid', 400);
-	}
+	// if (!/(@vtisl.com)$/.test(body.email)) {
+	// 	throw new BaseError('Not email valid', 400);
+	// }
 	const validateEmail = await resetPasswordValidation.validateAsync(body);
 	const recovery = randomBytes(64).toString('hex');
 	const user = updateRepository<IUserDocument>(
