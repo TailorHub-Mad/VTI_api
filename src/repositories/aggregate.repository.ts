@@ -211,6 +211,19 @@ export const aggregateCrud = async (
 						}
 					},
 					{
+						$addFields: {
+							'projects.notes.testSystems': {
+								$filter: {
+									input: '$testSystems',
+									as: 'testSystem',
+									cond: {
+										$in: ['$projects.notes._id', '$$testSystem.notes']
+									}
+								}
+							}
+						}
+					},
+					{
 						$lookup: {
 							from: 'tagnotes',
 							localField: 'projects.notes.tags',
