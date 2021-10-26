@@ -404,6 +404,14 @@ export const SUBSCRIBED_NOTE_POPULATE = (query: string) => [
 					}
 				},
 				{
+					$lookup: {
+						from: 'users',
+						localField: 'notes.owner',
+						foreignField: '_id',
+						as: 'notes.owner'
+					}
+				},
+				{
 					$addFields: {
 						'notes.projects': {
 							$filter: {
@@ -501,6 +509,14 @@ export const SUBSCRIBED_NOTE = [
 						$expr: {
 							$eq: ['$notes._id', '$$projectId']
 						}
+					}
+				},
+				{
+					$lookup: {
+						from: 'users',
+						localField: 'notes.owner',
+						foreignField: '_id',
+						as: 'notes.owner'
 					}
 				},
 				{

@@ -33,6 +33,11 @@ export const GetAllSubscribed = async (
 			...SUBSCRIBED_TESTSYSTEM,
 			...SUBSCRIBED_NOTE,
 			{
+				$project: {
+					password: 0
+				}
+			},
+			{
 				$match: query.length > 0 ? { $or: query } : {}
 			},
 			{
@@ -88,6 +93,11 @@ export const GetNotesSubscribed = async (
 		const users = await UserModel.aggregate([
 			...SUBSCRIBED_NOTE_POPULATE(req.query.title as string),
 			{
+				$project: {
+					password: 0
+				}
+			},
+			{
 				$match: req.user.role === 'admin' ? {} : { _id: Types.ObjectId(req.user.id) }
 			},
 			{
@@ -114,6 +124,11 @@ export const GetProjectsSubscribed = async (
 		const users = await UserModel.aggregate([
 			...SUBSCRIBED_PROJECT_POPULATE(req.query.alias as string),
 			{
+				$project: {
+					password: 0
+				}
+			},
+			{
 				$match: req.user.role === 'admin' ? {} : { _id: Types.ObjectId(req.user.id) }
 			},
 			{
@@ -139,6 +154,11 @@ export const GetTestSystemsSubscribed = async (
 		delete req.query.limit;
 		const users = await UserModel.aggregate([
 			...SUBSCRIBED_TESTSYSTEM_POPULATE(req.query.alias as string),
+			{
+				$project: {
+					password: 0
+				}
+			},
 			{
 				$match: req.user.role === 'admin' ? {} : { _id: Types.ObjectId(req.user.id) }
 			},
