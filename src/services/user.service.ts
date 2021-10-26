@@ -414,6 +414,22 @@ export const getSubscribers = async (user: IReqUser): Promise<unknown> => {
 						}
 					},
 					{
+						$group: {
+							_id: '$_id',
+							client: {
+								$first: '$$ROOT'
+							},
+							projects: {
+								$push: '$projects'
+							}
+						}
+					},
+					{
+						$replaceRoot: {
+							newRoot: { $mergeObjects: ['$client', { projects: '$projects' }] }
+						}
+					},
+					{
 						$unwind: {
 							path: '$notes'
 						}

@@ -74,12 +74,13 @@ export const findKey = (value: string, real?: boolean): string => {
 };
 
 export const addGroup = (
-	aux: { alias: string },
-	property: { [key: string]: { alias: string }[] },
+	aux: { alias: string; clientAlias: string },
+	property: { [key: string]: { alias: string; clientAlias: string }[] },
 	key: string
 ): void => {
 	if (property[key]) {
-		if (!property[key].find((group) => group.alias === aux.alias)) property[key].push(aux);
+		if (!property[key].find((group) => group.alias && group.alias === aux.alias))
+			property[key].push(aux);
 	} else {
 		property[key] = [aux];
 	}

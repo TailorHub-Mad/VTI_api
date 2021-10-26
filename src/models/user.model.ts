@@ -58,7 +58,6 @@ userSchema.pre('save', async function (next: HookNextFunction) {
 				})
 				.limit(1);
 			if (client?.ref) {
-				console.log(client.ref);
 				this.ref = 'US' + (+client.ref.slice(2) + 1).toString().padStart(4, '0');
 			} else {
 				this.ref = 'US0001';

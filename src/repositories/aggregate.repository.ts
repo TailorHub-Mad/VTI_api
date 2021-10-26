@@ -773,6 +773,7 @@ export const groupRepository = async <T, G extends string>(
 			locale: 'es',
 			numericOrdering: true
 		});
+
 	// console.log(JSON.stringify(properties));
 	// console.log(properties);
 	// return properties;

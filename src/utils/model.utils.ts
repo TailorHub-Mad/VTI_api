@@ -55,8 +55,6 @@ export const addToSetTags = async <T extends Document & { tags: string[] }>(
 	{ field, property, model }: { field: string; property: keyof T; model: Model<T> },
 	tags?: string[]
 ): Promise<void> => {
-	console.log(tags);
-	console.log({ $addToSet: { [field]: { _id: project._id, [property]: project[property] } } });
 	if (!tags) return;
 	await Promise.all(
 		tags.map((_id: string) => {
