@@ -4,7 +4,7 @@ import { CriterionModel } from './criterion.model';
 
 const groupSchema = new Schema(
 	{
-		name: { type: String, trim: true, unique: true },
+		name: { type: String, trim: true },
 		relatedTags: [{ type: Types.ObjectId, ref: 'TagProject' }]
 	},
 	{
