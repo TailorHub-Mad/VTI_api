@@ -329,13 +329,13 @@ export const getSubscribers = async (user: IReqUser): Promise<unknown> => {
 							path: '$notes'
 						}
 					},
-					{
-						$match: {
-							$expr: {
-								$in: ['$notes._id', '$projects.notes']
-							}
-						}
-					},
+					// {
+					// 	$match: {
+					// 		$expr: {
+					// 			$in: ['$notes._id', '$projects.notes']
+					// 		}
+					// 	}
+					// },
 					{
 						$lookup: {
 							from: 'tagnotes',
@@ -434,13 +434,13 @@ export const getSubscribers = async (user: IReqUser): Promise<unknown> => {
 							path: '$notes'
 						}
 					},
-					{
-						$match: {
-							$expr: {
-								$in: ['$notes._id', '$testSystems.notes']
-							}
-						}
-					},
+					// {
+					// 	$match: {
+					// 		$expr: {
+					// 			$in: ['$notes._id', '$testSystems.notes']
+					// 		}
+					// 	}
+					// },
 					{
 						$lookup: {
 							from: 'tagnotes',
@@ -506,10 +506,15 @@ export const getSubscribers = async (user: IReqUser): Promise<unknown> => {
 			}
 		},
 		{
+			$unwind: {
+				path: '$notes'
+			}
+		},
+		{
 			$group: {
 				_id: null,
 				notes: {
-					$push: { $arrayElemAt: ['$notes', 0] }
+					$push: '$notes'
 				}
 			}
 		}
