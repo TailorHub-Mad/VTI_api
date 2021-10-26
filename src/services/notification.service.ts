@@ -4,6 +4,7 @@ import { UserModel } from '../models/user.model';
 import { INotification, INotificationDocument, IReqUser } from '../interfaces/models.interface';
 import { ADMIN_NOTIFICATION } from '@constants/notification.constants';
 import { mongoIdValidation, notificationValidation } from '../validations/common.validation';
+import { ClientModel } from '../models/client.model';
 
 export const createNotification = async (
 	reqUser: IReqUser,
@@ -30,9 +31,89 @@ export const extendNotification = async (
 	forAdmin?: boolean
 ): Promise<void> => {
 	if (!notification) return;
-	const query = forAdmin
+	let query = forAdmin
 		? { isAdmin: true }
 		: { $or: [{ [`subscribed.${model.field}`]: model.id }, { isAdmin: true }] };
+
+	if (model.field === 'notes') {
+		const [infoNote] = await ClientModel.aggregate([
+			{
+				$match: {
+					$expr: {
+						$in: [Types.ObjectId(model.id), '$notes._id']
+					}
+				}
+			},
+			{
+				$unwind: {
+					path: '$notes'
+				}
+			},
+			{
+				$match: {
+					'notes._id': Types.ObjectId(model.id)
+				}
+			},
+			{
+				$addFileds: {
+					'notes.projects': {
+						$filter: {
+							input: '$projects',
+							as: 'project',
+							cond: {
+								$in: ['$notes._id', '$$project.notes']
+							}
+						}
+					},
+					'notes.testSystems': {
+						$filter: {
+							input: '$testSystems',
+							as: 'testSystem',
+							cond: {
+								$in: ['$notes._id', '$$testSystem.notes']
+							}
+						}
+					},
+					'notes.year': {
+						$dateToString: {
+							date: '$notes.createdAt',
+							format: '%Y'
+						}
+					}
+				}
+			},
+			{
+				$addFields: {
+					project: {
+						$arrayElemAt: ['$notes.projects', 0]
+					},
+					testSystem: {
+						$arrayElemAt: ['$notes.testSystems', 0]
+					}
+				}
+			},
+			{
+				$project: {
+					project: '$project._id',
+					testSystem: '$testSystem._id'
+				}
+			}
+		]);
+		query = {
+			$or: [
+				{
+					'subscribed.projects': infoNote.project
+				},
+				{
+					'subscribed.testSystems': infoNote.testSystem
+				},
+				{
+					'subscribed.notes': model.id
+				},
+				{ isAdmin: true }
+			]
+		};
+	}
 	await UserModel.updateMany(query, {
 		$addToSet: { notifications: { status: 'no read', notification: notification._id } }
 	});

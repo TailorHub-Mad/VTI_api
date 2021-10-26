@@ -382,8 +382,97 @@ export const getSubscribers = async (user: IReqUser): Promise<unknown> => {
 			}
 		},
 		{
+			$unwind: { path: '$subscribed.testSystems', preserveNullAndEmptyArrays: true }
+		},
+		{
+			$lookup: {
+				from: 'clients',
+				let: {
+					testSystems: '$subscribed.testSystems'
+				},
+				pipeline: [
+					{ $unwind: '$testSystems' },
+					{
+						$match: {
+							$expr: {
+								$eq: ['$testSystems._id', '$$testSystems']
+							}
+						}
+					},
+					{
+						$unwind: {
+							path: '$projects',
+							preserveNullAndEmptyArrays: true
+						}
+					},
+					{
+						$lookup: {
+							from: 'sectors',
+							localField: 'projects.sector',
+							foreignField: '_id',
+							as: 'projects.sector'
+						}
+					},
+					{
+						$unwind: {
+							path: '$notes'
+						}
+					},
+					{
+						$match: {
+							$expr: {
+								$in: ['$notes._id', '$testSystems.notes']
+							}
+						}
+					},
+					{
+						$lookup: {
+							from: 'tagnotes',
+							localField: 'notes.tags',
+							foreignField: '_id',
+							as: 'notes.tags'
+						}
+					},
+					{
+						$addFields: {
+							'notes.projects': {
+								$filter: {
+									input: '$projects',
+									as: 'project',
+									cond: {
+										$in: ['$notes._id', '$$project.notes']
+									}
+								}
+							},
+							'notes.testSystems': ['$testSystems'],
+							'notes.year': {
+								$dateToString: {
+									date: '$notes.createdAt',
+									format: '%Y'
+								}
+							}
+						}
+					},
+					{
+						$group: {
+							_id: null,
+							notes: {
+								$push: '$notes'
+							}
+						}
+					},
+					{
+						$replaceRoot: {
+							newRoot: { $mergeObjects: ['$notes'] }
+						}
+					}
+				],
+				as: 'testSystemsNotes'
+			}
+		},
+		{
 			$project: {
-				notes: { $concatArrays: ['$notes', '$projectNotes'] },
+				notes: { $concatArrays: ['$notes', '$projectNotes', '$testSystemsNotes'] },
 				_id: 0
 			}
 		},
@@ -394,9 +483,17 @@ export const getSubscribers = async (user: IReqUser): Promise<unknown> => {
 		},
 		{
 			$group: {
-				_id: null,
+				_id: '$notes._id',
 				notes: {
 					$push: '$notes'
+				}
+			}
+		},
+		{
+			$group: {
+				_id: null,
+				notes: {
+					$push: { $arrayElemAt: ['$notes', 0] }
 				}
 			}
 		}
