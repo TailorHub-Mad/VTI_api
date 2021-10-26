@@ -41,7 +41,7 @@ export const createNote = async (
 	user: IReqUser,
 	files?: Express.Multer.File[]
 ): Promise<{ noteId: string; isClosed: boolean }> => {
-	if (!Array.isArray(body.testSystems)) {
+	if (body.testSystems && !Array.isArray(body.testSystems)) {
 		body.testSystems = [body.testSystems];
 	}
 	if (!Array.isArray(body.tags)) {
