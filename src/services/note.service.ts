@@ -70,7 +70,7 @@ export const createNote = async (
 
 	const newRef = await createRef('notes');
 
-	client.notes.push({ title, description, link, tags, documents, ref: newRef });
+	client.notes.push({ title, description, link, tags, documents, ref: newRef, owner: user.id });
 	const newClient = await client.save();
 	const note: INoteDocument = newClient.notes.find((note) => note.title === title);
 	const projectId = transformStringToObjectId(project);

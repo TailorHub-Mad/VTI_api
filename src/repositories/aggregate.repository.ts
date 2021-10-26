@@ -76,14 +76,24 @@ export const aggregateCrud = async (
 		});
 	}
 	if (nameFild === 'notes') {
-		pipeline.push({
-			$lookup: {
-				from: 'tagnotes',
-				localField: 'notes.tags',
-				foreignField: '_id',
-				as: 'notes.tags'
+		pipeline.push(
+			{
+				$lookup: {
+					from: 'tagnotes',
+					localField: 'notes.tags',
+					foreignField: '_id',
+					as: 'notes.tags'
+				}
+			},
+			{
+				$lookup: {
+					from: 'users',
+					localField: 'notes.owner',
+					foreignField: '_id',
+					as: 'notes.owner'
+				}
 			}
-		});
+		);
 	}
 	if (nameFild === 'testSystems') {
 		pipeline.push(
@@ -518,14 +528,24 @@ export const groupRepository = async <T, G extends string>(
 			}
 		);
 		if (!options?.populate) {
-			pipeline.push({
-				$lookup: {
-					from: 'tagnotes',
-					localField: 'notes.tags',
-					foreignField: '_id',
-					as: 'notes.tags'
+			pipeline.push(
+				{
+					$lookup: {
+						from: 'tagnotes',
+						localField: 'notes.tags',
+						foreignField: '_id',
+						as: 'notes.tags'
+					}
+				},
+				{
+					$lookup: {
+						from: 'users',
+						localField: 'notes.owner',
+						foreignField: '_id',
+						as: 'notes.owner'
+					}
 				}
-			});
+			);
 		}
 	}
 
@@ -643,6 +663,14 @@ export const groupRepository = async <T, G extends string>(
 					localField: 'projects.notes.tags',
 					foreignField: '_id',
 					as: 'projects.notes.tags'
+				}
+			},
+			{
+				$lookup: {
+					from: 'users',
+					localField: 'projects.notes.owner',
+					foreignField: '_id',
+					as: 'projects.notes.owner'
 				}
 			},
 			{
