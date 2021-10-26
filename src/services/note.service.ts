@@ -44,7 +44,7 @@ export const createNote = async (
 	if (body.testSystems && !Array.isArray(body.testSystems)) {
 		body.testSystems = [body.testSystems];
 	}
-	if (!Array.isArray(body.tags)) {
+	if (body.tags && !Array.isArray(body.tags)) {
 		body.tags = [body.tags];
 	}
 	const validateBody = await createNoteValidation.validateAsync(body);
