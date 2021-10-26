@@ -55,7 +55,7 @@ export const extendNotification = async (
 				}
 			},
 			{
-				$addFileds: {
+				$addFields: {
 					'notes.projects': {
 						$filter: {
 							input: '$projects',
