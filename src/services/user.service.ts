@@ -193,7 +193,7 @@ export const getSubscribers = async (user: IReqUser): Promise<unknown> => {
 			}
 		},
 		{
-			$unwind: { path: '$subscribed.notes' }
+			$unwind: { path: '$subscribed.notes', preserveNullAndEmptyArrays: true }
 		},
 		{
 			$lookup: {
@@ -299,8 +299,91 @@ export const getSubscribers = async (user: IReqUser): Promise<unknown> => {
 			}
 		},
 		{
+			$unwind: { path: '$subscribed.projects', preserveNullAndEmptyArrays: true }
+		},
+		{
+			$lookup: {
+				from: 'clients',
+				let: {
+					projects: '$subscribed.projects'
+				},
+				pipeline: [
+					{ $unwind: '$projects' },
+					{
+						$match: {
+							$expr: {
+								$eq: ['$projects._id', '$$projects']
+							}
+						}
+					},
+					{
+						$lookup: {
+							from: 'sectors',
+							localField: 'projects.sector',
+							foreignField: '_id',
+							as: 'projects.sector'
+						}
+					},
+					{
+						$unwind: {
+							path: '$notes'
+						}
+					},
+					{
+						$match: {
+							$expr: {
+								$in: ['$notes._id', '$projects.notes']
+							}
+						}
+					},
+					{
+						$lookup: {
+							from: 'tagnotes',
+							localField: 'notes.tags',
+							foreignField: '_id',
+							as: 'notes.tags'
+						}
+					},
+					{
+						$addFields: {
+							'notes.projects': ['$projects'],
+							'notes.testSystems': {
+								$filter: {
+									input: '$testSystems',
+									as: 'testSystem',
+									cond: {
+										$in: ['$notes._id', '$$testSystem.notes']
+									}
+								}
+							},
+							'notes.year': {
+								$dateToString: {
+									date: '$notes.createdAt',
+									format: '%Y'
+								}
+							}
+						}
+					},
+					{
+						$group: {
+							_id: null,
+							notes: {
+								$push: '$notes'
+							}
+						}
+					},
+					{
+						$replaceRoot: {
+							newRoot: { $mergeObjects: ['$notes'] }
+						}
+					}
+				],
+				as: 'projectNotes'
+			}
+		},
+		{
 			$project: {
-				notes: 1,
+				notes: { $concatArrays: ['$notes', '$projectNotes'] },
 				_id: 0
 			}
 		},

@@ -20,7 +20,7 @@ export const noteSchema = new Schema<INoteDocument, INoteModel>(
 		}, // TODO: crear función generadora de fechas por limite de timepo
 		updateTime: { type: Date, default: () => new Date() },
 		owner: { type: Types.ObjectId, ref: 'User' }, // ad required: true
-		readBy: [{ type: Types.ObjectId, ref: 'User' }],
+		readBy: [{ type: Types.ObjectId, ref: 'User' }], // eliminar cuando se crean nuemos mensajes.
 		isClosed: { type: Boolean, default: false },
 		formalized: { type: Boolean, default: false },
 		ref: { type: String }

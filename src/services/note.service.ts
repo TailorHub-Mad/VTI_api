@@ -131,7 +131,7 @@ export const createMessage = async (
 	const client = await updateRepository<IClientDocument>(
 		ClientModel,
 		{ 'notes._id': validateIdNote },
-		{ $push: { 'notes.$.messages': message } }
+		{ $push: { 'notes.$.messages': message }, 'notes.$.readBy': [] }
 	);
 	await client?.save();
 	const _note = client?.notes.find(({ _id }) => _id.toString() === note);

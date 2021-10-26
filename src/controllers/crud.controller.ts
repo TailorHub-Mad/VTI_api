@@ -11,7 +11,7 @@ import {
 	update
 } from '../services/crud.service';
 import { getPagination } from '../utils/controllers.utils';
-import { GenericModel } from '../interfaces/models.interface';
+import { GenericModel, IClientDocument } from '../interfaces/models.interface';
 import { BaseError } from '@errors/base.error';
 import { FilterQuery, isValidObjectId, PopulateOptions } from 'mongoose';
 import { OrderAggregate } from '@utils/order.utils';
@@ -19,6 +19,8 @@ import { purgeObj } from '@utils/index';
 import { groupAggregate } from '@utils/aggregate.utils';
 import { UserModel } from '../models/user.model';
 import { sendMail } from '../config/nodemailer.config';
+import { updateRepository } from '../repositories/common.repository';
+import { ClientModel } from '../models/client.model';
 
 // Creamos un controlador genérico usando una interface T que tendrá el valor del modelo que nosotros le pasemos.
 export const GetAll =
@@ -182,6 +184,13 @@ export const GetByIdAggregate =
 			const { id } = req.params;
 			if (!id || !isValidObjectId(id)) throw new BaseError('Not ID');
 			const result = await getByIdAggregate(id, field, populates);
+			if (field === 'notes') {
+				await updateRepository<IClientDocument>(
+					ClientModel,
+					{ 'notes._id': id },
+					{ $addToSet: { 'notes.$.readBy': req.user.id } }
+				);
+			}
 			res.json(result);
 		} catch (err) {
 			next(err);
