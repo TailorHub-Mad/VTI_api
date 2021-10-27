@@ -2,7 +2,6 @@ import {
 	ANSWER_NOTE,
 	CLOSED_MESSAGE,
 	CREATED_NOTE,
-	MANTENIMIENTO_NOTIFICATION,
 	NOTES_NOTIFICATION,
 	UPDATE_MESSAGE
 } from '@constants/notification.constants';
@@ -37,7 +36,7 @@ export const CreateNote = async (
 					id: `${body?.project}?note=${info.noteId}`
 				}
 			],
-			type: info.isClosed ? MANTENIMIENTO_NOTIFICATION : CREATED_NOTE
+			type: CREATED_NOTE
 		});
 		await extendNotification(
 			{ field: NOTES_NOTIFICATION.model, id: info.noteId },
