@@ -219,49 +219,50 @@ export const aggregateCrud = async (
 
 		if (populates) {
 			if (populates.includes('testSystems') && nameFild === 'projects') {
-				pipeline.push(
-					{
-						$unwind: {
-							path: '$testSystems'
-						}
-					},
-					{
-						$lookup: {
-							from: 'vticodes',
-							localField: 'testSystems.vtiCode',
-							foreignField: '_id',
-							as: 'testSystems.vtiCode'
-						}
-					},
-					{
-						$addFields: {
-							'testSystems.vtiCode': {
-								$arrayElemAt: ['$testSystems.vtiCode', 0]
-							}
-						}
-					},
-					{
-						$addFields: {
-							'testSystems.vtiCode': '$testSystems.vtiCode.name'
-						}
-					},
-					{
-						$group: {
-							_id: '$_id',
-							client: {
-								$first: '$$ROOT'
-							},
-							testSystems: {
-								$push: '$$ROOT.testSystems'
-							}
-						}
-					},
-					{
-						$replaceRoot: {
-							newRoot: { $mergeObjects: ['$client', { testSystems: '$testSystems' }] }
-						}
-					}
-				);
+				// pipeline.push(
+				// 	{
+				// 		$unwind: {
+				// 			path: '$testSystems',
+				// 			preserveNullAndEmptyArrays: true
+				// 		}
+				// 	},
+				// 	{
+				// 		$lookup: {
+				// 			from: 'vticodes',
+				// 			localField: 'testSystems.vtiCode',
+				// 			foreignField: '_id',
+				// 			as: 'testSystems.vtiCode'
+				// 		}
+				// 	},
+				// 	{
+				// 		$addFields: {
+				// 			'testSystems.vtiCode': {
+				// 				$arrayElemAt: ['$testSystems.vtiCode', 0]
+				// 			}
+				// 		}
+				// 	},
+				// 	{
+				// 		$addFields: {
+				// 			'testSystems.vtiCode': '$testSystems.vtiCode.name'
+				// 		}
+				// 	},
+				// 	{
+				// 		$group: {
+				// 			_id: '$_id',
+				// 			client: {
+				// 				$first: '$$ROOT'
+				// 			},
+				// 			testSystems: {
+				// 				$push: '$$ROOT.testSystems'
+				// 			}
+				// 		}
+				// 	},
+				// 	{
+				// 		$replaceRoot: {
+				// 			newRoot: { $mergeObjects: ['$client', { testSystems: '$testSystems' }] }
+				// 		}
+				// 	}
+				// );
 			}
 			populates.forEach((populate) => {
 				pipeline.push({

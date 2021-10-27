@@ -722,15 +722,10 @@ export const getSubscribersNotes = async (user: IReqUser): Promise<unknown> => {
 			}
 		},
 		{
-			$unwind: {
-				path: '$notes'
-			}
-		},
-		{
 			$group: {
 				_id: null,
 				notes: {
-					$push: '$notes'
+					$push: { $arrayElemAt: ['$notes', 0] }
 				}
 			}
 		}
