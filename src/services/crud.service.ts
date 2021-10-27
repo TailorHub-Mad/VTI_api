@@ -172,11 +172,12 @@ export const getByQueryAggregate = async (
 					}
 					return {
 						$and: value.map((v) => ({
-							[key]: key.includes('_id')
-								? Types.ObjectId(v as string)
-								: v === 'true' || v === 'false'
-								? v === 'true'
-								: { $regex: v, $options: 'i' }
+							[key]:
+								key.includes('_id') || key.includes('tags')
+									? Types.ObjectId(v as string)
+									: v === 'true' || v === 'false'
+									? v === 'true'
+									: { $regex: v, $options: 'i' }
 						}))
 					};
 				} else if (key.match(/\.createdAt$/)) {
@@ -194,7 +195,7 @@ export const getByQueryAggregate = async (
 				}
 				return {
 					[key]:
-						key.includes('_id') || key.includes('clientId')
+						key.includes('_id') || key.includes('clientId') || key.includes('tags')
 							? Types.ObjectId(value as string)
 							: value === 'true' || value === 'false'
 							? value === 'true'
