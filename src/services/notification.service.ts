@@ -99,20 +99,22 @@ export const extendNotification = async (
 				}
 			}
 		]);
-		query = {
-			$or: [
-				{
-					'subscribed.projects': infoNote.project
-				},
-				{
-					'subscribed.testSystems': infoNote.testSystem
-				},
-				{
-					'subscribed.notes': model.id
-				},
-				{ isAdmin: true }
-			]
-		};
+		if (infoNote) {
+			query = {
+				$or: [
+					{
+						'subscribed.projects': infoNote.project
+					},
+					{
+						'subscribed.testSystems': infoNote.testSystem
+					},
+					{
+						'subscribed.notes': model.id
+					},
+					{ isAdmin: true }
+				]
+			};
+		}
 	}
 	await UserModel.updateMany(query, {
 		$addToSet: { notifications: { status: 'no read', notification: notification._id } }
