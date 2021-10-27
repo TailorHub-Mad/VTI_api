@@ -173,7 +173,10 @@ export const getByQueryAggregate = async (
 					return {
 						$and: value.map((v) => ({
 							[key]:
-								key.includes('_id') || key.includes('tags')
+								key.includes('_id') ||
+								key.includes('tags') ||
+								key.includes('vtiCode') ||
+								key.includes('sector')
 									? Types.ObjectId(v as string)
 									: v === 'true' || v === 'false'
 									? v === 'true'
@@ -195,7 +198,11 @@ export const getByQueryAggregate = async (
 				}
 				return {
 					[key]:
-						key.includes('_id') || key.includes('clientId') || key.includes('tags')
+						key.includes('_id') ||
+						key.includes('clientId') ||
+						key.includes('tags') ||
+						key.includes('vtiCode') ||
+						key.includes('sector')
 							? Types.ObjectId(value as string)
 							: value === 'true' || value === 'false'
 							? value === 'true'
