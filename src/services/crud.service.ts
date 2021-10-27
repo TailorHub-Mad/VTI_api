@@ -66,30 +66,38 @@ export const getAllAggregate = async (
 	pagination: Pagination,
 	_extends?: string,
 	order?: { [key: string]: -1 | 1 },
-	populates?: string[]
+	populates?: string[],
+	reqUser?: IReqUser
 ): Promise<unknown> => {
 	const transformExtendsToArray = _extends?.split('.');
 	const nameField = transformExtendsToArray?.slice(-1)[0];
 	return await aggregateCrud(
 		{ _extends, nameFild: nameField, querys: {}, group: 'null', populates },
 		pagination,
-		order
+		order,
+		reqUser
 	);
 };
 
 export const getByIdAggregate = async (
 	id: string,
 	_extends?: string,
-	populates?: string[]
+	populates?: string[],
+	reqUser?: IReqUser
 ): Promise<unknown> => {
 	const transformExtendsToArray = _extends?.split('.');
 	const nameField = transformExtendsToArray?.slice(-1)[0];
-	return await aggregateCrud({
-		_extends,
-		nameFild: nameField,
-		querys: { [`${nameField}._id`]: Types.ObjectId(id) },
-		populates
-	});
+	return await aggregateCrud(
+		{
+			_extends,
+			nameFild: nameField,
+			querys: { [`${nameField}._id`]: Types.ObjectId(id) },
+			populates
+		},
+		undefined,
+		undefined,
+		reqUser
+	);
 };
 
 export const getByQueryAggregate = async (
@@ -166,8 +174,8 @@ export const getByQueryAggregate = async (
 						$and: value.map((v) => ({
 							[key]: key.includes('_id')
 								? Types.ObjectId(v as string)
-								: v === 'true'
-								? true
+								: v === 'true' || v === 'false'
+								? v === 'true'
 								: { $regex: v, $options: 'i' }
 						}))
 					};
@@ -188,8 +196,8 @@ export const getByQueryAggregate = async (
 					[key]:
 						key.includes('_id') || key.includes('clientId')
 							? Types.ObjectId(value as string)
-							: value === 'true'
-							? true
+							: value === 'true' || value === 'false'
+							? value === 'true'
 							: { $regex: value, $options: 'i' }
 				};
 			})
@@ -211,6 +219,7 @@ export const getByQueryAggregate = async (
 			populates
 		},
 		pagination,
-		order
+		order,
+		reqUser
 	);
 };

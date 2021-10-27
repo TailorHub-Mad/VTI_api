@@ -4,7 +4,7 @@ import { groupAggregate, populateAggregate } from '@utils/aggregate.utils';
 import { FilterQuery, Types } from 'mongoose';
 import { IPopulateGroup } from '../interfaces/aggregate.interface';
 import { Pagination } from '../interfaces/config.interface';
-import { IClientModel } from '../interfaces/models.interface';
+import { IClientModel, IReqUser } from '../interfaces/models.interface';
 import { ClientModel } from '../models/client.model';
 import QueryString from 'qs';
 
@@ -50,7 +50,8 @@ export const aggregateCrud = async (
 		populates?: string[];
 	},
 	pagination?: Pagination,
-	order?: { [key: string]: -1 | 1 }
+	order?: { [key: string]: -1 | 1 },
+	reqUser?: IReqUser
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any[]> => {
 	const pipeline: unknown[] = match
@@ -65,6 +66,25 @@ export const aggregateCrud = async (
 		  ]
 		: [];
 
+	if (reqUser && reqUser?.role !== 'admin') {
+		const date = new Date();
+		pipeline.push({
+			$addFields: {
+				notes: {
+					$filter: {
+						input: '$notes',
+						as: 'note',
+						cond: {
+							$or: [
+								{ $gte: [date, '$$note.updateLimitDate'] },
+								{ $eq: ['$$note.owner', Types.ObjectId(reqUser?.id)] }
+							]
+						}
+					}
+				}
+			}
+		});
+	}
 	const fields = _extends?.split('.');
 	if (fields) {
 		fields.forEach((_, index, array) => {
@@ -75,6 +95,7 @@ export const aggregateCrud = async (
 			});
 		});
 	}
+
 	if (nameFild === 'notes') {
 		pipeline.push(
 			{
@@ -242,6 +263,14 @@ export const aggregateCrud = async (
 						}
 					},
 					{
+						$lookup: {
+							from: 'users',
+							localField: 'projects.notes.owner',
+							foreignField: '_id',
+							as: 'projects.notes.owner'
+						}
+					},
+					{
 						$replaceRoot: {
 							newRoot: { $mergeObjects: ['$projects'] }
 						}
@@ -330,6 +359,19 @@ export const aggregateCrud = async (
 						localField: 'notes.messages.owner',
 						foreignField: '_id',
 						as: 'notes.messages.owner'
+					}
+				},
+				{
+					$addFields: {
+						'notes.isDocuments': {
+							$cond: {
+								if: {
+									$and: [{ $size: ['$notes.documents'] }, { $size: ['$notes.messages.documents'] }]
+								},
+								then: true,
+								else: false
+							}
+						}
 					}
 				},
 				{
@@ -499,6 +541,14 @@ export const groupRepository = async <T, G extends string>(
 				}
 			},
 			{
+				$lookup: {
+					from: 'users',
+					localField: 'notes.owner',
+					foreignField: '_id',
+					as: 'notes.owner'
+				}
+			},
+			{
 				$addFields: {
 					'notes.projects': {
 						$filter: {
@@ -528,24 +578,14 @@ export const groupRepository = async <T, G extends string>(
 			}
 		);
 		if (!options?.populate) {
-			pipeline.push(
-				{
-					$lookup: {
-						from: 'tagnotes',
-						localField: 'notes.tags',
-						foreignField: '_id',
-						as: 'notes.tags'
-					}
-				},
-				{
-					$lookup: {
-						from: 'users',
-						localField: 'notes.owner',
-						foreignField: '_id',
-						as: 'notes.owner'
-					}
+			pipeline.push({
+				$lookup: {
+					from: 'tagnotes',
+					localField: 'notes.tags',
+					foreignField: '_id',
+					as: 'notes.tags'
 				}
-			);
+			});
 		}
 	}
 

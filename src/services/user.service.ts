@@ -674,7 +674,7 @@ export const getNotRead = async (user: IReqUser): Promise<any> => {
 					{
 						$match: {
 							$expr: {
-								$in: ['$$user', '$notes.readBy']
+								$not: { $in: ['$$user', '$notes.readBy'] }
 							}
 						}
 					},

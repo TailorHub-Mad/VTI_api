@@ -166,7 +166,8 @@ export const GetAllAggregate =
 				purgeObj(
 					Object.assign({}, new OrderAggregate(req.query as { [key: string]: 'asc' | 'desc' }))
 				),
-				populates
+				populates,
+				req.user
 			);
 			res.json(result);
 		} catch (err) {
@@ -183,7 +184,7 @@ export const GetByIdAggregate =
 		try {
 			const { id } = req.params;
 			if (!id || !isValidObjectId(id)) throw new BaseError('Not ID');
-			const result = await getByIdAggregate(id, field, populates);
+			const result = await getByIdAggregate(id, field, populates, req.user);
 			if (field === 'notes') {
 				await updateRepository<IClientDocument>(
 					ClientModel,
