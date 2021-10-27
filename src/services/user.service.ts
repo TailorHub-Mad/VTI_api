@@ -58,7 +58,223 @@ export const filterUser = async (query: QueryString.ParsedQs): Promise<IUserDocu
 	return users;
 };
 
-export const getFavorite = async (user: IReqUser): Promise<unknown> => {
+export const getFavoriteProjects = async (user: IReqUser): Promise<unknown> => {
+	const projects = await UserModel.aggregate([
+		{
+			$match: {
+				_id: Types.ObjectId(user.id)
+			}
+		},
+		{
+			$unwind: { path: '$favorites.projects' }
+		},
+		{
+			$lookup: {
+				from: 'clients',
+				let: {
+					projects: '$favorites.projects'
+				},
+				pipeline: [
+					{ $unwind: '$projects' },
+					{
+						$match: {
+							$expr: {
+								$eq: ['$projects._id', '$$projects']
+							}
+						}
+					},
+					{
+						$lookup: {
+							from: 'sectors',
+							localField: 'projects.sector',
+							foreignField: '_id',
+							as: 'projects.sector'
+						}
+					},
+					{
+						$lookup: {
+							from: 'tagprojects',
+							localField: 'projects.tags',
+							foreignField: '_id',
+							as: 'projects.tags'
+						}
+					},
+					{
+						$addFields: {
+							'projects.testSystems': {
+								$filter: {
+									input: '$notes',
+									as: 'note',
+									cond: {
+										$eq: ['$projects.notes', '$$note._id']
+									}
+								}
+							}
+						}
+					},
+					{
+						$addFields: {
+							'projects.notes': {
+								$filter: {
+									input: '$notes',
+									as: 'note',
+									cond: {
+										$in: ['$$note._id', '$projects.notes']
+									}
+								}
+							},
+							'projects.testSystems': {
+								$filter: {
+									input: '$notes',
+									as: 'note',
+									cond: {
+										$in: ['$$note._id', '$projects.testSystems']
+									}
+								}
+							}
+						}
+					},
+					{
+						$replaceRoot: {
+							newRoot: { $mergeObjects: ['$projects'] }
+						}
+					}
+				],
+				as: 'projects'
+			}
+		},
+		{
+			$project: {
+				projects: 1,
+				_id: 0
+			}
+		},
+		{
+			$unwind: {
+				path: '$projects'
+			}
+		},
+		{
+			$group: {
+				_id: null,
+				projects: {
+					$push: '$projects'
+				}
+			}
+		}
+	]);
+	return projects;
+};
+
+export const getSubscribersProjects = async (user: IReqUser): Promise<unknown> => {
+	const projects = await UserModel.aggregate([
+		{
+			$match: {
+				_id: Types.ObjectId(user.id)
+			}
+		},
+		{
+			$unwind: { path: '$subscribed.projects' }
+		},
+		{
+			$lookup: {
+				from: 'clients',
+				let: {
+					projects: '$subscribed.projects'
+				},
+				pipeline: [
+					{ $unwind: '$projects' },
+					{
+						$match: {
+							$expr: {
+								$eq: ['$projects._id', '$$projects']
+							}
+						}
+					},
+					{
+						$lookup: {
+							from: 'sectors',
+							localField: 'projects.sector',
+							foreignField: '_id',
+							as: 'projects.sector'
+						}
+					},
+					{
+						$lookup: {
+							from: 'tagprojects',
+							localField: 'projects.tags',
+							foreignField: '_id',
+							as: 'projects.tags'
+						}
+					},
+					{
+						$addFields: {
+							'projects.testSystems': {
+								$filter: {
+									input: '$notes',
+									as: 'note',
+									cond: {
+										$eq: ['$projects.notes', '$$note._id']
+									}
+								}
+							}
+						}
+					},
+					{
+						$addFields: {
+							'projects.notes': {
+								$filter: {
+									input: '$notes',
+									as: 'note',
+									cond: {
+										$in: ['$$note._id', '$projects.notes']
+									}
+								}
+							},
+							'projects.testSystems': {
+								$filter: {
+									input: '$notes',
+									as: 'note',
+									cond: {
+										$in: ['$$note._id', '$projects.testSystems']
+									}
+								}
+							}
+						}
+					},
+					{
+						$replaceRoot: {
+							newRoot: { $mergeObjects: ['$projects'] }
+						}
+					}
+				],
+				as: 'projects'
+			}
+		},
+		{
+			$project: {
+				projects: 1,
+				_id: 0
+			}
+		},
+		{
+			$unwind: {
+				path: '$projects'
+			}
+		},
+		{
+			$group: {
+				_id: null,
+				projects: {
+					$push: '$projects'
+				}
+			}
+		}
+	]);
+	return projects;
+};
+
+export const getFavoriteNotes = async (user: IReqUser): Promise<unknown> => {
 	const notes = await UserModel.aggregate([
 		{
 			$match: {
@@ -185,7 +401,7 @@ export const getFavorite = async (user: IReqUser): Promise<unknown> => {
 	]);
 	return notes;
 };
-export const getSubscribers = async (user: IReqUser): Promise<unknown> => {
+export const getSubscribersNotes = async (user: IReqUser): Promise<unknown> => {
 	const notes = await UserModel.aggregate([
 		{
 			$match: {

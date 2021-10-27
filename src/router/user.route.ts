@@ -3,10 +3,12 @@ import { Router } from 'express';
 import {
 	FilterUser,
 	GetActiveNote,
-	GetFavorites,
+	GetFavoritesNotes,
+	GetFavoritesProjects,
 	GetNoRead,
 	getProfile,
-	GetSubscribers,
+	GetSubscribersNotes,
+	GetSubscribersProjects,
 	Recovery,
 	ResetPassword
 } from '../controllers/user.controller';
@@ -24,9 +26,13 @@ router.post('/login', Login);
 
 router.get('/me', getProfile);
 
-router.get('/favorite', GetFavorites);
+router.get('/favorite/notes', GetFavoritesNotes);
 
-router.get('/subscribed', GetSubscribers);
+router.get('/subscribed/notes', GetSubscribersNotes);
+
+router.get('/favorite/projects', GetFavoritesProjects);
+
+router.get('/subscribed/projects', GetSubscribersProjects);
 
 router.get('/active', GetActiveNote);
 

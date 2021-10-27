@@ -4,9 +4,11 @@ import { Request, Response, NextFunction } from 'express';
 import {
 	filterUser,
 	getActiveNote,
-	getFavorite,
+	getFavoriteNotes,
 	getNotRead,
-	getSubscribers,
+	getSubscribersNotes,
+	getFavoriteProjects,
+	getSubscribersProjects,
 	recovery,
 	resetPassword
 } from '../services/user.service';
@@ -56,26 +58,51 @@ export const Recovery = async (req: Request, res: Response, next: NextFunction):
 	}
 };
 
-export const GetFavorites = async (
+export const GetFavoritesNotes = async (
 	req: Request,
 	res: Response,
 	next: NextFunction
 ): Promise<void> => {
 	try {
-		const notes = await getFavorite(req.user);
+		const notes = await getFavoriteNotes(req.user);
 		res.status(200).json(notes);
 	} catch (err) {
 		next(err);
 	}
 };
 
-export const GetSubscribers = async (
+export const GetSubscribersNotes = async (
 	req: Request,
 	res: Response,
 	next: NextFunction
 ): Promise<void> => {
 	try {
-		const notes = await getSubscribers(req.user);
+		const notes = await getSubscribersNotes(req.user);
+		res.status(200).json(notes);
+	} catch (err) {
+		next(err);
+	}
+};
+export const GetFavoritesProjects = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		const notes = await getFavoriteProjects(req.user);
+		res.status(200).json(notes);
+	} catch (err) {
+		next(err);
+	}
+};
+
+export const GetSubscribersProjects = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		const notes = await getSubscribersProjects(req.user);
 		res.status(200).json(notes);
 	} catch (err) {
 		next(err);
