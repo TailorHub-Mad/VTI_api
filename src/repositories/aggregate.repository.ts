@@ -494,10 +494,14 @@ export const aggregateCrud = async (
 						'notes.isDocuments': {
 							$cond: {
 								if: {
-									$and: [
+									$or: [
 										{ $size: ['$notes.documents'] },
-										{ $gt: ['$notes.messages.documents', null] },
-										{ $size: ['$notes.messages.documents'] }
+										{
+											$and: [
+												{ $gt: ['$notes.messages.documents', null] },
+												{ $size: ['$notes.messages.documents'] }
+											]
+										}
 									]
 								},
 								then: true,
