@@ -10,7 +10,7 @@ import { CreateTag, UpdateTag } from '../controllers/tag.controller';
 import { TagNoteModel } from '../models/tag_notes.model';
 import { TagProjectModel } from '../models/tag_project.model';
 import { ITagNoteDocument, ITagProjectDocument } from '../interfaces/models.interface';
-import { DeleteCrud, GetAll } from '../controllers/crud.controller';
+import { DeleteCrud, GetAll, ReadById } from '../controllers/crud.controller';
 import { FilterClient } from '../controllers/client.controller';
 
 const router = Router();
@@ -20,6 +20,13 @@ router.get('/notes', GetAll<ITagNoteDocument>(TagNoteModel, { path: 'relatedTags
 router.get(
 	'/projects',
 	GetAll<ITagProjectDocument>(TagProjectModel, { path: 'relatedTags parent' })
+);
+
+router.get('/notes/:id', ReadById<ITagNoteDocument>(TagNoteModel, { path: 'relatedTags parent' }));
+
+router.get(
+	'/projects/:id',
+	ReadById<ITagProjectDocument>(TagProjectModel, { path: 'relatedTags parent' })
 );
 
 router.get(
