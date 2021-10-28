@@ -129,6 +129,8 @@ export const PROJECT_TESTSYSTEMS = {
 		'testSystems.notes.owner.lastName': 1,
 		'testSystems._id': 1,
 		'testSystems.vtiCode': 1,
+		'testSystems.alias': 1,
+		'testSystems.ref': 1,
 		'testSystems.updatedAt': 1,
 		'testSystems.createdAt': 1,
 		'testSystems.clientAlias': 1,
