@@ -228,6 +228,16 @@ export interface IVtiCode {
 export interface IVtiCodeDocument extends IVtiCode, Document {}
 
 export type IVtiCodeModel = Model<IVtiCodeDocument>;
+
+export interface IFilter {
+	name: string;
+	type: string;
+	query: string;
+}
+
+export interface IFilterDocument extends IFilter, Document {}
+
+export type IFilterModel = Model<IFilterDocument>;
 export interface IReqUser {
 	id: string;
 	email: string;
