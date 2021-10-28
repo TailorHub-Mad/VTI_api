@@ -52,6 +52,7 @@ export const PROJECT_NOTES = {
 		'notes.isClosed': 1,
 		'notes.formalized': 1,
 		'notes._id': 1,
+		'notes.ref': 1,
 		'notes.title': 1,
 		'notes.description': 1,
 		'notes.link': 1,
