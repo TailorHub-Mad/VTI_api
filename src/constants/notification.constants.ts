@@ -14,12 +14,12 @@ export const TESTSYTEMS_NOTIFICATION = {
 };
 
 export const TAG_NOTE_NOTIFICATION = {
-	label: '*tag de apunte*',
+	label: '*tagapunte*',
 	model: 'tagNotes'
 };
 
 export const TAG_PROJECT_NOTIFICATION = {
-	label: '*tag de proyecto*',
+	label: '*tagproyecto*',
 	model: 'tagProjects'
 };
 
