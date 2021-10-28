@@ -117,6 +117,17 @@ export const getByQueryAggregate = async (
 		Object.assign({}, new OrderAggregate(query as { [key: string]: 'asc' | 'desc' }))
 	);
 
+	if (query['notes.ref'] && query['notes.title']) {
+		aux.push({
+			$or: [
+				{ 'notes.ref': { $regex: query['notes.ref'], $options: 'i' } },
+				{ 'notes.title': { $regex: query['notes.title'], $options: 'i' } }
+			]
+		});
+		delete query['notes.ref'];
+		delete query['notes.title'];
+	}
+
 	if ((query.subscribed || query.favorites || query.noRead) && reqUser) {
 		const user = await findOneRepository<IUserDocument>(UserModel, { _id: reqUser.id });
 		if (user) {
