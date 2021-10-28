@@ -1,5 +1,5 @@
 import { TYPES_FILTER } from '@constants/filter.constants';
-import Joi from 'Joi';
+import Joi from 'joi';
 
 export const createFilterValidation = Joi.object().keys({
 	name: Joi.string().required(),
