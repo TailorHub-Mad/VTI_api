@@ -48,6 +48,7 @@ export const PROJECT_NOTES = {
 	$project: {
 		'notes.tags._id': 1,
 		'notes.tags.name': 1,
+		'notes.year': 1,
 		'notes.readBy': 1,
 		'notes.isClosed': 1,
 		'notes.formalized': 1,
