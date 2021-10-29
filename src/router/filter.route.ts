@@ -2,13 +2,14 @@ import { Router } from 'express';
 import { IFilterDocument } from '../interfaces/models.interface';
 import { FilterModel } from '../models/filter.model';
 import { createFilterValidation } from '../validations/filter.validation';
-import { Create, DeleteCrud, Read } from '../controllers/crud.controller';
+import { Create, DeleteCrud } from '../controllers/crud.controller';
+import { GetFilters } from '../controllers/filter.controller';
 
 const router = Router();
 
-router.get('/simple', Read<IFilterDocument>(FilterModel, { type: 'simple' }));
+router.get('/simple', GetFilters({ type: 'simple' }));
 
-router.get('/complex', Read<IFilterDocument>(FilterModel, { type: 'complex' }));
+router.get('/complex', GetFilters({ type: 'complex' }));
 
 router.post('/', Create<IFilterDocument>(FilterModel, createFilterValidation));
 
