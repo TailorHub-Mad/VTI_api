@@ -5,5 +5,6 @@ export const createFilterValidation = Joi.object().keys({
 	name: Joi.string().required(),
 	type: Joi.string().valid(...TYPES_FILTER),
 	query: Joi.string().required(),
-	public: Joi.boolean()
+	public: Joi.boolean(),
+	object: Joi.string()
 });

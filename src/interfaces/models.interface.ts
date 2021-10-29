@@ -234,6 +234,7 @@ export interface IFilter {
 	type: string;
 	query: string;
 	public: boolean;
+	object: string;
 }
 
 export interface IFilterDocument extends IFilter, Document {}

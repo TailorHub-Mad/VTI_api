@@ -11,7 +11,7 @@ import {
 	update
 } from '../services/crud.service';
 import { getPagination } from '../utils/controllers.utils';
-import { GenericModel, IClientDocument } from '../interfaces/models.interface';
+import { GenericModel, IClientDocument, IClientModel } from '../interfaces/models.interface';
 import { BaseError } from '@errors/base.error';
 import { FilterQuery, isValidObjectId, PopulateOptions } from 'mongoose';
 import { OrderAggregate } from '@utils/order.utils';
@@ -21,6 +21,7 @@ import { UserModel } from '../models/user.model';
 import { sendMail } from '../config/nodemailer.config';
 import { updateRepository } from '../repositories/common.repository';
 import { ClientModel } from '../models/client.model';
+import { aggregateCrud } from '../repositories/aggregate.repository';
 
 // Creamos un controlador genérico usando una interface T que tendrá el valor del modelo que nosotros le pasemos.
 export const GetAll =
@@ -209,7 +210,20 @@ export const GetByQueryAggregate =
 			const pagination = getPagination(req.query);
 			delete req.query.limit;
 			delete req.query.offset;
-			const result = await getByQueryAggregate(query, pagination, field, populates, req.user);
+			// console.log(JSON.parse(req.query.query as string));
+			const result = req.query.query
+				? await aggregateCrud(
+						{
+							_extends: field,
+							nameFild: field,
+							querys: JSON.parse(req.query.query as string) as FilterQuery<IClientModel>,
+							populates
+						},
+						pagination,
+						undefined,
+						req.user
+				  )
+				: await getByQueryAggregate(query, pagination, field, populates, req.user);
 			res.json(result);
 		} catch (err) {
 			next(err);

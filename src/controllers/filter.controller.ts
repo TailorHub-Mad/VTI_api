@@ -13,6 +13,9 @@ export const GetFilters =
 			if (req.user.role !== 'admin') {
 				query.public = true;
 			}
+			if (req.query.object) {
+				query.object = req.query.object;
+			}
 			const document = await read<IFilterDocument>(FilterModel, query, pagination);
 			res.status(200).json(document);
 		} catch (err) {
