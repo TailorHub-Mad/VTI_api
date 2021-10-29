@@ -22,13 +22,6 @@ router.get(
 	GetAll<ITagProjectDocument>(TagProjectModel, { path: 'relatedTags parent' })
 );
 
-router.get('/notes/:id', ReadById<ITagNoteDocument>(TagNoteModel, { path: 'relatedTags parent' }));
-
-router.get(
-	'/projects/:id',
-	ReadById<ITagProjectDocument>(TagProjectModel, { path: 'relatedTags parent' })
-);
-
 router.get(
 	'/notes/filter',
 	FilterClient<ITagNoteDocument>(TagNoteModel, filterTagNoteValidation, {
@@ -41,6 +34,13 @@ router.get(
 	FilterClient<ITagProjectDocument>(TagProjectModel, filterTagProjectValidation, {
 		path: 'relatedTags parent'
 	})
+);
+
+router.get('/notes/:id', ReadById<ITagNoteDocument>(TagNoteModel, { path: 'relatedTags parent' }));
+
+router.get(
+	'/projects/:id',
+	ReadById<ITagProjectDocument>(TagProjectModel, { path: 'relatedTags parent' })
 );
 
 router.post('/notes', CreateTag<ITagNoteDocument>(TagNoteModel, createTagValidation, 'note'));
