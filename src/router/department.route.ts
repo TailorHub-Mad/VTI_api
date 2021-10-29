@@ -25,7 +25,7 @@ router.get(
 	ReadById<IDepartmentDocument>(DepartmentModel, {
 		path: 'users',
 		populate: { path: 'department' },
-		select: 'alias name lastName email'
+		select: '-password'
 	})
 );
 
