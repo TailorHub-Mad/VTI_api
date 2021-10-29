@@ -192,7 +192,7 @@ export const getByQueryAggregate = async (
 						};
 					}
 					return {
-						$and: value.map((v) => ({
+						$or: value.map((v) => ({
 							[key]:
 								key.includes('_id') ||
 								key.includes('tags') ||
