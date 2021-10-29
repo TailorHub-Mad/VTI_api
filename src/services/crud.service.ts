@@ -127,6 +127,16 @@ export const getByQueryAggregate = async (
 		delete query['notes.ref'];
 		delete query['notes.title'];
 	}
+	if (query['projects.ref'] && query['projects.alias']) {
+		aux.push({
+			$or: [
+				{ 'projects.ref': { $regex: query['projects.ref'], $options: 'i' } },
+				{ 'projects.alias': { $regex: query['projects.alias'], $options: 'i' } }
+			]
+		});
+		delete query['projects.ref'];
+		delete query['projects.alias'];
+	}
 
 	if ((query.subscribed || query.favorites || query.noRead) && reqUser) {
 		const user = await findOneRepository<IUserDocument>(UserModel, { _id: reqUser.id });

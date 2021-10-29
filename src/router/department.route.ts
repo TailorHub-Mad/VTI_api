@@ -20,7 +20,14 @@ router.get(
 	})
 );
 
-router.get('/:id', ReadById<IDepartmentDocument>(DepartmentModel, { path: 'users' }));
+router.get(
+	'/:id',
+	ReadById<IDepartmentDocument>(DepartmentModel, {
+		path: 'users',
+		populate: { path: 'department' },
+		select: 'alias name lastName email'
+	})
+);
 
 router.post('/create', Create<IDepartmentDocument>(DepartmentModel, createDepartmentValidation));
 
