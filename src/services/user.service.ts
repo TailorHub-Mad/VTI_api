@@ -984,5 +984,6 @@ export const getNotRead = async (user: IReqUser): Promise<any> => {
 			}
 		}
 	]);
+	console.log(notes);
 	return notes;
 };

@@ -89,6 +89,9 @@ export const createNote = async (
 	newClient.projects = newClient.projects.map((project) => {
 		if (project._id.equals(projectId)) {
 			project.notes.push(note._id);
+			if (!project.users.includes(user.id)) {
+				project.users.push(user.id);
+			}
 			isClosed = project.closed?.year;
 			if (project) {
 				updateRepository<IUserDocument>(
@@ -134,16 +137,21 @@ export const createMessage = async (
 		{ 'notes._id': validateIdNote },
 		{ $push: { 'notes.$.messages': message }, 'notes.$.readBy': [] }
 	);
-	await client?.save();
+
 	const _note = client?.notes.find(({ _id }) => _id.toString() === note);
 	const project = client?.projects.find(({ notes }) => notes.includes(new Types.ObjectId(note)));
 	if (project) {
+		if (!project.users.includes(user.id)) {
+			project.users.push(user.id);
+		}
+		console.log(client?.projects);
 		updateRepository<IUserDocument>(
 			UserModel,
 			{ _id: user.id },
 			{ $addToSet: { projectsComments: project.alias } }
 		);
 	}
+	await client?.save();
 
 	logger.notice(
 		`El usuario ${user.email} ha creado el mensaje con title ${validateBody.message} en el apunte ${_note?.title}`
