@@ -198,6 +198,14 @@ export const aggregateCrud = async (
 				},
 				{
 					$lookup: {
+						from: 'users',
+						localField: 'projects.users',
+						foreignField: '_id',
+						as: 'projects.users'
+					}
+				},
+				{
+					$lookup: {
 						from: 'tagprojects',
 						localField: 'projects.tags',
 						foreignField: '_id',

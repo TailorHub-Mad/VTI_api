@@ -203,6 +203,6 @@ export const PROJECT_PROJECTS = {
 		'projects.createdAt': 1,
 		'projects.updatedAt': 1,
 		'projects.closed': 1,
-		'projects.users': 1
+		'projects.users.alias': 1
 	}
 };

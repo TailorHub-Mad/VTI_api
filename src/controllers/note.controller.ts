@@ -28,7 +28,7 @@ export const CreateNote = async (
 		const { body, files, user } = req;
 		const info = await createNote(body, user, files as Express.Multer.File[] | undefined);
 		const notification = await createNotification(user, {
-			description: `Se ha creado un nuevo ${NOTES_NOTIFICATION.label}`,
+			description: `Se ha creado un nuevo apunte ${NOTES_NOTIFICATION.label}`,
 			urls: [
 				{
 					label: body?.title || NOTES_NOTIFICATION.label,
