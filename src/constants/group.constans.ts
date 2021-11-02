@@ -76,7 +76,7 @@ export const PROJECT_NOTES = {
 		'notes.messages.owner.lastName': 1,
 		'notes.messages.owner.ref': 1,
 		'notes.messages.owner.documents': 1,
-		'notes.messages.owner.updateLimitDate': 1,
+		'notes.messages.updateLimitDate': 1,
 		'notes.messages.owner.createdAt': 1,
 		'notes.messages.owner.updatedAt': 1,
 		'notes.updateLimitDate': 1,
