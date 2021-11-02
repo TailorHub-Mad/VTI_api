@@ -25,6 +25,7 @@ export const updateNoteValidationAdmin = Joi.object().keys({
 	isClosed: Joi.boolean(),
 	formalized: Joi.boolean(),
 	tags: Joi.array().items(mongoIdValidation),
+	testSystems: Joi.array().items(mongoIdValidation),
 	documents: Joi.array().items(
 		Joi.object({
 			_id: mongoIdValidation,
