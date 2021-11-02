@@ -610,6 +610,10 @@ export const groupRepository = async <T, G extends string>(
 ): Promise<T[]> => {
 	const searchField = group.split('.');
 	searchField.splice(-1);
+	const union = query?.union ? '$and' : '$or';
+	if (query?.union) {
+		delete query.union;
+	}
 	const transformQueryToArray = query
 		? Object.entries(query!).map(([key, value]) => {
 				if (Array.isArray(value)) {
@@ -635,7 +639,7 @@ export const groupRepository = async <T, G extends string>(
 	const transformQuery =
 		transformQueryToArray.length > 0
 			? {
-					$or: transformQueryToArray
+					[union]: transformQueryToArray
 			  }
 			: {};
 	const pipeline = [];
@@ -749,7 +753,8 @@ export const groupRepository = async <T, G extends string>(
 				$addFields: {
 					'testSystems.vtiCode': {
 						$arrayElemAt: ['$testSystems.vtiCode', 0]
-					}
+					},
+					[`${field}.clientAlias`]: '$alias'
 				}
 			},
 			{

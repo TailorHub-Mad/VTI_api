@@ -196,7 +196,7 @@ export const getByQueryAggregate = async (
 							[key]:
 								key.includes('_id') ||
 								key.includes('tags') ||
-								key.includes('vtiCode') ||
+								(key.includes('vtiCode') && _extends !== 'testSystems') ||
 								key.includes('sector')
 									? Types.ObjectId(v as string)
 									: v === 'true' || v === 'false'
@@ -222,7 +222,7 @@ export const getByQueryAggregate = async (
 						key.includes('_id') ||
 						key.includes('clientId') ||
 						key.includes('tags') ||
-						key.includes('vtiCode') ||
+						(key.includes('vtiCode') && _extends !== 'testSystems') ||
 						key.includes('sector')
 							? Types.ObjectId(value as string)
 							: value === 'true' || value === 'false'

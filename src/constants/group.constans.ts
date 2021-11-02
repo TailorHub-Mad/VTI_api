@@ -4,7 +4,6 @@ export const GROUP_PROJECT = [
 	'clientAlias',
 	'alias',
 	'years',
-	'sector.0.title',
 	'date.year',
 	'tags.name',
 	'tags'
@@ -69,6 +68,8 @@ export const PROJECT_NOTES = {
 		'notes.messages.formalized': 1,
 		'notes.messages.message': 1,
 		'notes.messages.documents': 1,
+		'notes.messages.updatedAt': 1,
+		'notes.messages.createdAt': 1,
 		'notes.messages.owner._id': 1,
 		'notes.messages.owner.alias': 1,
 		'notes.messages.owner.name': 1,
@@ -88,7 +89,10 @@ export const PROJECT_NOTES = {
 		'notes.projects.date': 1,
 		'notes.projects.ref': 1,
 		'notes.projects.closed': 1,
+		'notes.projects.tags': 1,
+		'notes.projects.users': 1,
 		'notes.testSystems._id': 1,
+		'notes.testSystems.date.year': 1,
 		'notes.testSystems.vtiCode': 1,
 		'notes.testSystems.alias': 1,
 		'notes.testSystems.ref': 1,
@@ -104,6 +108,9 @@ export const PROJECT_TESTSYSTEMS = {
 		'testSystems.projects.ref': 1,
 		'testSystems.projects.closed': 1,
 		'testSystems.projects.date': 1,
+		'testSystems.projects.users': 1,
+		'testSystems.projects.tags': 1,
+		'testSystems.projects.sector': 1,
 		'testSystems.notes.tags.name': 1,
 		'testSystems.notes.tags.ref': 1,
 		'testSystems.notes.tags._id': 1,
@@ -130,6 +137,7 @@ export const PROJECT_TESTSYSTEMS = {
 		'testSystems.notes.owner.ref': 1,
 		'testSystems.notes.owner.email': 1,
 		'testSystems.notes.owner.lastName': 1,
+		'testSystems.date.year': 1,
 		'testSystems._id': 1,
 		'testSystems.vtiCode': 1,
 		'testSystems.alias': 1,
@@ -151,6 +159,7 @@ export const PROJECT_PROJECTS = {
 		'projects.focusPoint.alias': 1,
 		'projects.testSystems._id': 1,
 		'projects.testSystems.vtiCode': 1,
+		'projects.testSystems.date.year': 1,
 		'projects.testSystems.alias': 1,
 		'projects.testSystems.ref': 1,
 		'projects.tags.ref': 1,
@@ -193,6 +202,7 @@ export const PROJECT_PROJECTS = {
 		'projects.isActive': 1,
 		'projects.createdAt': 1,
 		'projects.updatedAt': 1,
-		'projects.closed': 1
+		'projects.closed': 1,
+		'projects.users': 1
 	}
 };
