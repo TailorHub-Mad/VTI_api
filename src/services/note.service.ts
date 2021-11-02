@@ -7,6 +7,7 @@ import {
 } from '../validations/note.validation';
 import {
 	IClientDocument,
+	IClientModel,
 	IMessage,
 	INote,
 	INoteDocument,
@@ -29,9 +30,9 @@ import { mongoIdValidation } from '../validations/common.validation';
 import { MessageModel } from '../models/message.model';
 import { GROUP_NOTES } from '@constants/group.constans';
 import QueryString from 'qs';
-import { groupRepository } from '../repositories/aggregate.repository';
+import { aggregateCrud, groupRepository } from '../repositories/aggregate.repository';
 import { IPopulateGroup } from '../interfaces/aggregate.interface';
-import { Model, Types } from 'mongoose';
+import { FilterQuery, Model, Types } from 'mongoose';
 import { UserModel } from '../models/user.model';
 import { TagNoteModel } from '../models/tag_notes.model';
 import { deleteModelInClientRepository } from '../repositories/client.repository';
@@ -238,8 +239,10 @@ export const updateMessage = async (
 
 export const groupNotes = async (query: QueryString.ParsedQs): Promise<INote[]> => {
 	const group = { group: query.group, real: query.real };
+	const match = { query: query.query };
 	delete query.group;
 	delete query.real;
+	delete query.query;
 	const queryValid = await groupNotesValidation.validateAsync(group);
 	let populate: IPopulateGroup | undefined;
 	if (queryValid.group.includes('tags')) {
@@ -255,11 +258,13 @@ export const groupNotes = async (query: QueryString.ParsedQs): Promise<INote[]> 
 	if (queryValid.group === 'year') {
 		queryValid.group = 'notes.year';
 	}
+
 	const notes = await groupRepository<INote, typeof GROUP_NOTES[number]>(
 		queryValid.group,
 		'notes',
 		{ real: queryValid.real, populate },
-		query
+		query,
+		match.query ? (JSON.parse(match.query as string) as FilterQuery<IClientModel>) : undefined
 	);
 	return notes;
 };

@@ -29,11 +29,12 @@ export const userFilterAggregate = async (
 			}
 			return {
 				$and: value.map((v) => ({
-					[key]: key.includes('_id')
-						? Types.ObjectId(v as string)
-						: v === 'true'
-						? true
-						: { $regex: v, $options: 'i' }
+					[key]:
+						key.includes('_id') || key.includes('focusPoint')
+							? Types.ObjectId(v as string)
+							: v === 'true'
+							? true
+							: { $regex: v, $options: 'i' }
 				}))
 			};
 		} else if (key.match(/\.createdAt$/)) {
@@ -51,7 +52,7 @@ export const userFilterAggregate = async (
 		}
 		return {
 			[key]:
-				key.includes('_id') || key.includes('clientId')
+				key.includes('_id') || key.includes('clientId') || key.includes('focusPoint')
 					? Types.ObjectId(value as string)
 					: value === 'true'
 					? true

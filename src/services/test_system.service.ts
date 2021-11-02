@@ -3,7 +3,7 @@ import {
 	groupTestSystemValidation,
 	updateTestSystemValidation
 } from '../validations/test_system.validation';
-import { IClient, ITestSystem } from '../interfaces/models.interface';
+import { IClient, IClientModel, ITestSystem } from '../interfaces/models.interface';
 import { BaseError } from '@errors/base.error';
 import { checkVtiCode } from '../repositories/test_system.repository';
 import {
@@ -17,6 +17,7 @@ import { IPopulateGroup } from '../interfaces/aggregate.interface';
 import { groupRepository } from '../repositories/aggregate.repository';
 import { GROUP_TEST_SYSTEM } from '@constants/group.constans';
 import { createRef } from '@utils/model.utils';
+import { FilterQuery } from 'mongoose';
 
 export const createTestSystem = async (body: Partial<IClient>): Promise<string | undefined> => {
 	const bodyValidation = await createTestSystemValidation.validateAsync(body);
@@ -51,7 +52,12 @@ export const updateTestSystem = async (
 };
 
 export const groupTestSystem = async (query: QueryString.ParsedQs): Promise<ITestSystem[]> => {
-	const queryValid = await groupTestSystemValidation.validateAsync(query);
+	const group = { group: query.group, real: query.real };
+	const match = { query: query.query };
+	delete query.query;
+	delete query.group;
+	delete query.real;
+	const queryValid = await groupTestSystemValidation.validateAsync(group);
 	let populate: IPopulateGroup | undefined;
 	if (queryValid.group.includes('tags')) {
 		queryValid.group = 'notes.tags.name';
@@ -61,7 +67,9 @@ export const groupTestSystem = async (query: QueryString.ParsedQs): Promise<ITes
 		queryValid.group,
 		'testSystems',
 		// {},
-		{ real: queryValid.real, populate }
+		{ real: queryValid.real, populate },
+		query,
+		match.query ? (JSON.parse(match.query as string) as FilterQuery<IClientModel>) : undefined
 	);
 	return testSystems;
 };

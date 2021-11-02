@@ -11,7 +11,12 @@ import {
 	orderProjectValidation,
 	updateProjectValidation
 } from '../validations/project.validation';
-import { IProjects, ISectorDocument, IUserDocument } from '../interfaces/models.interface';
+import {
+	IClientModel,
+	IProjects,
+	ISectorDocument,
+	IUserDocument
+} from '../interfaces/models.interface';
 import QueryString from 'qs';
 import { groupRepository } from '../repositories/aggregate.repository';
 import { GROUP_PROJECT } from '@constants/group.constans';
@@ -21,6 +26,7 @@ import { updateRepository } from '../repositories/common.repository';
 import { UserModel } from '../models/user.model';
 import { addToSetTags, createRef, updateTags } from '@utils/model.utils';
 import { TagProjectModel } from '../models/tag_project.model';
+import { FilterQuery } from 'mongoose';
 
 export const createProject = async (body: Partial<IProjects>): Promise<string | undefined> => {
 	const projectValidation = await createProjectValidation.validateAsync(body);
@@ -188,7 +194,12 @@ export const deleteProject = async (id_project: string): Promise<void> => {
 };
 
 export const orderProject = async (query: QueryString.ParsedQs): Promise<IProjects[]> => {
-	const queryValid = await orderProjectValidation.validateAsync(query);
+	const group = { group: query.group, real: query.real };
+	const match = { query: query.query };
+	delete query.query;
+	delete query.group;
+	delete query.real;
+	const queryValid = await orderProjectValidation.validateAsync(group);
 	let populate: IPopulateGroup | undefined;
 	if (queryValid.group.includes('tags')) {
 		queryValid.group = 'projects.tags.name';
@@ -198,7 +209,9 @@ export const orderProject = async (query: QueryString.ParsedQs): Promise<IProjec
 		queryValid.group,
 		'projects',
 		// {},
-		{ real: queryValid.real, populate }
+		{ real: queryValid.real, populate },
+		query,
+		match.query ? (JSON.parse(match.query as string) as FilterQuery<IClientModel>) : undefined
 	);
 	return projects;
 };

@@ -13,20 +13,20 @@ afterAll(async () => {
 
 describe('Aggregate', () => {
 	describe('Notes', () => {
-		it('All notes', async () => {
-			console.log('----------------->');
-			const notes = (
-				await aggregateCrud(
-					{ _extends: 'notes', nameFild: 'notes', querys: {}, group: 'null' },
-					pagination
-				)
-			)[0];
+		// it('All notes', async () => {
+		// 	console.log('----------------->');
+		// 	const notes = (
+		// 		await aggregateCrud(
+		// 			{ _extends: 'notes', nameFild: 'notes', querys: {}, group: 'null' },
+		// 			pagination
+		// 		)
+		// 	)[0];
 
-			console.log(notes.length);
-			const note = notes[0];
-			// expect(notes).toBeDefined();
-			// expect(note).toBeDefined();
-		});
+		// 	console.log(notes.length);
+		// 	const note = notes[0];
+		// 	// expect(notes).toBeDefined();
+		// 	// expect(note).toBeDefined();
+		// });
 		it('Find by title', async () => {
 			const { notes } = (
 				await aggregateCrud(
@@ -46,44 +46,44 @@ describe('Aggregate', () => {
 			expect(note).toBeDefined();
 			expect(note.title).toBe('ffbd6bb0409ac228');
 		});
-		it('All notes with limit = 10', async () => {
-			pagination.limit = 10;
-			const { notes } = (
-				await aggregateCrud(
-					{ _extends: 'notes', nameFild: 'notes', querys: {}, group: 'null' },
-					pagination
-				)
-			)[0];
+		// it('All notes with limit = 10', async () => {
+		// 	pagination.limit = 10;
+		// 	const { notes } = (
+		// 		await aggregateCrud(
+		// 			{ _extends: 'notes', nameFild: 'notes', querys: {}, group: 'null' },
+		// 			pagination
+		// 		)
+		// 	)[0];
 
-			const note = notes[0];
-			console.log(notes.length);
-			// expect(notes).toHaveLength(10);
-			// expect(note).toBeDefined();
-		});
-		it('All notes with limit and page', async () => {
-			pagination.limit = 10;
-			const { notes: notesPage0 } = (
-				await aggregateCrud(
-					{ _extends: 'notes', nameFild: 'notes', querys: {}, group: 'null' },
-					pagination
-				)
-			)[0];
+		// 	const note = notes[0];
+		// 	console.log(notes.length);
+		// 	// expect(notes).toHaveLength(10);
+		// 	// expect(note).toBeDefined();
+		// });
+		// it('All notes with limit and page', async () => {
+		// 	pagination.limit = 10;
+		// 	const { notes: notesPage0 } = (
+		// 		await aggregateCrud(
+		// 			{ _extends: 'notes', nameFild: 'notes', querys: {}, group: 'null' },
+		// 			pagination
+		// 		)
+		// 	)[0];
 
-			const { notes: notesPage1 } = (
-				await aggregateCrud(
-					{ _extends: 'notes', nameFild: 'notes', querys: {}, group: 'null' },
-					{ ...pagination, ...{ offset: 1 } }
-				)
-			)[0];
+		// 	const { notes: notesPage1 } = (
+		// 		await aggregateCrud(
+		// 			{ _extends: 'notes', nameFild: 'notes', querys: {}, group: 'null' },
+		// 			{ ...pagination, ...{ offset: 1 } }
+		// 		)
+		// 	)[0];
 
-			const notePage0 = notesPage0[0];
-			const notePage1 = notesPage1[0];
-			// expect(notesPage0).toBeDefined();
-			// expect(notesPage1).toBeDefined();
-			// expect(notePage0).toBeDefined();
-			// expect(notePage1).toBeDefined();
-			// expect(notePage0._id).not.toBe(notePage1._id);
-		});
+		// 	const notePage0 = notesPage0[0];
+		// 	const notePage1 = notesPage1[0];
+		// 	// expect(notesPage0).toBeDefined();
+		// 	// expect(notesPage1).toBeDefined();
+		// 	// expect(notePage0).toBeDefined();
+		// 	// expect(notePage1).toBeDefined();
+		// 	// expect(notePage0._id).not.toBe(notePage1._id);
+		// });
 	});
 
 	describe('Clients', () => {

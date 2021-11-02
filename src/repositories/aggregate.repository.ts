@@ -606,7 +606,8 @@ export const groupRepository = async <T, G extends string>(
 	group: G,
 	field: string,
 	options?: { real?: boolean; populate?: IPopulateGroup },
-	query?: QueryString.ParsedQs
+	query?: QueryString.ParsedQs,
+	match?: FilterQuery<IClientModel>
 ): Promise<T[]> => {
 	const searchField = group.split('.');
 	searchField.splice(-1);
@@ -713,6 +714,15 @@ export const groupRepository = async <T, G extends string>(
 						$dateToString: {
 							date: '$notes.createdAt',
 							format: '%Y'
+						}
+					},
+					'notes.isAnswered': {
+						$cond: {
+							if: {
+								$size: ['$notes.messages']
+							},
+							then: true,
+							else: false
 						}
 					}
 				}
@@ -902,7 +912,7 @@ export const groupRepository = async <T, G extends string>(
 			$unwind: `$${field}`
 		},
 		{
-			$match: transformQuery || {}
+			$match: match || transformQuery || {}
 		},
 		{
 			$project: {
