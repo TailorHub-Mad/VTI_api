@@ -776,7 +776,8 @@ export const groupRepository = async <T, G extends string>(
 							then: true,
 							else: false
 						}
-					}
+					},
+					[`${field}.clientAlias`]: '$alias'
 				}
 			}
 		);
