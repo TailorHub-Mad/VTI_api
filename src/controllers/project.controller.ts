@@ -28,7 +28,7 @@ export const CreateProject = async (
 			],
 			type: NEW_PROJECT
 		});
-		await extendNotification({ field: PROJECTS_NOTIFICATION.model, id: id! }, notification, true);
+		await extendNotification({ field: PROJECTS_NOTIFICATION.model, id: id! }, notification);
 		logger.notice(`El usuario ${user.email} ha creado un proyecto con el alias ${body.alias}`);
 		res.sendStatus(201);
 	} catch (err) {
