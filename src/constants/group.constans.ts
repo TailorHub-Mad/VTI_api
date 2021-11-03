@@ -68,6 +68,7 @@ export const PROJECT_NOTES = {
 		'notes.messages.formalized': 1,
 		'notes.messages.message': 1,
 		'notes.messages.documents': 1,
+		'notes.messages.link': 1,
 		'notes.messages.updatedAt': 1,
 		'notes.messages.createdAt': 1,
 		'notes.messages.owner._id': 1,
