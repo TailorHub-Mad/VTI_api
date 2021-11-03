@@ -30,7 +30,8 @@ export const CreateTestSystem = async (
 		});
 		await extendNotification(
 			{ field: TESTSYTEMS_NOTIFICATION.model, id: testSystemId! },
-			notification
+			notification,
+			true
 		);
 		logger.notice(
 			`El usuario ${user.email} ha creado un sistema de ensayo con el alias ${body.alias}`

@@ -28,11 +28,11 @@ export const createNotification = async (
 export const extendNotification = async (
 	model: { field: string; id: string },
 	notification?: INotificationDocument,
-	forAdmin?: boolean
+	forAll?: boolean
 ): Promise<void> => {
 	if (!notification) return;
-	let query = forAdmin
-		? { isAdmin: true }
+	let query = forAll
+		? {}
 		: { $or: [{ [`subscribed.${model.field}`]: model.id }, { isAdmin: true }] };
 
 	if (model.field === 'notes') {
