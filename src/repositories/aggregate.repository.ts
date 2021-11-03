@@ -4,10 +4,12 @@ import { groupAggregate, populateAggregate } from '@utils/aggregate.utils';
 import { FilterQuery, Types } from 'mongoose';
 import { IPopulateGroup } from '../interfaces/aggregate.interface';
 import { Pagination } from '../interfaces/config.interface';
-import { IClientModel, IReqUser } from '../interfaces/models.interface';
+import { IClientModel, IReqUser, IUserDocument } from '../interfaces/models.interface';
 import { ClientModel } from '../models/client.model';
 import QueryString from 'qs';
 import { PROJECT_NOTES, PROJECT_PROJECTS, PROJECT_TESTSYSTEMS } from '@constants/group.constans';
+import { findOneRepository } from './common.repository';
+import { UserModel } from 'src/models/user.model';
 
 /**
  *
@@ -615,7 +617,8 @@ export const groupRepository = async <T, G extends string>(
 	field: string,
 	options?: { real?: boolean; populate?: IPopulateGroup },
 	query?: QueryString.ParsedQs,
-	match?: FilterQuery<IClientModel>
+	match?: QueryString.ParsedQs,
+	reqUser?: IReqUser
 ): Promise<T[]> => {
 	const searchField = group.split('.');
 	searchField.splice(-1);
@@ -623,27 +626,68 @@ export const groupRepository = async <T, G extends string>(
 	if (query?.union) {
 		delete query.union;
 	}
-	const transformQueryToArray = query
-		? Object.entries(query!).map(([key, value]) => {
-				if (Array.isArray(value)) {
-					return {
-						$and: value.map((v) => ({
-							[key]: key.includes('_id')
-								? Types.ObjectId(v as string)
-								: v === 'true'
-								? true
-								: { $regex: v, $options: 'i' }
-						}))
-					};
+	const aux = [];
+	if ((query?.subscribed || query?.favorites || query?.noRead) && reqUser) {
+		const user = await findOneRepository<IUserDocument>(UserModel, { _id: reqUser.id });
+		if (user) {
+			if (query?.subscribed) {
+				delete query.subscribed;
+				if (user.subscribed.notes.length > 0) {
+					aux.push({
+						$or: user.subscribed.notes.map((note) => ({ 'notes._id': Types.ObjectId(note) }))
+					});
+				} else {
+					return [];
 				}
-				return {
-					[key]: key.includes('_id')
-						? Types.ObjectId(value as string)
-						: value === 'true'
-						? true
-						: { $regex: value, $options: 'i' }
-				};
-		  })
+			}
+			if (query?.favorites) {
+				delete query.favorites;
+				if (user.favorites.notes.length > 0) {
+					aux.push({
+						$or: user.favorites.notes.map((note) => ({ 'notes._id': Types.ObjectId(note) }))
+					});
+				} else {
+					return [];
+				}
+			}
+			if (query?.noRead) {
+				delete query.noRead;
+				aux.push({ 'notes.readBy': Types.ObjectId(user._id) });
+			}
+		}
+	}
+	const transformQueryToArray = query
+		? [
+				...Object.entries(query!).map(([key, value]) => {
+					if (Array.isArray(value)) {
+						return {
+							$and: value.map((v) => ({
+								[key]:
+									key.includes('_id') ||
+									key.includes('tags') ||
+									(key.includes('vtiCode') && field !== 'testSystems') ||
+									key.includes('sector')
+										? Types.ObjectId(v as string)
+										: v === 'true'
+										? true
+										: { $regex: v, $options: 'i' }
+							}))
+						};
+					}
+					return {
+						[key]:
+							key.includes('_id') ||
+							key.includes('tags') ||
+							(key.includes('vtiCode') && field !== 'testSystems') ||
+							key.includes('sector')
+								? Types.ObjectId(value as string)
+								: value === 'true'
+								? true
+								: { $regex: value, $options: 'i' }
+					};
+				}),
+				...aux
+		  ]
 		: [];
 	const transformQuery =
 		transformQueryToArray.length > 0

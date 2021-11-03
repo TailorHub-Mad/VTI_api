@@ -245,7 +245,10 @@ export const updateMessage = async (
 	}
 };
 
-export const groupNotes = async (query: QueryString.ParsedQs): Promise<INote[]> => {
+export const groupNotes = async (
+	query: QueryString.ParsedQs,
+	reqUser: IReqUser
+): Promise<INote[]> => {
 	const group = { group: query.group, real: query.real };
 	const match = { query: query.query };
 	delete query.group;
@@ -272,7 +275,8 @@ export const groupNotes = async (query: QueryString.ParsedQs): Promise<INote[]> 
 		'notes',
 		{ real: queryValid.real, populate },
 		query,
-		match.query ? (JSON.parse(match.query as string) as FilterQuery<IClientModel>) : undefined
+		match.query ? (JSON.parse(match.query as string) as FilterQuery<IClientModel>) : undefined,
+		reqUser
 	);
 	return notes;
 };

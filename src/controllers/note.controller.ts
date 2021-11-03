@@ -174,7 +174,7 @@ export const GroupNotes = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
-		const notes = await groupNotes(req.query);
+		const notes = await groupNotes(req.query, req.user);
 		res.json(notes);
 	} catch (err) {
 		next(err);
