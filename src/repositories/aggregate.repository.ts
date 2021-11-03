@@ -9,7 +9,7 @@ import { ClientModel } from '../models/client.model';
 import QueryString from 'qs';
 import { PROJECT_NOTES, PROJECT_PROJECTS, PROJECT_TESTSYSTEMS } from '@constants/group.constans';
 import { findOneRepository } from './common.repository';
-import { UserModel } from 'src/models/user.model';
+import { UserModel } from '../models/user.model';
 
 /**
  *
