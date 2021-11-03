@@ -100,16 +100,11 @@ export const getFavoriteProjects = async (user: IReqUser): Promise<unknown> => {
 						}
 					},
 					{
-						$addFields: {
-							'projects.testSystems': {
-								$filter: {
-									input: '$notes',
-									as: 'note',
-									cond: {
-										$eq: ['$projects.notes', '$$note._id']
-									}
-								}
-							}
+						$lookup: {
+							from: 'users',
+							localField: 'projects.focusPoint',
+							foreignField: '_id',
+							as: 'projects.focusPoint'
 						}
 					},
 					{
@@ -125,7 +120,7 @@ export const getFavoriteProjects = async (user: IReqUser): Promise<unknown> => {
 							},
 							'projects.testSystems': {
 								$filter: {
-									input: '$notes',
+									input: '$testSystems',
 									as: 'note',
 									cond: {
 										$in: ['$$note._id', '$projects.testSystems']
