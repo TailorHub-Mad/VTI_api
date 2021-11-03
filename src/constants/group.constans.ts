@@ -91,6 +91,7 @@ export const PROJECT_NOTES = {
 		'notes.projects.closed': 1,
 		'notes.projects.tags': 1,
 		'notes.projects.users': 1,
+		'notes.projects.sector.title': 1,
 		'notes.testSystems._id': 1,
 		'notes.testSystems.date.year': 1,
 		'notes.testSystems.vtiCode': 1,
