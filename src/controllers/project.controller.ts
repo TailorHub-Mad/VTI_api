@@ -18,7 +18,7 @@ export const CreateProject = async (
 		const { body, user } = req;
 		const id = await createProject(body);
 		const notification = await createNotification(user, {
-			description: `Se ha creado un nuevo mensaje en el ${PROJECTS_NOTIFICATION.label}`,
+			description: `Se ha creado un nuevo proyecto: ${PROJECTS_NOTIFICATION.label}`,
 			urls: [
 				{
 					label: body.alias || PROJECTS_NOTIFICATION.label,

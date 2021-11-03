@@ -18,7 +18,7 @@ export const CreateTestSystem = async (
 		const { body, user } = req;
 		const testSystemId = await createTestSystem(body);
 		const notification = await createNotification(user, {
-			description: `Se ha creado un nuevo sitema de ensayo ${TESTSYTEMS_NOTIFICATION.label}`,
+			description: `Se ha creado un nuevo sitema de ensayo: ${TESTSYTEMS_NOTIFICATION.label}`,
 			urls: [
 				{
 					label: body.alias || TESTSYTEMS_NOTIFICATION.label,

@@ -533,6 +533,29 @@ export const aggregateCrud = async (
 						},
 						messages: {
 							$push: '$messages'
+						},
+						isDocuments: {
+							$push: '$isDocuments'
+						}
+					}
+				},
+				{
+					$addFields: {
+						isDocuments: {
+							$filter: {
+								input: '$isDocuments',
+								as: 'isDocument',
+								cond: {
+									$eq: ['$$isDocument', true]
+								}
+							}
+						}
+					}
+				},
+				{
+					$addFields: {
+						'notes.isDocuments': {
+							$arrayElemAt: ['$isDocuments', 0]
 						}
 					}
 				},
@@ -661,7 +684,7 @@ export const groupRepository = async <T, G extends string>(
 				...Object.entries(query!).map(([key, value]) => {
 					if (Array.isArray(value)) {
 						return {
-							$and: value.map((v) => ({
+							$or: value.map((v) => ({
 								[key]:
 									key.includes('_id') ||
 									key.includes('tags') ||

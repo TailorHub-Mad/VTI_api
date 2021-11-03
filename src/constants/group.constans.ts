@@ -6,6 +6,7 @@ export const GROUP_PROJECT = [
 	'years',
 	'date.year',
 	'tags.name',
+	'sector.0.title',
 	'tags'
 ] as const;
 
