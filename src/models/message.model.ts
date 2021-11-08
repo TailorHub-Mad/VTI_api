@@ -11,7 +11,7 @@ export const messageSchema = new Schema<IMessageDocument, IMessageModel>(
 			type: Date,
 			default: () => {
 				const date = new Date();
-				date.setHours(date.getHours() + 1);
+				date.setMinutes(date.getMinutes() + 1);
 				return date;
 			}
 		},

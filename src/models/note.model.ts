@@ -14,7 +14,7 @@ export const noteSchema = new Schema<INoteDocument, INoteModel>(
 			type: Date,
 			default: () => {
 				const date = new Date();
-				date.setHours(date.getHours() + 1);
+				date.setMinutes(date.getMinutes() + 1);
 				return date;
 			}
 		}, // TODO: crear función generadora de fechas por limite de timepo
