@@ -9,9 +9,8 @@ import * as loaders from './loaders';
 import cookieParser from 'cookie-parser';
 import compression from 'compression';
 import { errorHandler } from './middleware/error.middleware';
-import redisLoader from './loaders/redis.loader';
 import dbLoader from './loaders/db.loader';
-// import './loaders/backup.loader';
+import { cronjobs } from '@utils/cronjobs.utils';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const packageJson = require('../package.json');
 
@@ -56,6 +55,7 @@ dbLoader
 			logger.info(`${packageJson.name} ${packageJson.version} listening on port ${PORT}!`);
 			logger.info(`PROD mode is ${process.env.NODE_ENV === 'production' ? 'ON' : 'OFF'}`);
 			logger.info(`Running on port ${PORT}`);
+			cronjobs();
 		});
 
 		process.on('SIGINT', function () {
