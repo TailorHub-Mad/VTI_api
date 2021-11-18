@@ -802,6 +802,11 @@ export const groupRepository = async <T, G extends string>(
 					},
 					[`${field}.clientAlias`]: '$alias'
 				}
+			},
+			{
+				$sort: {
+					title: 1
+				}
 			}
 		);
 		if (!options?.populate) {
@@ -846,6 +851,11 @@ export const groupRepository = async <T, G extends string>(
 			{
 				$addFields: {
 					'testSystems.vtiCode': '$testSystems.vtiCode.name'
+				}
+			},
+			{
+				$sort: {
+					alias: 1
 				}
 			}
 		);

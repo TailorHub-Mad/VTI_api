@@ -86,11 +86,17 @@ export const addGroup = (
 	}
 };
 
+const orders = {
+	notes: 'title',
+	projects: 'alias',
+	testSystems: 'alias'
+};
+
 export const groupAggregate = <T, G extends string>(
 	properties: any[],
 	{ group, field, real }: { group: G; field: string; real?: boolean }
 ): T[] => {
-	return properties.reduce((projectsGroup, { aux }) => {
+	const obj = properties.reduce((projectsGroup, { aux }) => {
 		const valueGroup = group.split('.'); // .filter((property) => property !== field);
 		let value = valueGroup.reduce((field, property) => {
 			if (field) {
@@ -109,4 +115,13 @@ export const groupAggregate = <T, G extends string>(
 		}
 		return projectsGroup;
 	}, {} as { [key: string]: T[] });
+	const order = Object.keys(obj).sort((keyA, keyB) => keyA.localeCompare(keyB));
+	const fieldOrder = orders[field as 'notes'];
+	const newObj = order.reduce((acc, key) => {
+		acc[key] = obj[key].sort((keyA: { title: string }, keyB: { title: string }) =>
+			keyA[fieldOrder as 'title'].localeCompare(keyB[fieldOrder as 'title'])
+		);
+		return acc;
+	}, {} as { [key: string]: T[] });
+	return newObj as any;
 };
