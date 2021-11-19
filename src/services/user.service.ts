@@ -150,6 +150,11 @@ export const getFavoriteProjects = async (user: IReqUser): Promise<unknown> => {
 			}
 		},
 		{
+			$sort: {
+				alias: 1
+			}
+		},
+		{
 			$group: {
 				_id: null,
 				projects: {
@@ -157,7 +162,10 @@ export const getFavoriteProjects = async (user: IReqUser): Promise<unknown> => {
 				}
 			}
 		}
-	]);
+	]).collation({
+		locale: 'es',
+		numericOrdering: true
+	});
 	return projects;
 };
 
@@ -248,6 +256,11 @@ export const getSubscribersProjects = async (user: IReqUser): Promise<unknown> =
 			}
 		},
 		{
+			$sort: {
+				alias: 1
+			}
+		},
+		{
 			$unwind: {
 				path: '$projects'
 			}
@@ -260,7 +273,10 @@ export const getSubscribersProjects = async (user: IReqUser): Promise<unknown> =
 				}
 			}
 		}
-	]);
+	]).collation({
+		locale: 'es',
+		numericOrdering: true
+	});
 	return projects;
 };
 
@@ -381,6 +397,11 @@ export const getFavoriteNotes = async (user: IReqUser): Promise<unknown> => {
 			}
 		},
 		{
+			$sort: {
+				'notes.title': 1
+			}
+		},
+		{
 			$group: {
 				_id: null,
 				notes: {
@@ -388,7 +409,10 @@ export const getFavoriteNotes = async (user: IReqUser): Promise<unknown> => {
 				}
 			}
 		}
-	]);
+	]).collation({
+		locale: 'es',
+		numericOrdering: true
+	});
 	return notes;
 };
 export const getSubscribersNotes = async (user: IReqUser): Promise<unknown> => {
@@ -712,6 +736,11 @@ export const getSubscribersNotes = async (user: IReqUser): Promise<unknown> => {
 			}
 		},
 		{
+			$sort: {
+				'notes.title': 1
+			}
+		},
+		{
 			$group: {
 				_id: null,
 				notes: {
@@ -719,7 +748,10 @@ export const getSubscribersNotes = async (user: IReqUser): Promise<unknown> => {
 				}
 			}
 		}
-	]);
+	]).collation({
+		locale: 'es',
+		numericOrdering: true
+	});
 	return notes;
 };
 export const getActiveNote = async (user: IReqUser): Promise<unknown> => {
@@ -847,6 +879,11 @@ export const getActiveNote = async (user: IReqUser): Promise<unknown> => {
 			}
 		},
 		{
+			$sort: {
+				'notes.title': 1
+			}
+		},
+		{
 			$group: {
 				_id: null,
 				notes: {
@@ -854,7 +891,10 @@ export const getActiveNote = async (user: IReqUser): Promise<unknown> => {
 				}
 			}
 		}
-	]);
+	]).collation({
+		locale: 'es',
+		numericOrdering: true
+	});
 	return notes;
 };
 export const getNotRead = async (user: IReqUser): Promise<any> => {
@@ -971,6 +1011,11 @@ export const getNotRead = async (user: IReqUser): Promise<any> => {
 			}
 		},
 		{
+			$sort: {
+				'notes.title': 1
+			}
+		},
+		{
 			$group: {
 				_id: null,
 				notes: {
@@ -978,7 +1023,9 @@ export const getNotRead = async (user: IReqUser): Promise<any> => {
 				}
 			}
 		}
-	]);
-	console.log(notes);
+	]).collation({
+		locale: 'es',
+		numericOrdering: true
+	});
 	return notes;
 };
