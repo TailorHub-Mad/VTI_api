@@ -14,6 +14,7 @@ import QueryString from 'qs';
 import { UserModel } from '../models/user.model';
 import { purgeObj } from '@utils/index';
 import { OrderAggregate } from '@utils/order.utils';
+import { ClientModel } from 'src/models/client.model';
 
 export const getAll = async <Doc, M extends GenericModel<Doc>>(
 	model: M,
@@ -116,6 +117,11 @@ export const getByQueryAggregate = async (
 	const order = purgeObj(
 		Object.assign({}, new OrderAggregate(query as { [key: string]: 'asc' | 'desc' }))
 	);
+	Object.entries(query).forEach(([key, value]) => {
+		if (value === 'asc' || value === 'des') {
+			delete query[key];
+		}
+	});
 
 	if (query['notes.ref'] && query['notes.title']) {
 		aux.push({
@@ -143,9 +149,79 @@ export const getByQueryAggregate = async (
 		if (user) {
 			if (query.subscribed) {
 				delete query.subscribed;
-				if (user.subscribed.notes.length > 0) {
+				if (
+					user.subscribed.notes.length > 0 ||
+					user.subscribed.projects.length > 0 ||
+					user.subscribed.testSystems.length > 0
+				) {
+					const [projectNotesSubcribed] = await ClientModel.aggregate([
+						{
+							$unwind: {
+								path: '$projects'
+							}
+						},
+						{
+							$match: {
+								'projects._id': {
+									$in: user.subscribed.projects.map((project) => Types.ObjectId(project))
+								}
+							}
+						},
+						{
+							$project: {
+								notes: '$projects.notes'
+							}
+						},
+						{
+							$unwind: {
+								path: '$notes'
+							}
+						},
+						{
+							$group: {
+								_id: null,
+								notes: {
+									$push: '$notes'
+								}
+							}
+						}
+					]);
+					const [testSystemsNotesSubcribed] = await ClientModel.aggregate([
+						{
+							$unwind: {
+								path: '$testSystems'
+							}
+						},
+						{
+							$match: {
+								'testSystems._id': {
+									$in: user.subscribed.testSystems.map((testSystems) => Types.ObjectId(testSystems))
+								}
+							}
+						},
+						{
+							$project: {
+								notes: '$testSystems.notes'
+							}
+						},
+						{
+							$unwind: {
+								path: '$notes'
+							}
+						},
+						{
+							$group: {
+								_id: null,
+								notes: {
+									$push: '$notes'
+								}
+							}
+						}
+					]);
 					aux.push({
-						$or: user.subscribed.notes.map((note) => ({ 'notes._id': Types.ObjectId(note) }))
+						$or: (user.subscribed.notes || [])
+							.concat(projectNotesSubcribed?.notes || [], testSystemsNotesSubcribed?.notes || [])
+							.map((note) => ({ 'notes._id': Types.ObjectId(note) }))
 					});
 				} else {
 					return [];

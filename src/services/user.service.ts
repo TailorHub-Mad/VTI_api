@@ -9,6 +9,7 @@ import { updateRepository } from '../repositories/common.repository';
 import { recoveryValidation, resetPasswordValidation } from '../validations/user.validation';
 import QueryString from 'qs';
 import { userFilterAggregate } from '../repositories/user.repository';
+import { PROJECT_NOTES } from '@constants/group.constans';
 
 export const resetPassword = async (
 	body: { email: string },
@@ -349,6 +350,14 @@ export const getFavoriteNotes = async (user: IReqUser): Promise<unknown> => {
 						}
 					},
 					{
+						$lookup: {
+							from: 'users',
+							localField: 'notes.owner',
+							foreignField: '_id',
+							as: 'notes.owner'
+						}
+					},
+					{
 						$addFields: {
 							'notes.projects': {
 								$filter: {
@@ -408,7 +417,8 @@ export const getFavoriteNotes = async (user: IReqUser): Promise<unknown> => {
 					$push: '$notes'
 				}
 			}
-		}
+		},
+		PROJECT_NOTES
 	]).collation({
 		locale: 'es',
 		numericOrdering: true
@@ -481,6 +491,14 @@ export const getSubscribersNotes = async (user: IReqUser): Promise<unknown> => {
 							localField: 'notes.tags',
 							foreignField: '_id',
 							as: 'notes.tags'
+						}
+					},
+					{
+						$lookup: {
+							from: 'users',
+							localField: 'notes.owner',
+							foreignField: '_id',
+							as: 'notes.owner'
 						}
 					},
 					{
@@ -572,6 +590,14 @@ export const getSubscribersNotes = async (user: IReqUser): Promise<unknown> => {
 							localField: 'notes.tags',
 							foreignField: '_id',
 							as: 'notes.tags'
+						}
+					},
+					{
+						$lookup: {
+							from: 'users',
+							localField: 'notes.owner',
+							foreignField: '_id',
+							as: 'notes.owner'
 						}
 					},
 					{
@@ -680,6 +706,14 @@ export const getSubscribersNotes = async (user: IReqUser): Promise<unknown> => {
 						}
 					},
 					{
+						$lookup: {
+							from: 'users',
+							localField: 'notes.owner',
+							foreignField: '_id',
+							as: 'notes.owner'
+						}
+					},
+					{
 						$addFields: {
 							'notes.projects': {
 								$filter: {
@@ -780,7 +814,8 @@ export const getSubscribersNotes = async (user: IReqUser): Promise<unknown> => {
 					$push: { $arrayElemAt: ['$notes', 0] }
 				}
 			}
-		}
+		},
+		PROJECT_NOTES
 	]).collation({
 		locale: 'es',
 		numericOrdering: true
@@ -856,6 +891,14 @@ export const getActiveNote = async (user: IReqUser): Promise<unknown> => {
 						}
 					},
 					{
+						$lookup: {
+							from: 'users',
+							localField: 'notes.owner',
+							foreignField: '_id',
+							as: 'notes.owner'
+						}
+					},
+					{
 						$addFields: {
 							'notes.projects': {
 								$filter: {
@@ -923,7 +966,8 @@ export const getActiveNote = async (user: IReqUser): Promise<unknown> => {
 					$push: '$notes'
 				}
 			}
-		}
+		},
+		PROJECT_NOTES
 	]).collation({
 		locale: 'es',
 		numericOrdering: true
@@ -996,6 +1040,14 @@ export const getNotRead = async (user: IReqUser): Promise<any> => {
 						}
 					},
 					{
+						$lookup: {
+							from: 'users',
+							localField: 'notes.owner',
+							foreignField: '_id',
+							as: 'notes.owner'
+						}
+					},
+					{
 						$addFields: {
 							'notes.projects': {
 								$filter: {
@@ -1055,7 +1107,8 @@ export const getNotRead = async (user: IReqUser): Promise<any> => {
 					$push: '$notes'
 				}
 			}
-		}
+		},
+		PROJECT_NOTES
 	]).collation({
 		locale: 'es',
 		numericOrdering: true
