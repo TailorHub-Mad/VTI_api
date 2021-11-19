@@ -518,12 +518,12 @@ export const getSubscribersNotes = async (user: IReqUser): Promise<unknown> => {
 								$push: '$notes'
 							}
 						}
-					},
-					{
-						$replaceRoot: {
-							newRoot: { $mergeObjects: ['$notes'] }
-						}
 					}
+					// {
+					// 	$replaceRoot: {
+					// 		newRoot: { $mergeObjects: ['$notes'] }
+					// 	}
+					// }
 				],
 				as: 'notes'
 			}
@@ -559,13 +559,13 @@ export const getSubscribersNotes = async (user: IReqUser): Promise<unknown> => {
 							path: '$notes'
 						}
 					},
-					// {
-					// 	$match: {
-					// 		$expr: {
-					// 			$in: ['$notes._id', '$projects.notes']
-					// 		}
-					// 	}
-					// },
+					{
+						$match: {
+							$expr: {
+								$in: ['$notes._id', '$projects.notes']
+							}
+						}
+					},
 					{
 						$lookup: {
 							from: 'tagnotes',
@@ -601,12 +601,12 @@ export const getSubscribersNotes = async (user: IReqUser): Promise<unknown> => {
 								$push: '$notes'
 							}
 						}
-					},
-					{
-						$replaceRoot: {
-							newRoot: { $mergeObjects: ['$notes'] }
-						}
 					}
+					// {
+					// 	$replaceRoot: {
+					// 		newRoot: { $mergeObjects: ['$notes'] }
+					// 	}
+					// }
 				],
 				as: 'projectNotes'
 			}
@@ -664,13 +664,13 @@ export const getSubscribersNotes = async (user: IReqUser): Promise<unknown> => {
 							path: '$notes'
 						}
 					},
-					// {
-					// 	$match: {
-					// 		$expr: {
-					// 			$in: ['$notes._id', '$testSystems.notes']
-					// 		}
-					// 	}
-					// },
+					{
+						$match: {
+							$expr: {
+								$in: ['$notes._id', '$testSystems.notes']
+							}
+						}
+					},
 					{
 						$lookup: {
 							from: 'tagnotes',
@@ -706,14 +706,47 @@ export const getSubscribersNotes = async (user: IReqUser): Promise<unknown> => {
 								$push: '$notes'
 							}
 						}
-					},
-					{
-						$replaceRoot: {
-							newRoot: { $mergeObjects: ['$notes'] }
-						}
 					}
+					// {
+					// 	$replaceRoot: {
+					// 		newRoot: { $mergeObjects: ['$notes'] }
+					// 	}
+					// }
 				],
 				as: 'testSystemsNotes'
+			}
+		},
+		{
+			$addFields: {
+				notes: {
+					$arrayElemAt: ['$notes', 0]
+				},
+				projectNotes: {
+					$arrayElemAt: ['$projectNotes', 0]
+				},
+				testSystemsNotes: {
+					$arrayElemAt: ['$testSystemsNotes', 0]
+				}
+			}
+		},
+		{
+			$project: {
+				notes: '$notes.notes',
+				projectNotes: '$projectNotes.notes',
+				testSystemsNotes: '$testSystemsNotes.notes'
+			}
+		},
+		{
+			$project: {
+				notes: {
+					$ifNull: ['$notes', []]
+				},
+				projectNotes: {
+					$ifNull: ['$projectNotes', []]
+				},
+				testSystemsNotes: {
+					$ifNull: ['$testSystemsNotes', []]
+				}
 			}
 		},
 		{
