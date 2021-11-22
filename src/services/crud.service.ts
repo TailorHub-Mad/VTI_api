@@ -239,7 +239,7 @@ export const getByQueryAggregate = async (
 			}
 			if (query.noRead) {
 				delete query.noRead;
-				aux.push({ 'notes.readBy': Types.ObjectId(user._id) });
+				aux.push({ 'notes.readBy': { $ne: Types.ObjectId(user._id) } });
 			}
 		}
 	}
