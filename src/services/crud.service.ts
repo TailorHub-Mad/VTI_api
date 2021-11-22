@@ -14,7 +14,7 @@ import QueryString from 'qs';
 import { UserModel } from '../models/user.model';
 import { purgeObj } from '@utils/index';
 import { OrderAggregate } from '@utils/order.utils';
-import { ClientModel } from 'src/models/client.model';
+import { ClientModel } from '../models/client.model';
 
 export const getAll = async <Doc, M extends GenericModel<Doc>>(
 	model: M,
