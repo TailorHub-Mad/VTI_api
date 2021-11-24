@@ -11,13 +11,14 @@ export const GetFilters =
 		try {
 			const pagination = getPagination(req.query);
 			console.log(req.user);
+			const _query = { ...query };
 			if (req.user.role !== 'admin') {
-				query.public = true;
+				_query.public = true;
 			}
 			if (req.query.object) {
-				query.object = req.query.object;
+				_query.object = req.query.object;
 			}
-			const document = await read<IFilterDocument>(FilterModel, query, pagination);
+			const document = await read<IFilterDocument>(FilterModel, _query, pagination);
 			res.status(200).json(document);
 		} catch (err) {
 			logger.error(`Error read ${FilterModel.collection.name}`);
