@@ -655,9 +655,79 @@ export const groupRepository = async <T, G extends string>(
 		if (user) {
 			if (query?.subscribed) {
 				delete query.subscribed;
-				if (user.subscribed.notes.length > 0) {
+				if (
+					user.subscribed.notes.length > 0 ||
+					user.subscribed.projects.length > 0 ||
+					user.subscribed.testSystems.length > 0
+				) {
+					const [projectNotesSubcribed] = await ClientModel.aggregate([
+						{
+							$unwind: {
+								path: '$projects'
+							}
+						},
+						{
+							$match: {
+								'projects._id': {
+									$in: user.subscribed.projects.map((project) => Types.ObjectId(project))
+								}
+							}
+						},
+						{
+							$project: {
+								notes: '$projects.notes'
+							}
+						},
+						{
+							$unwind: {
+								path: '$notes'
+							}
+						},
+						{
+							$group: {
+								_id: null,
+								notes: {
+									$push: '$notes'
+								}
+							}
+						}
+					]);
+					const [testSystemsNotesSubcribed] = await ClientModel.aggregate([
+						{
+							$unwind: {
+								path: '$testSystems'
+							}
+						},
+						{
+							$match: {
+								'testSystems._id': {
+									$in: user.subscribed.testSystems.map((testSystems) => Types.ObjectId(testSystems))
+								}
+							}
+						},
+						{
+							$project: {
+								notes: '$testSystems.notes'
+							}
+						},
+						{
+							$unwind: {
+								path: '$notes'
+							}
+						},
+						{
+							$group: {
+								_id: null,
+								notes: {
+									$push: '$notes'
+								}
+							}
+						}
+					]);
 					aux.push({
-						$or: user.subscribed.notes.map((note) => ({ 'notes._id': Types.ObjectId(note) }))
+						$or: (user.subscribed.notes || [])
+							.concat(projectNotesSubcribed?.notes || [], testSystemsNotesSubcribed?.notes || [])
+							.map((note) => ({ 'notes._id': Types.ObjectId(note) }))
 					});
 				} else {
 					return [];
