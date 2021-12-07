@@ -30,7 +30,7 @@ import { mongoIdValidation } from '../validations/common.validation';
 import { MessageModel } from '../models/message.model';
 import { GROUP_NOTES } from '@constants/group.constans';
 import QueryString from 'qs';
-import { aggregateCrud, groupRepository } from '../repositories/aggregate.repository';
+import { groupRepository } from '../repositories/aggregate.repository';
 import { IPopulateGroup } from '../interfaces/aggregate.interface';
 import { FilterQuery, Model, Types } from 'mongoose';
 import { UserModel } from '../models/user.model';
@@ -111,6 +111,10 @@ export const createNote = async (
 		return testSystem;
 	});
 	await newClient.save();
+	await UserModel.findOneAndUpdate(
+		{ _id: user.id },
+		{ $addToSet: { 'subscribred.notes': note._id } }
+	);
 	return { noteId: note._id, isClosed };
 };
 
@@ -152,7 +156,7 @@ export const createMessage = async (
 		);
 	}
 	await client?.save();
-
+	await UserModel.findOneAndUpdate({ _id: user.id }, { $addToSet: { 'subscribred.notes': note } });
 	logger.notice(
 		`El usuario ${user.email} ha creado el mensaje con title ${validateBody.message} en el apunte ${_note?.title}`
 	);
