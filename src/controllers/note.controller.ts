@@ -154,7 +154,7 @@ export const UpdateMessage = async (
 			],
 			type: UPDATE_MESSAGE
 		});
-		await extendNotification({ field: NOTES_NOTIFICATION.model, id }, notification);
+		await extendNotification({ field: NOTES_NOTIFICATION.model, id }, notification, true);
 		logger.notice(
 			`El usuario ${user.email} ha modificado un mensaje con título ${body.message} en el apunte con la id ${id}`
 		);
