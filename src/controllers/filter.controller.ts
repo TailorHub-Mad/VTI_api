@@ -10,7 +10,6 @@ export const GetFilters =
 	async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
 			const pagination = getPagination(req.query);
-			console.log(req.user);
 			const _query = { ...query };
 			if (req.user.role !== 'admin') {
 				_query.public = true;

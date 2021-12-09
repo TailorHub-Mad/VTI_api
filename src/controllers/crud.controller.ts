@@ -10,18 +10,30 @@ import {
 	read,
 	update
 } from '../services/crud.service';
-import { getPagination } from '../utils/controllers.utils';
-import { GenericModel, IClientDocument, IClientModel } from '../interfaces/models.interface';
+import { getPagination, isSameArray } from '../utils/controllers.utils';
+import {
+	GenericModel,
+	IClientDocument,
+	IClientModel,
+	IUserDocument
+} from '../interfaces/models.interface';
 import { BaseError } from '@errors/base.error';
-import { FilterQuery, isValidObjectId, PopulateOptions } from 'mongoose';
+import { FilterQuery, isValidObjectId, PopulateOptions, Types } from 'mongoose';
 import { OrderAggregate } from '@utils/order.utils';
 import { purgeObj } from '@utils/index';
 import { groupAggregate } from '@utils/aggregate.utils';
 import { UserModel } from '../models/user.model';
 import { sendMail } from '../config/nodemailer.config';
-import { updateRepository } from '../repositories/common.repository';
+import { findOneRepository, updateRepository } from '../repositories/common.repository';
 import { ClientModel } from '../models/client.model';
 import { aggregateCrud } from '../repositories/aggregate.repository';
+import { createNotification, extendNotification } from 'src/services/notification.service';
+import {
+	NEW_SUBSCRIPTION,
+	NOTES_NOTIFICATION,
+	PROJECTS_NOTIFICATION,
+	TESTSYTEMS_NOTIFICATION
+} from '@constants/notification.constants';
 
 // Creamos un controlador genérico usando una interface T que tendrá el valor del modelo que nosotros le pasemos.
 export const GetAll =
@@ -117,9 +129,78 @@ export const Update =
 	): ((req: Request, res: Response, next: NextFunction) => Promise<void>) =>
 	async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
-			const { body, params } = req;
+			const { body, params, user } = req;
 			const { id } = params;
 			if (!id || !isValidObjectId(id)) throw new BaseError('Not ID');
+			if (model.modelName === 'User') {
+				const userDB = await findOneRepository<IUserDocument>(UserModel, { _id: id });
+				const { subscribed } = body;
+				if (subscribed && userDB) {
+					const { notes, projects, testSystems } = subscribed;
+					const subscribedNotes = isSameArray(notes, userDB.subscribed.notes);
+					const subscribedProjects = isSameArray(projects, userDB.subscribed.projects);
+					const subscribedTestSystems = isSameArray(testSystems, userDB.subscribed.testSystems);
+					await Promise.all(
+						[
+							{ label: 'note', _id: subscribedNotes, subscribed: 'apunte' },
+							{ label: 'project', _id: subscribedProjects, subscribed: 'proyecto' },
+							{
+								label: 'testSystems',
+								_id: subscribedTestSystems,
+								subscribed: 'sistema de ensayo'
+							}
+						].map(async ({ label, _id, subscribed }) => {
+							if (_id) {
+								let objectNotification = PROJECTS_NOTIFICATION;
+								let id = _id;
+								const client = await findOneRepository<IClientDocument>(ClientModel, {
+									$or: [{ 'notes._id': _id }, { 'projects._id': _id }, { 'testSystems._id': _id }]
+								});
+								let notificationLabel = '';
+								if (label === 'project') {
+									const project = client?.projects.find(
+										(project) => project._id.toString() === _id
+									);
+									notificationLabel = project.alias;
+								}
+								if (label === 'note') {
+									objectNotification = NOTES_NOTIFICATION;
+									const projectNote = client?.projects.find(({ notes }) =>
+										notes.includes(new Types.ObjectId(_id))
+									);
+									const note = client?.notes.find((note) => note._id.toString() === _id);
+									notificationLabel = note.title;
+									if (client) {
+										id = `${projectNote?._id}?note=${_id}`;
+									}
+								} else if (label === 'testSystems') {
+									const testSystem = client?.testSystems.find(
+										(testSystem) => testSystem._id.toString() === _id
+									);
+									objectNotification = TESTSYTEMS_NOTIFICATION;
+									notificationLabel = testSystem.alias;
+								}
+								const notification = await createNotification(user, {
+									description: `El usuario ${userDB.email} se ha subscrito al ${subscribed}: ${objectNotification.label}`,
+									urls: [
+										{
+											label: notificationLabel || objectNotification.label,
+											model: objectNotification.model,
+											id: id
+										}
+									],
+									type: NEW_SUBSCRIPTION
+								});
+								await extendNotification(
+									{ field: objectNotification.model, id: _id },
+									notification,
+									true
+								);
+							}
+						})
+					);
+				}
+			}
 			const document = await update<Doc, M>(model, validate, { _id: id }, body);
 			res.status(200).json(document);
 		} catch (err) {
@@ -210,7 +291,6 @@ export const GetByQueryAggregate =
 			const pagination = getPagination(req.query);
 			delete req.query.limit;
 			delete req.query.offset;
-			// console.log(JSON.parse(req.query.query as string));
 			const result = req.query.query
 				? await aggregateCrud(
 						{

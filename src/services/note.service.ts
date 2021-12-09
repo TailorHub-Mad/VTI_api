@@ -148,7 +148,6 @@ export const createMessage = async (
 		if (!project.users.includes(user.id)) {
 			project.users.push(user.id);
 		}
-		console.log(client?.projects);
 		updateRepository<IUserDocument>(
 			UserModel,
 			{ _id: user.id },
