@@ -27,7 +27,7 @@ import { sendMail } from '../config/nodemailer.config';
 import { findOneRepository, updateRepository } from '../repositories/common.repository';
 import { ClientModel } from '../models/client.model';
 import { aggregateCrud } from '../repositories/aggregate.repository';
-import { createNotification, extendNotification } from 'src/services/notification.service';
+import { createNotification, extendNotification } from '../services/notification.service';
 import {
 	NEW_SUBSCRIPTION,
 	NOTES_NOTIFICATION,
