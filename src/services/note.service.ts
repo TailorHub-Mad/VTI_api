@@ -113,7 +113,7 @@ export const createNote = async (
 	await newClient.save();
 	await UserModel.findOneAndUpdate(
 		{ _id: user.id },
-		{ $addToSet: { 'subscribred.notes': note._id } }
+		{ $addToSet: { 'subscribed.notes': note._id } }
 	);
 	return { noteId: note._id, isClosed };
 };
@@ -155,7 +155,7 @@ export const createMessage = async (
 		);
 	}
 	await client?.save();
-	await UserModel.findOneAndUpdate({ _id: user.id }, { $addToSet: { 'subscribred.notes': note } });
+	await UserModel.findOneAndUpdate({ _id: user.id }, { $addToSet: { 'subscribed.notes': note } });
 	logger.notice(
 		`El usuario ${user.email} ha creado el mensaje con title ${validateBody.message} en el apunte ${_note?.title}`
 	);
