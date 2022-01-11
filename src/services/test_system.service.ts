@@ -25,9 +25,9 @@ export const createTestSystem = async (body: Partial<IClient>): Promise<string |
 
 	delete bodyValidation.clientId;
 
-	if (await checkVtiCode(bodyValidation.vtiCode, { id_client: clientId })) {
-		throw new BaseError('vti code in used.', 400);
-	}
+	// if (await checkVtiCode(bodyValidation.vtiCode, { id_client: clientId })) {
+	// 	throw new BaseError('vti code in used.', 400);
+	// }
 
 	const newRef = await createRef('testSystems');
 	bodyValidation.ref = newRef;
