@@ -1,5 +1,5 @@
 import { DATE_SCHEMA } from '@constants/model.constants';
-import { model, Schema, Types } from 'mongoose';
+import { HookNextFunction, model, Schema, Types } from 'mongoose';
 import { ITagProjectDocument, ITagProjectModel } from '../interfaces/models.interface';
 
 const tagProjectSchema = new Schema<ITagProjectDocument, ITagProjectModel>(
@@ -8,7 +8,8 @@ const tagProjectSchema = new Schema<ITagProjectDocument, ITagProjectModel>(
 		updated: DATE_SCHEMA,
 		relatedTags: [{ type: Types.ObjectId, ref: 'TagProject' }],
 		parent: { type: Types.ObjectId, ref: 'TagProject' },
-		projects: [{ _id: Types.ObjectId, alias: String }]
+		projects: [{ _id: Types.ObjectId, alias: String }],
+		ref: { type: String }
 	},
 	{
 		timestamps: true,
@@ -22,6 +23,30 @@ const tagProjectSchema = new Schema<ITagProjectDocument, ITagProjectModel>(
 
 tagProjectSchema.virtual('isInheritance').get(function (this: ITagProjectDocument) {
 	return this.relatedTags.length > 0;
+});
+
+tagProjectSchema.pre('save', async function (next: HookNextFunction) {
+	try {
+		if (this.isNew) {
+			const [tag] = await this.db
+				.model<ITagProjectDocument>('TagProject')
+				.find({})
+				.sort({ ref: -1 })
+				.collation({
+					locale: 'es',
+					numericOrdering: true
+				})
+				.limit(1);
+			if (tag?.ref) {
+				this.ref = 'TAGAP' + (+tag.ref.slice(3) + 1).toString().padStart(4, '0');
+			} else {
+				this.ref = 'TAGAP0001';
+			}
+		}
+		next();
+	} catch (err) {
+		next(err);
+	}
 });
 
 export const TagProjectModel = model('TagProject', tagProjectSchema);

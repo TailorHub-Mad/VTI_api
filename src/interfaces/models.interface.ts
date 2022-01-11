@@ -155,6 +155,7 @@ export interface ITag {
 	projects: IProjectsDocument['_id'][];
 	relatedTags: ITagDocument['_id'][];
 	index: number;
+	ref: string;
 }
 
 export interface ITagDocument extends ITag, Document {}
