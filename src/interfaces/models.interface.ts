@@ -130,6 +130,7 @@ export interface INote {
 	messages: IMessageDocument['_id'][];
 	approved: boolean;
 	formalized: boolean;
+	ref: string;
 }
 
 export interface INoteDocument extends INote, Document {}

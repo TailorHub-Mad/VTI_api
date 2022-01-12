@@ -36,7 +36,7 @@ export const createRef = async <T extends { ref: string }>(
 	return newRef;
 };
 
-export const updateTags = async <T extends Document & { tags: string[] }>(
+export const updateTags = async <T extends Document & { tags: string[]; ref: string }>(
 	project: T,
 	newTags: string[],
 	{ field, property, model }: { field: string; property: keyof T; model: Model<T> }
@@ -50,7 +50,7 @@ export const updateTags = async <T extends Document & { tags: string[] }>(
 	await pullTags(project, pull);
 };
 
-export const addToSetTags = async <T extends Document & { tags: string[] }>(
+export const addToSetTags = async <T extends Document & { tags: string[]; ref: string }>(
 	project: T,
 	{ field, property, model }: { field: string; property: keyof T; model: Model<T> },
 	tags?: string[]
@@ -65,7 +65,9 @@ export const addToSetTags = async <T extends Document & { tags: string[] }>(
 					_id
 				},
 				{
-					$addToSet: { [field]: { _id: project._id, [property]: project[property] } }
+					$addToSet: {
+						[field]: { _id: project._id, [property]: project[property], ref: project.ref }
+					}
 				}
 			);
 		})
