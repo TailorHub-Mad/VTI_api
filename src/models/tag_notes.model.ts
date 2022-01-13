@@ -8,7 +8,7 @@ const TagNoteSchema = new Schema<ITagNoteDocument, ITagNoteModel>(
 		updated: DATE_SCHEMA,
 		relatedTags: [{ type: Types.ObjectId, ref: 'TagNote' }],
 		parent: { type: Types.ObjectId, ref: 'TagNote' },
-		notes: [{ _id: Types.ObjectId, title: String }],
+		notes: [{ _id: Types.ObjectId, title: String, ref: String }],
 		ref: { type: String }
 	},
 	{
