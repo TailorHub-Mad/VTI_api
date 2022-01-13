@@ -38,7 +38,7 @@ TagNoteSchema.pre('save', async function (next: HookNextFunction) {
 				})
 				.limit(1);
 			if (tag?.ref) {
-				this.ref = 'TAGAP' + (+tag.ref.slice(3) + 1).toString().padStart(4, '0');
+				this.ref = 'TAGAP' + (+tag.ref.slice(5) + 1).toString().padStart(4, '0');
 			} else {
 				this.ref = 'TAGAP0001';
 			}
