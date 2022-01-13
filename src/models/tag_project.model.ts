@@ -38,9 +38,9 @@ tagProjectSchema.pre('save', async function (next: HookNextFunction) {
 				})
 				.limit(1);
 			if (tag?.ref) {
-				this.ref = 'TAGPRO' + (+tag.ref.slice(3) + 1).toString().padStart(4, '0');
+				this.ref = 'TAGPR' + (+tag.ref.slice(3) + 1).toString().padStart(4, '0');
 			} else {
-				this.ref = 'TAGPRO0001';
+				this.ref = 'TAGPR0001';
 			}
 		}
 		next();
