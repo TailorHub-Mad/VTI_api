@@ -10,6 +10,7 @@ import { recoveryValidation, resetPasswordValidation } from '../validations/user
 import QueryString from 'qs';
 import { userFilterAggregate } from '../repositories/user.repository';
 import { PROJECT_NOTES } from '@constants/group.constans';
+import { sendNewEmail } from '../template/new_user.template';
 
 export const resetPassword = async (
 	body: { email: string },
@@ -20,7 +21,7 @@ export const resetPassword = async (
 	// }
 	const validateEmail = await resetPasswordValidation.validateAsync(body);
 	const recovery = randomBytes(64).toString('hex');
-	const user = updateRepository<IUserDocument>(
+	const user = await updateRepository<IUserDocument>(
 		UserModel,
 		{ email: validateEmail.email },
 		{
@@ -34,8 +35,8 @@ export const resetPassword = async (
 	}/${recovery}`;
 	await sendMail({
 		to: validateEmail.email,
-		subject: 'Recovery',
-		html: `<a href=${url}>RECOVERY</a>`
+		subject: isRecovery ? 'Recovery' : 'Nuevo usuario',
+		html: isRecovery ? `<a href=${url}>RECOVERY</a>` : sendNewEmail(user.name, url)
 	});
 };
 
