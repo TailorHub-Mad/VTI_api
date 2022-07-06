@@ -36,13 +36,6 @@ export const signup = async ({
 			throw new BaseError();
 		}
 
-		console.log('LLEGO AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII', savedUser);
-		sendMail({
-			to: savedUser.email,
-			subject: 'Recovery',
-			html: 'SOY UN CORREO DE PRUEBA'
-		});
-
 		await updateRepository<IDepartmentDocument>(
 			DepartmentModel,
 			{ _id: department },
