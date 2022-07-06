@@ -1,4 +1,4 @@
-export const sendNewEmail = (name: string, url: string) => `<!doctype html>
+export const sendNewEmail = (name: string, url: string): string => `<!doctype html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
   <head>
     <title>
