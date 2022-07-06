@@ -7,7 +7,6 @@ import { signJWT } from './jwt.service';
 import { BaseError } from '@errors/base.error';
 import { updateRepository } from '../repositories/common.repository';
 import { DepartmentModel } from '../models/department.model';
-import { sendMail } from '../config/nodemailer.config';
 
 export const signup = async ({
 	email,
