@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from 'express';
 import Joi from 'joi';
 import { PopulateOptions } from 'mongoose';
 import { GenericModel } from '../interfaces/models.interface';
-import { filterClient } from '../services/client.service';
+import { deleteClient, filterClient } from '../services/client.service';
 
 export const FilterClient =
 	<Doc, M extends GenericModel<Doc> = GenericModel<Doc>>(
@@ -20,3 +20,17 @@ export const FilterClient =
 			next(err);
 		}
 	};
+
+export const DeleteClient = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+): Promise<void> => {
+	try {
+		const { id } = req.params;
+		await deleteClient(id);
+		res.sendStatus(200);
+	} catch (err) {
+		next(err);
+	}
+};

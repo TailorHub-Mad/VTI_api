@@ -9,12 +9,12 @@ export const signJWT = (userId: string, isAdmin: boolean, email: string): string
 	});
 };
 
-interface verify {
+interface Tverify {
 	sub: string;
 	email: string;
 	role: string;
 }
 
-export const verifyJWT = (token: string): verify => {
-	return JWT.verify(token, 'PRIVATEKEY') as verify;
+export const verifyJWT = (token: string): Tverify => {
+	return JWT.verify(token, 'PRIVATEKEY') as Tverify;
 };

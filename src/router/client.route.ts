@@ -1,20 +1,14 @@
 import { CLIENTS_PATH } from '@constants/routes.constants';
 import { Router } from 'express';
 import { ClientModel } from '../models/client.model';
-import {
-	Create,
-	GetAllAggregate,
-	Update,
-	ReadById,
-	DeleteCrud
-} from '../controllers/crud.controller';
+import { Create, GetAllAggregate, Update, ReadById } from '../controllers/crud.controller';
 import {
 	FilterClientValidation,
 	newClientValidation,
 	updateClientValidation
 } from '../validations/client.validation';
 import { IClientDocument } from '../interfaces/models.interface';
-import { FilterClient } from '../controllers/client.controller';
+import { DeleteClient, FilterClient } from '../controllers/client.controller';
 
 const router = Router();
 
@@ -34,6 +28,6 @@ router.get('/:id', ReadById<IClientDocument>(ClientModel));
 router.put('/:id', Update<IClientDocument>(ClientModel, updateClientValidation));
 
 // Delete one client by ID
-router.delete('/:id', DeleteCrud<IClientDocument>(ClientModel));
+router.delete('/:id', DeleteClient);
 
 export const ClientsRouter = { router, path: CLIENTS_PATH };
