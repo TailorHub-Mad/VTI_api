@@ -104,8 +104,35 @@ export const aggregateCrud = async (
 			{
 				$lookup: {
 					from: 'tagnotes',
-					localField: 'notes.tags',
-					foreignField: '_id',
+					let: {
+						tags: '$notes.tags'
+					},
+					pipeline: [
+						{
+							$match: {
+								$expr: {
+									$in: ['$_id', '$$tags']
+								}
+							}
+						},
+						{
+							$addFields: {
+								index: {
+									$indexOfArray: ['$$tags', '$_id']
+								}
+							}
+						},
+						{
+							$sort: {
+								index: 1
+							}
+						},
+						{
+							$project: {
+								index: 0
+							}
+						}
+					],
 					as: 'notes.tags'
 				}
 			},
