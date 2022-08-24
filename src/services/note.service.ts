@@ -187,7 +187,8 @@ export const updateNote = async (
 	const client = await updateRepository<IClientDocument>(
 		ClientModel,
 		{ 'notes._id': validateIdNote },
-		updated
+		updated,
+		{ new: false }
 	);
 	const _note = client?.notes.find(({ _id }) => _id.toString() === validateIdNote);
 	await updateTags(_note, validateBody.tags, {
@@ -345,7 +346,11 @@ export const deleteNote = async (id_note: string): Promise<void> => {
 	await deleteModelInClientRepository('notes', noteIdValidation);
 };
 
-export const deleteMessage = async (id_note: string, id_message: string): Promise<void> => {
+export const deleteMessage = async (
+	id_note: string,
+	id_message: string,
+	role: string
+): Promise<void> => {
 	const noteIdValidation = await mongoIdValidation.validateAsync(id_note);
 	const messageIdValidation = await mongoIdValidation.validateAsync(id_message);
 	const client = (
@@ -360,11 +365,19 @@ export const deleteMessage = async (id_note: string, id_message: string): Promis
 			(note) => note._id.toString() === noteIdValidation
 		);
 		if (notes) {
-			const messages = notes.messages.filter(
-				(message) => message._id.toString() !== messageIdValidation
+			const message = notes.messages.find(
+				(message) => message._id.toString() === messageIdValidation
 			);
-			notes.messages = messages;
-			await client.save();
+
+			if (message.updateLimitDate < new Date() || role === 'admin') {
+				const messages = notes.messages.filter(
+					(message) => message._id.toString() !== messageIdValidation
+				);
+				notes.messages = messages;
+				await client.save();
+			} else {
+				throw new BaseError('You can not delete this message.', 403);
+			}
 		}
 	}
 };

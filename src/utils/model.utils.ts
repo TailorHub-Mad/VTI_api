@@ -43,11 +43,10 @@ export const updateTags = async <T extends Document & { tags: string[]; ref: str
 ): Promise<void> => {
 	if (!newTags) return;
 	const oldTags = project.tags.map((tag: string) => tag.toString());
-	const addToSet = newTags.filter((tag: string) => !(oldTags as string[]).includes(tag));
+	const addToSet = newTags.filter((tag: string) => !oldTags.includes(tag));
 	const pull = oldTags.filter((tag: string) => !newTags.includes(tag));
-
 	await addToSetTags(project, { field, property, model }, addToSet);
-	await pullTags(project, pull);
+	await pullTags(project, { field, model }, pull);
 };
 
 export const addToSetTags = async <T extends Document & { tags: string[]; ref: string }>(
@@ -76,17 +75,20 @@ export const addToSetTags = async <T extends Document & { tags: string[]; ref: s
 
 export const pullTags = async <T extends Document & { tags: string[] }>(
 	project: T,
+	{ field, model }: { field: string; model: Model<T> },
 	tags: string[]
 ): Promise<void> => {
+	console.log(field);
 	await Promise.all(
 		tags.map((tag) => {
-			return updateRepository<ITagProjectDocument>(
-				TagProjectModel,
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			return updateRepository<any>(
+				model,
 				{
 					_id: tag
 				},
 				{
-					$pull: { projects: { _id: project._id } }
+					$pull: { [field]: { _id: project._id } }
 				}
 			);
 		})
