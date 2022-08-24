@@ -231,7 +231,7 @@ export const DeleteMessage = async (
 	try {
 		const { user } = req;
 		const { id_note, id_message } = req.params;
-		await deleteMessage(id_note, id_message);
+		await deleteMessage(id_note, id_message, user.role);
 		logger.notice(`El usuario ${user.email} ha eliminado un mensaje con el id ${id_message}`);
 		res.sendStatus(200);
 	} catch (err) {
