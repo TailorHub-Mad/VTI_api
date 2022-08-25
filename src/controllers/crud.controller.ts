@@ -193,8 +193,7 @@ export const Update =
 								});
 								await extendNotification(
 									{ field: objectNotification.model, id: _id },
-									notification,
-									true
+									notification
 								);
 							}
 						})
